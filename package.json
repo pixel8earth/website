@@ -2,7 +2,7 @@
   "name": "pixel8.earth",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http:www.pixel8.earth",
+  "homepage": "http://wwww.pixel8.earth",
   "dependencies": {
     "gh-pages": "^2.0.1",
     "react": "^16.8.6",
@@ -15,7 +15,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "yarn run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
