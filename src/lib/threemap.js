@@ -163,7 +163,7 @@ class ThreeMap extends Component {
   }
 
   updateTiles(e) {
-    const buf = 1
+    const buf = 2
     const minx = this.tile.x - buf
     const maxx = this.tile.x + buf
     const miny = this.tile.y - buf
