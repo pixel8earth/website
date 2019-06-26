@@ -1,15 +1,18 @@
-import React from 'react';
+import React, {Component} from 'react';
+
+import ThreeMap from './lib/threemap';
+import PointTiles from './layers/point_tiles'
+import GeoJSON from './layers/geojson'
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src="/pixel8.jpg" alt="Future home of Pixel8.earth" width={400}/>
-        Future home of Pixel8.earth
-      </header>
-    </div>
-  );
+const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv'
+const pointTiles = new PointTiles('lidar', template)
+const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json')
+
+export default class App extends Component {
+  render() {
+    return (<ThreeMap center={[-97.739310,30.257733]} cam_zoom={150} layers={[pointTiles, mapillaryTracks]}/>);
+  }
 }
 
-export default App;
