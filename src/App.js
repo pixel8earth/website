@@ -6,7 +6,7 @@ import GeoJSON from './layers/geojson'
 
 import './App.css';
 
-const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv'
+const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
 const pointTiles = new PointTiles('lidar', template)
 const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json')
 

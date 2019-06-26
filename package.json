@@ -4,12 +4,13 @@
   "private": true,
   "homepage": "http://wwww.pixel8.earth",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@mapbox/tile-cover": "^3.0.2",
     "gh-pages": "^2.0.1",
+    "pako": "^1.0.10",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@mapbox/tile-cover": "^3.0.2",
     "sphericalmercator": "^1.0.5",
     "three": "^0.105.2"
   },

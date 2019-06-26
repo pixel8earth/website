@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import pako from 'pako'
 
 class PointTiles {
   type = 'PointTiles'
@@ -106,7 +107,10 @@ class PointTiles {
           if (!res.ok) {
             return reject('not found')
           }
-          return res.text()
+          return res.arrayBuffer()
+        })
+        .then(byteArray => {
+          return pako.inflate(byteArray, {to: 'string'})
         })
         .then(raw => {
           const rows = raw.split('\n')

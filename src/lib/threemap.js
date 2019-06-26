@@ -45,7 +45,6 @@ class ThreeMap extends Component {
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
     this.camera.position.y = this.props.cam_zoom || 100
     this.camera.lookAt(this.scene.position)
-    //this.camera.up = new THREE.Vector3(0,0,1)
     //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
     this.renderer.setClearColor('#000000')
@@ -70,7 +69,8 @@ class ThreeMap extends Component {
     this.centerTile = this.centerTile()
     this.tile = this.centerTile
     // NOTE: possibly needed for rendering data as an offset 
-    this.offsets = merc.forward(this.props.center)
+    this.offsets = mercator.forward(this.props.center)
+    console.log(this.offsets, merc.inverse(this.offsets))
     
     this.axes = new THREE.AxesHelper( 1 );
     this.scene.add( this.axes );
@@ -120,19 +120,35 @@ class ThreeMap extends Component {
     return lngLat
   }
 
+  projectToScene(px) {
+    const width = window.innerWidth
+    const height = window.innerHeight
+    var screenPosition = {x: (px[0]/width-0.5)*2, y:(0.5-px[1]/height)*2};
+    this.raycaster.setFromCamera(screenPosition, this.camera);
+    var pt = this.raycaster.intersectObject(this.plane)[0].point;
+    return pt;
+  }
+
   onUp(e) {
     //TODO: possibly need a strategy to find the screen coords in scene world coords
     // could use this to compute the viewable bbox in lat/lon and get tiles at a given zoom 
     // Another option is to use raycasting onto the base plane and find all tiles (but tricky at low angles)
     //var vector = new THREE.Vector3( 0, 0, 0 ).unproject( this.camera );
 
+    // these scales are probably an issue, need to find a way to not use them
+    // but they slow down the impact of panning on tile requests    
+    const scaleX = 0.045 
+    const scaleY = 0.035 
+
+    /*var ul = this.projectToScene([0, 0])
+    var ll = mercator.ll([ul.x*scaleX + basePlaneDimension / 2, ul.z*scaleY + basePlaneDimension / 2], 0)
+    console.log(ul.x, ul.z, ll)*/
+
     if (this.axes) {
       this.axes.position.x = this.controls.target.x
       this.axes.position.z = this.controls.target.z
     }
 
-    const scaleX = 0.045 //(0.5 / this.props.cam_zoom) * this.tile_zoom
-    const scaleY = 0.035 //(0.5 / this.props.cam_zoom) * this.tile_zoom
     const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
     const lng = lngLat[0]*scaleX + this.props.center[0]
     const lat = (-1 * lngLat[1]*scaleY) + this.props.center[1]
@@ -147,7 +163,7 @@ class ThreeMap extends Component {
   }
 
   updateTiles(e) {
-    const buf = 2
+    const buf = 1
     const minx = this.tile.x - buf
     const maxx = this.tile.x + buf
     const miny = this.tile.y - buf
