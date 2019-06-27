@@ -78,6 +78,8 @@ class ThreeMap extends Component {
 
     window.addEventListener('resize', this.onWindowResize.bind(this), false)
     window.addEventListener('mouseup', this.onUp.bind(this), false)
+    window.addEventListener('mousedown', this.onDown.bind(this), false)
+    window.addEventListener('mousemove', this.onMove.bind(this), false)
     this.renderScene()
   }
 
@@ -128,7 +130,22 @@ class ThreeMap extends Component {
     return pt;
   }
 
+  onMove(e) {
+    if (this.flag) {
+      if (this.axes) {
+        this.axes.position.x = this.controls.target.x
+        this.axes.position.z = this.controls.target.z
+      }
+    }
+  }
+
+  onDown(e) {
+    // turn on mouse move handler
+    this.flag = 1;
+  }
+
   onUp(e) {
+    this.flag = 0; // turn off mouse move handler
     //TODO: possibly need a strategy to find the screen coords in scene world coords
     // could use this to compute the viewable bbox in lat/lon and get tiles at a given zoom 
     // Another option is to use raycasting onto the base plane and find all tiles (but tricky at low angles)
@@ -136,13 +153,8 @@ class ThreeMap extends Component {
 
     // these scales are probably an issue, need to find a way to not use them
     // but they slow down the impact of panning on tile requests    
-    const scaleX = 0.045 
+    const scaleX = 0.045 // these suck to have FYI... just hardcoded scale factors... 
     const scaleY = 0.035 
-
-    if (this.axes) {
-      this.axes.position.x = this.controls.target.x
-      this.axes.position.z = this.controls.target.z
-    }
 
     const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
     const lng = lngLat[0] * scaleX + this.props.center[0]
@@ -159,8 +171,8 @@ class ThreeMap extends Component {
 
   updateTiles(e) {
     const buf = 2
-    const minx = this.tile.x - buf
-    const maxx = this.tile.x + buf
+    const minx = this.tile.x - (buf+1) // extra tile in x dir
+    const maxx = this.tile.x + (buf+1) // extra tile in x dir
     const miny = this.tile.y - buf
     const maxy = this.tile.y + buf
 
