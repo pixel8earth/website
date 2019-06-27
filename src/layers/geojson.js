@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import SphericalMercator from 'sphericalmercator'
+import pako from 'pako'
 
-const basePlaneDimension = 65024;
-const mercator = new SphericalMercator({size: basePlaneDimension});
+const basePlaneDimension = 65024
+const mercator = new SphericalMercator({size: basePlaneDimension})
 
 function generateSprite() {
   const canvas = document.createElement('canvas');
@@ -56,9 +57,14 @@ class GeoJSON {
   fetchData(url, offsets) {
     return new Promise( (resolve, reject) => {
       fetch(url)
-        .then( res => {
+        .then( async res => {
           if (!res.ok) {
             return reject('not found')
+          }
+          const parts = url.split('.')
+          const ext = parts[parts.length - 1]
+          if (ext === 'gz') {
+            return JSON.parse(pako.inflate(await res.arrayBuffer(), {to: 'string'}))
           }
           return res.json()
         })

@@ -25,11 +25,11 @@ import './App.css';
 */
 const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
 const pointTiles = new PointTiles('lidar', template)
-const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json')
+const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
 
 export default class App extends Component {
   render() {
-    return (<ThreeMap center={[-97.739310,30.257733]} cam_zoom={150} layers={[pointTiles, mapillaryTracks]}/>);
+    return (<ThreeMap center={[-97.739310, 30.257733]} cam_zoom={150} layers={[pointTiles, mapillaryTracks]}/>);
   }
 }
 

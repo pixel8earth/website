@@ -153,7 +153,7 @@ class ThreeMap extends Component {
 
     // these scales are probably an issue, need to find a way to not use them
     // but they slow down the impact of panning on tile requests    
-    const scaleX = 0.045 // these suck to have FYI... just hardcoded scale factors... 
+    const scaleX = 0.035 // these suck to have FYI... just hardcoded scale factors... 
     const scaleY = 0.035 
 
     const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
