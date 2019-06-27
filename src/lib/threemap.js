@@ -52,6 +52,8 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
+    this.controls.zoomSpeed = 0.25
+    this.controls.maxPolarAngle = 1.35 
     this.controls.addEventListener('change', this.renderScene)
 
     this.raycaster = new THREE.Raycaster();
@@ -69,7 +71,8 @@ class ThreeMap extends Component {
     this.centerTile = this.centerTile()
     this.tile = this.centerTile
     // NOTE: possibly needed for rendering data as an offset 
-    this.offsets = mercator.forward(this.props.center)
+    this.offsets = merc.forward(this.props.center)
+    //console.log(merc.forward(this.props.center), mercator.forward(this.props.center))
     
     this.axes = new THREE.AxesHelper( 1 );
     this.scene.add( this.axes );
@@ -95,6 +98,9 @@ class ThreeMap extends Component {
   }
 
   renderScene = () => {
+    if (this.camera.position.y > 400) {
+      this.camera.position.y = 400
+    }
     this.renderer.render(this.scene, this.camera)
   }
 
@@ -157,7 +163,7 @@ class ThreeMap extends Component {
     const scaleY = 0.035 
 
     const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
-    const lng = lngLat[0] * scaleX + this.props.center[0]
+    const lng = (lngLat[0] * scaleX) + this.props.center[0]
     const lat = (lngLat[1] * scaleY) + this.props.center[1]
     const t = pointToTile(lng, lat, this.tile_zoom) // thinking that merc or mercator should do this...
     const newTile = new THREE.Vector3(t[0], t[1], t[2])
@@ -171,8 +177,8 @@ class ThreeMap extends Component {
 
   updateTiles(e) {
     const buf = 2
-    const minx = this.tile.x - (buf+1) // extra tile in x dir
-    const maxx = this.tile.x + (buf+1) // extra tile in x dir
+    const minx = this.tile.x - (buf) // extra tile in x dir
+    const maxx = this.tile.x + (buf) // extra tile in x dir
     const miny = this.tile.y - buf
     const maxy = this.tile.y + buf
 

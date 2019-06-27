@@ -23,7 +23,8 @@ import './App.css';
  
  
 */
-const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
+const template = 'http://localhost/~chelm/hdiz/austin/lidar_tiles/{z}/{x}/{y}.csv.gz'
+//const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
 const pointTiles = new PointTiles('lidar', template)
 const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
 
