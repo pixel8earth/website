@@ -34,9 +34,9 @@ class ThreeMap extends Component {
   layers = []
   loadedTiles = []
   tile_zoom = 18
+  mouse = new THREE.Vector2()
 
   componentDidMount() {
-    console.log(this.props)
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
     //ADD SCENE
@@ -70,7 +70,6 @@ class ThreeMap extends Component {
     this.tile = this.centerTile
     // NOTE: possibly needed for rendering data as an offset 
     this.offsets = mercator.forward(this.props.center)
-    console.log(this.offsets, merc.inverse(this.offsets))
     
     this.axes = new THREE.AxesHelper( 1 );
     this.scene.add( this.axes );
@@ -105,7 +104,7 @@ class ThreeMap extends Component {
 
   getZoom() {
     const pt = this.controls.target.distanceTo(this.controls.object.position);
-    return Math.min(Math.max(getBaseLog(0.5, pt/35000) + 4, 0), 22);
+    return Math.min(Math.max(getBaseLog(0.5, pt/(basePlaneDimension)) + 8, 0), 18);
   }
 
   getOffsets() {
@@ -133,16 +132,12 @@ class ThreeMap extends Component {
     //TODO: possibly need a strategy to find the screen coords in scene world coords
     // could use this to compute the viewable bbox in lat/lon and get tiles at a given zoom 
     // Another option is to use raycasting onto the base plane and find all tiles (but tricky at low angles)
-    //var vector = new THREE.Vector3( 0, 0, 0 ).unproject( this.camera );
+    //var v = new THREE.Vector3( 0, 150, 0 )//.unproject( this.camera );
 
     // these scales are probably an issue, need to find a way to not use them
     // but they slow down the impact of panning on tile requests    
     const scaleX = 0.045 
     const scaleY = 0.035 
-
-    /*var ul = this.projectToScene([0, 0])
-    var ll = mercator.ll([ul.x*scaleX + basePlaneDimension / 2, ul.z*scaleY + basePlaneDimension / 2], 0)
-    console.log(ul.x, ul.z, ll)*/
 
     if (this.axes) {
       this.axes.position.x = this.controls.target.x
@@ -150,13 +145,13 @@ class ThreeMap extends Component {
     }
 
     const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
-    const lng = lngLat[0]*scaleX + this.props.center[0]
-    const lat = (-1 * lngLat[1]*scaleY) + this.props.center[1]
+    const lng = lngLat[0] * scaleX + this.props.center[0]
+    const lat = (lngLat[1] * scaleY) + this.props.center[1]
     const t = pointToTile(lng, lat, this.tile_zoom) // thinking that merc or mercator should do this...
     const newTile = new THREE.Vector3(t[0], t[1], t[2])
 
     if (newTile.x !== this.tile.x || newTile.y !== this.tile.y) {
-      console.log('NEW Center tile', newTile.x, newTile.y)
+      //console.log('NEW Center tile', newTile.x, newTile.y)
       this.tile = newTile
       this.updateTiles()
     }

@@ -8,13 +8,13 @@ class PointTiles {
 
   vert = `
     uniform float size;
-    varying vec3 vColor;
+    //varying vec3 vColor;
     varying vec3 vUv;
     void main()
     {
         vUv = position;
         vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-        vColor = normalize(abs(worldPosition.xyz));
+        //vColor = normalize(abs(worldPosition.xyz));
         gl_PointSize = min(size * vUv.y, 2.0);
         gl_Position = projectionMatrix * viewMatrix * worldPosition;
     }
@@ -122,7 +122,7 @@ class PointTiles {
                 if (rData.length > 1) { 
                   data.push(rData[0] - offsets[0]) // x
                   data.push(rData[2] - 130) // z
-                  data.push(rData[1] - offsets[1]) // y
+                  data.push(-1 * (rData[1] - offsets[1])) // y
                 }
               } catch(e) {}
             }
