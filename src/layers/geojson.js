@@ -7,14 +7,14 @@ const mercator = new SphericalMercator({size: basePlaneDimension})
 
 function generateSprite() {
   const canvas = document.createElement('canvas');
-  canvas.width = 40;
-  canvas.height = 40;
+  canvas.width = 20;
+  canvas.height = 20;
   const ctx = canvas.getContext('2d');
   const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
   gradient.addColorStop(0, 'rgba(255,255,255,1)');
   gradient.addColorStop(0.2, 'rgba(0,255,255,1)');
   gradient.addColorStop(0.4, 'rgba(0,0,64,1)');
-  gradient.addColorStop(1, 'rgba(0,0,0,1)');
+  gradient.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   const texture = new THREE.Texture(canvas);
@@ -32,11 +32,11 @@ class GeoJSON {
     this.color = color
   }
 
-  update = (tiles, scene, offsets, render) => {
+  update = (tiles, scene, offsets, centerTile, render) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: 4.0,
+        size: 3.0,
         transparent: true,
         blending: THREE.AdditiveBlending,
         map: generateSprite()

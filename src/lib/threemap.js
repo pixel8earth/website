@@ -52,7 +52,7 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
-    this.controls.zoomSpeed = 0.25
+    //this.controls.zoomSpeed = 0.25
     this.controls.maxPolarAngle = 1.35 
     this.controls.addEventListener('change', this.renderScene)
 
@@ -98,8 +98,8 @@ class ThreeMap extends Component {
   }
 
   renderScene = () => {
-    if (this.camera.position.y > 400) {
-      this.camera.position.y = 400
+    if (this.camera.position.y > 600) {
+      this.camera.position.y = 600
     }
     this.renderer.render(this.scene, this.camera)
   }
@@ -192,7 +192,7 @@ class ThreeMap extends Component {
   }
 
   updateLayers(tiles) {
-    this.layers.forEach(l => l.update(tiles, this.scene, this.offsets, () => this.renderScene()))
+    this.layers.forEach(l => l.update(tiles, this.scene, this.offsets, this.centerTile, () => this.renderScene()))
   }
 
   render() {

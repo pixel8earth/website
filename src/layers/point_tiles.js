@@ -52,7 +52,7 @@ class PointTiles {
     this.color = color
   }
 
-  update = (tiles, scene, offsets, render) => {
+  update = (tiles, scene, offsets, centerTile, render) => {
     // takes a list of tiles, fetches, adds to map, then removes uneeded tiles
     // TODO - the fetchTile promise needs some logic around cancelation i think
     // TODO - we may need some state on this component that keeps track of the 
@@ -81,7 +81,7 @@ class PointTiles {
     // TODO - this removal of tiles needs to wait until the tiles have been loaded
     Object.keys(this.loadedTiles).forEach( coords => {
       if (coordsList.indexOf(coords) === -1) {
-        var selectedObject = scene.getObjectByName(coords)
+        var selectedObject = scene.getObjectByName(this.name + coords)
         scene.remove(selectedObject)
         delete this.loadedTiles[coords]
       }
@@ -93,7 +93,7 @@ class PointTiles {
       const geom = new THREE.BufferGeometry()
       geom.addAttribute( 'position', vertices )
       const points = new THREE.Points( geom, this.material)
-      points.name = coords
+      points.name = this.name + coords
       this.loadedTiles[coords] = coords
       scene.add(points)
       render()
