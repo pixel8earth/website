@@ -80,7 +80,8 @@ const styles = {
     height: '60px',
     position: 'absolute',
     top: 0,
-    left: 0
+    left: 0,
+    cursor: 'pointer'
   },
   main: {
     backgroundColor: '#304D6D',
@@ -98,7 +99,8 @@ const styles = {
   },
   imgWrap: {
     textAlign: 'center',
-    marginTop: '2px'
+    marginTop: '2px',
+    cursor: 'pointer'
   },
   pixel8Icon: {
     width: '75px',
