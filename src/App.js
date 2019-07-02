@@ -18,8 +18,6 @@ import './App.css';
       that are supposed to be hidden, or at least are not in the current view. 
       To solve this i think we need to have some sort of state on the point tile component that either (1) prevent tiles from rendering that are invalid or (2) the promises on the fetches need to be cancelled 
 
-  3. Render meshes 
-  4. aerial imagery 
   5. source all data providers 
 
   6. animate ground level things... move along a path etc  
@@ -28,16 +26,16 @@ import './App.css';
 */
 //const template = 'http://localhost/~chelm/hdiz/austin/lidar_tiles/{z}/{x}/{y}.csv.gz'
 //const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
-//const points = new PointTiles('lidar', 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz')
+const points = new PointTiles('lidar', 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz')
 const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
-//const images = new ImageTiles('aerial', 'http://localhost/~chelm/hdiz/austin/imagery/image_tiles/{z}/{x}/{y}.jpg')
+const images = new ImageTiles('aerial', 'https://pixel8austin.storage.googleapis.com/imagery/{z}/{x}/{y}.jpg')
 const mesh = new PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapis.com/mesh/ground/{z}/{x}/{y}.ply')
 //const mesh = new PlyTiles('ground-mesh', 'http://localhost/~chelm/hdiz/austin/meshes/{z}/{x}/{y}.ply')
 //const pc = new PointCloud('cloud', 'http://localhost/~chelm/hdiz/austin/collects/1561993727406-raw.csv', {proj: 'EPSG:32614'})
 
 export default class App extends Component {
   render() {
-    return (<ThreeMap center={[-97.739677,30.257936]} cam_zoom={1} layers={[mapillaryTracks, mesh]}/>);
+    return (<ThreeMap center={[-97.739677,30.257936]} cam_zoom={1} layers={[mapillaryTracks, points, images]} />);
   }
 }
 

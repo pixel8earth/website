@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { llPixel } from '../lib/utils'
+//import { llPixel } from '../lib/utils'
 import SphericalMercator from 'sphericalmercator'
 import worker from '../lib/worker';
 import WebWorker from '../lib/WebWorker';
@@ -72,7 +72,7 @@ class PointTiles {
   }
 
   removeOldTiles = (tiles, key) => {
-    const { scene } = this.updateContext;
+    const { scene, render } = this.updateContext;
     const stringTiles = tiles.map( t => `${t.x}-${t.y}-${t.z}`);
     const toRemove = this.loadedTiles.reduce((acc, item) => {
       // remove uuid from tile name to compare to tiles coming in on update
@@ -84,15 +84,57 @@ class PointTiles {
       let selectedObject = scene.getObjectByName(item);
       if (selectedObject) {
         scene.remove(selectedObject);
+        render()
         const index = this.loadedTiles.indexOf(item);
         if (index > -1) this.loadedTiles.splice(index, 1);
       }
     });
   }
 
+  fetchHandler = (raw, offsets, size) => {
+    console.log('In the fetch handler, must be pure')
+
+    const llPixel = (ll, zoom, _size) => {
+      var size = _size * Math.pow(2, zoom);
+      var d = size / 2;
+      var bc = (size / 360);
+      var cc = (size / (2 * Math.PI));
+      var ac = size;
+      var f = Math.min(Math.max(Math.sin((Math.PI / 180) * ll[1]), -0.9999), 0.9999);
+      var x = d + ll[0] * bc;
+      var y = d + 0.5 * Math.log((1 + f) / (1 - f)) * -cc;
+      (x > ac) && (x = ac);
+      (y > ac) && (y = ac);
+      return [x, y];
+    }
+
+    const rows = raw.split('\n')
+    const data = []
+    rows.forEach((row, idx) => {
+      if (idx > 0) {
+        const rData = row.split(",").map(v => parseFloat(v))
+        if (rData.length > 1) {
+          // taken from sphericalmercator.js - including here cuz the imports are funky
+          const ll =  [
+            (rData[0] * (180 / Math.PI) / 6378137.0),
+            ((Math.PI*0.5) - 2.0 * Math.atan(Math.exp(-rData[1] / 6378137.0))) * (180 / Math.PI)
+          ]
+          let px = llPixel(ll, 0, size)
+          px = {x: px[0] - size / 2, y: 0, z: px[1] - size / 2}
+          data.push(px.x - offsets.x)
+          data.push((rData[2] * 0.5 / 686) - 0.1) // umm ok... some z level scaling gonna need to be figured out
+          data.push(px.z - offsets.z)
+        }
+      }
+    });
+    return data
+  }
+
   update = async (tiles, scene, offsets, render) => {
     this.coordsList = [];
     const key = Date.now().toString();
+    // fetch handler blob
+    //const blob = new Blob(["(" + this.fetchHandler.toString() + ")()"]);
 
     tiles.forEach((t, i) => {
       const coords = [t.x, t.y, t.z].join('-')
@@ -111,7 +153,8 @@ class PointTiles {
           try {
             this.fetchingUrls.push(url);
             this.updateContext = { scene, render };
-            this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size });
+            //this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: URL.createObjectURL(blob) });
+            this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
           } catch (err) {
             console.log('Error fetching tile: ', err)
           }

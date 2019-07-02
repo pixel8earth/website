@@ -149,33 +149,6 @@ class ThreeMap extends Component {
       this.tile = newTile
       this.updateTiles()
     }
-
-    //if (corners[0] === screenPosition) return;
-    //else screenPosition = corners[0];
-
-
-    //this.flag = 0; // turn off mouse move handler
-    //TODO: possibly need a strategy to find the screen coords in scene world coords
-    // could use this to compute the viewable bbox in lat/lon and get tiles at a given zoom 
-    // Another option is to use raycasting onto the base plane and find all tiles (but tricky at low angles)
-    //var v = new THREE.Vector3( 0, 150, 0 )//.unproject( this.camera );
-
-    // these scales are probably an issue, need to find a way to not use them
-    // but they slow down the impact of panning on tile requests    
-    /*const scaleX = 0.035 // these suck to have FYI... just hardcoded scale factors... 
-    const scaleY = 0.035 
-
-    const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
-    const lng = (lngLat[0] * scaleX) + this.props.center[0]
-    const lat = (lngLat[1] * scaleY) + this.props.center[1]
-    const t = pointToTile(lng, lat, this.tile_zoom) // thinking that merc or mercator should do this...
-    const newTile = new THREE.Vector3(t[0], t[1], t[2])
-
-    if (newTile.x !== this.tile.x || newTile.y !== this.tile.y) {
-      //console.log('NEW Center tile', newTile.x, newTile.y)
-      this.tile = newTile
-      this.updateTiles()
-    }*/
   }
 
   updateTiles(e) {
