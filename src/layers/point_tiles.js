@@ -50,7 +50,6 @@ class PointTiles {
     this.urlTemplate = url
     this.color = color
     this.size = size
-    this.mercator = new SphericalMercator({size: this.size});
     this.worker = new WebWorker(worker, { type: "module" });
     this.worker.addEventListener('message', this.receiveMessage, false);
     this.updateContext = null;

@@ -16,7 +16,7 @@ class GeoJSON {
   update = (tiles, scene, offsets, render) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
-        color: 0x00ffff,
+        color: this.color,
         size: 0.0005
       })
   
