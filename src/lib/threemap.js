@@ -206,7 +206,7 @@ class ThreeMap extends Component {
       // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
       this.updateLayers(bboxTiles)
     } catch(e) {*/
-      const buf = 3
+      const buf = 1
       const minx = this.tile.x - (buf) // extra tile in x dir
       const maxx = this.tile.x + (buf) // extra tile in x dir
       const miny = this.tile.y - buf

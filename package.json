@@ -6,6 +6,7 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@mapbox/tile-cover": "^3.0.2",
+    "babel-preset-react-app": "^9.0.0",
     "gh-pages": "^2.0.1",
     "pako": "^1.0.10",
     "proj4": "^2.5.0",
