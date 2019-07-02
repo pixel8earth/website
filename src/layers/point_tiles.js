@@ -59,9 +59,9 @@ class PointTiles {
   }
 
   receiveMessage = async (e) => {
-    const { result, job, error, url } = e.data;
+    const { result, job, error, url, coords } = e.data;
     if (job === 'fetchTileComplete' && !error) {
-      const { render, scene, coords } = this.updateContext;
+      const { render, scene } = this.updateContext;
       const fetchIndex = this.fetchingUrls.indexOf(url);
       if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1);
       const vertices = new THREE.Float32BufferAttribute( result, 3 );
@@ -103,14 +103,16 @@ class PointTiles {
 
       // if a tile is cached, use the cache, else if another update is NOT
       // ALREADY FETCHING the same url, fetch it via web worker
-      if (!this.loadedTiles.indexOf(coords) > -1) {
+      const lt = this.loadedTiles.map(item => item.split('-').slice(0, 3).join('-'));
+      const loaded = lt.indexOf(coords) > 0;
+      if (!loaded) {
         if (this.cachedTiles[coords]) {
           this.addTile(coords, this.cachedTiles[coords], scene, render, key);
         } else if (!currentlyFetching) {
           try {
             this.fetchingUrls.push(url);
-            this.updateContext = { coords, scene, render };
-            this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets });
+            this.updateContext = { scene, render };
+            this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords });
           } catch (err) {
             console.log('Error fetching tile: ', err)
           }
