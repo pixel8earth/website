@@ -17,7 +17,7 @@ class GeoJSON {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         color: 0x00ffff,
-        size: 0.00015
+        size: 0.0005
       })
   
       this.fetchData(this.url, offsets)
