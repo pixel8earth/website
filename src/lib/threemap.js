@@ -2,33 +2,9 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import MapControls from './MapControls'
 import SphericalMercator from 'sphericalmercator'
+import cover from '@mapbox/tile-cover'
+import { getBaseLog, pointToTile, llPixel } from './utils' 
 
-const basePlaneDimension = 65024;
-const mercator = new SphericalMercator({size: basePlaneDimension});
-const merc = new SphericalMercator({ size: 256 })
-
-function pointToTileFraction(lon, lat, z) {
-  var sin = Math.sin(lat * (Math.PI / 180)),
-      z2 = Math.pow(2, z),
-      x = z2 * (lon / 360 + 0.5),
-      y = z2 * (0.5 - 0.25 * Math.log((1 + sin) / (1 - sin)) / Math.PI)
-
-  // Wrap Tile X
-  x = x % z2
-  if (x < 0) x = x + z2
-  return [x, y, z]
-}
-
-function pointToTile (lon, lat, z) {
-    var tile = pointToTileFraction(lon, lat, z)
-    tile[0] = Math.floor(tile[0])
-    tile[1] = Math.floor(tile[1])
-    return tile
-}
-
-function getBaseLog(base, result) {
-  return Math.log(result) / Math.log(base);
-}
 
 class ThreeMap extends Component {
   layers = []
@@ -39,11 +15,13 @@ class ThreeMap extends Component {
   componentDidMount() {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
+    this.size = 65024 // the base plane size (full extent of the map)
+    this.mercator = new SphericalMercator({size: this.size});
     //ADD SCENE
     this.scene = new THREE.Scene()
     //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
-    this.camera.position.y = this.props.cam_zoom || 100
+    this.camera.position.y = 0.5 //this.props.cam_zoom || 100
     this.camera.lookAt(this.scene.position)
     //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -58,7 +36,7 @@ class ThreeMap extends Component {
 
     this.raycaster = new THREE.Raycaster();
 
-    var basePlane = new THREE.PlaneBufferGeometry(basePlaneDimension*100, basePlaneDimension*100, 1, 1);
+    var basePlane = new THREE.PlaneBufferGeometry(this.size*100, this.size*100, 1, 1);
     var mat = new THREE.MeshBasicMaterial({wireframe: true, opacity:0, transparent: true});
 
     this.plane = new THREE.Mesh( basePlane, mat );
@@ -68,22 +46,20 @@ class ThreeMap extends Component {
     //Add light for meshes
     this.scene.add( new THREE.HemisphereLight( 0x443333, 0xffffff ) );
 
-    this.centerTile = this.centerTile()
-    this.tile = this.centerTile
-    // NOTE: possibly needed for rendering data as an offset 
-    this.offsets = merc.forward(this.props.center)
-    //console.log(merc.forward(this.props.center), mercator.forward(this.props.center))
+
+    this.tile = this.centerTile()
+    this.offsets = this.getOffsets()
     
-    this.axes = new THREE.AxesHelper( 1 );
+    this.axes = new THREE.AxesHelper( .25 );
     this.scene.add( this.axes );
     this.layers = this.props.layers
-    this.updateTiles()
 
     window.addEventListener('resize', this.onWindowResize.bind(this), false)
     window.addEventListener('mouseup', this.onUp.bind(this), false)
     window.addEventListener('mousedown', this.onDown.bind(this), false)
     window.addEventListener('mousemove', this.onMove.bind(this), false)
     this.renderScene()
+    this.updateTiles()
   }
 
   componentWillUnmount(){
@@ -110,21 +86,27 @@ class ThreeMap extends Component {
     return {x: tile[0], y: tile[1], z: tile[2]}
   }
 
+  getCenter(){
+    var pt = this.controls.target;
+    return this.unproject(pt)
+  }
+
   getZoom() {
     const pt = this.controls.target.distanceTo(this.controls.object.position);
-    return Math.min(Math.max(getBaseLog(0.5, pt/(basePlaneDimension)) + 8, 0), 18);
+    return Math.round(Math.min(Math.max(getBaseLog(0.5, pt/this.size) + 4, 0), 18));
   }
 
   getOffsets() {
-    const bbox = merc.bbox(this.tile.x, this.tile.x, this.tile.z, true, '900913')
-    return [bbox[0], bbox[3], 0]
+    var px = llPixel(this.props.center, 0, this.size);
+    px = {x: px[0] - this.size/ 2, y: 0, z: px[1] - this.size / 2 };
+    return px
   }
 
-  unproject(pt, scaleX, scaleY) {
-    const x = pt.x * scaleX
-    const y = pt.z * scaleY
-    var lngLat = mercator.ll([x + basePlaneDimension / 2, y + basePlaneDimension / 2], 0)
-    return lngLat
+  unproject(pt) {
+    var lngLat = this.mercator.ll([pt.x + this.size / 2, pt.z + this.size / 2 ], 0);
+    lngLat[0] += this.props.center[0]
+    lngLat[1] += this.props.center[1]
+    return lngLat.map(function(num){return num.toFixed(5)/1})
   }
 
   projectToScene(px) {
@@ -136,11 +118,17 @@ class ThreeMap extends Component {
     return pt;
   }
 
+  project(lnglat) {
+    let px = this.mercator.px(lnglat,0);
+    px = {x:px[0]-this.size/2, y:0, z:px[1]-this.size/2};
+    return px
+  }
+
   onMove(e) {
     if (this.flag) {
       if (this.axes) {
-        this.axes.position.x = this.controls.target.x
-        this.axes.position.z = this.controls.target.z
+        //this.axes.position.x = this.controls.target.x
+        //this.axes.position.z = this.controls.target.z
       }
     }
   }
@@ -151,7 +139,22 @@ class ThreeMap extends Component {
   }
 
   onUp(e) {
-    this.flag = 0; // turn off mouse move handler
+    //compute the center tile... from controls.target 
+    const newCenter = this.getCenter() 
+    const t = pointToTile(newCenter[0], newCenter[1], this.tile_zoom) // thinking that merc or mercator should do this...
+    const newTile = new THREE.Vector3(t[0], t[1], t[2])
+
+    if (newTile.x !== this.tile.x || newTile.y !== this.tile.y) {
+      console.log('New Tile', newTile, this.tile)
+      this.tile = newTile
+      this.updateTiles()
+    }
+
+    //if (corners[0] === screenPosition) return;
+    //else screenPosition = corners[0];
+
+
+    //this.flag = 0; // turn off mouse move handler
     //TODO: possibly need a strategy to find the screen coords in scene world coords
     // could use this to compute the viewable bbox in lat/lon and get tiles at a given zoom 
     // Another option is to use raycasting onto the base plane and find all tiles (but tricky at low angles)
@@ -159,7 +162,7 @@ class ThreeMap extends Component {
 
     // these scales are probably an issue, need to find a way to not use them
     // but they slow down the impact of panning on tile requests    
-    const scaleX = 0.035 // these suck to have FYI... just hardcoded scale factors... 
+    /*const scaleX = 0.035 // these suck to have FYI... just hardcoded scale factors... 
     const scaleY = 0.035 
 
     const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
@@ -172,27 +175,56 @@ class ThreeMap extends Component {
       //console.log('NEW Center tile', newTile.x, newTile.y)
       this.tile = newTile
       this.updateTiles()
-    }
+    }*/
   }
 
   updateTiles(e) {
-    const buf = 2
-    const minx = this.tile.x - (buf) // extra tile in x dir
-    const maxx = this.tile.x + (buf) // extra tile in x dir
-    const miny = this.tile.y - buf
-    const maxy = this.tile.y + buf
+    console.log('updateTiles')
+    /*try {
+      const ul = {x:-1,y:-1,z:-1}
+      const ur = {x:1,y:-1,z:-1}
+      const lr = {x:1,y:1,z:1}
+      const ll = {x:-1,y:1,z:1}
 
-    const newTiles = []
-    for ( let x = minx; x < maxx+1; x++ ) {
-      for ( let y = miny; y < maxy+1; y++ ) {
-        newTiles.push(new THREE.Vector3(x, y, 18))
+      // NOTe - this fails as low polar angles, it needs to see the baseplane
+      // when this fails i think we convert to the other tile loading...
+      var corners = [ul, ur, lr, ll, ul].map( corner => {
+          this.raycaster.setFromCamera(corner, this.camera);
+          return this.raycaster.intersectObject(this.plane)[0].point;
+      })
+
+      const box = {
+        "type": "Polygon", 
+        "coordinates": [corners.map( c => this.unproject(c) )]
       }
-    }
-    this.updateLayers(newTiles)
+
+      // using tile-cover, figure out which tiles are inside viewshed and put in zxy order
+      var bboxTiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
+          .map(([x,y,z]) => new THREE.Vector3(x, y, z));
+   
+      console.log('raycasted tiles', bboxTiles.length)
+      // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
+      this.updateLayers(bboxTiles)
+    } catch(e) {*/
+      const buf = 4
+      const minx = this.tile.x - (buf) // extra tile in x dir
+      const maxx = this.tile.x + (buf) // extra tile in x dir
+      const miny = this.tile.y - buf
+      const maxy = this.tile.y + buf
+
+      const newTiles = []
+      for ( let x = minx; x < maxx+1; x++ ) {
+        for ( let y = miny; y < maxy+1; y++ ) {
+          newTiles.push(new THREE.Vector3(x, y, 18))
+        }
+      }
+      console.log('raycaster failed', e, newTiles.length)
+      this.updateLayers(newTiles)
+    //}
   }
 
   updateLayers(tiles) {
-    this.layers.forEach(l => l.update(tiles, this.scene, this.offsets, this.centerTile, () => this.renderScene()))
+    this.layers.forEach(l => l.update(tiles, this.scene, this.offsets, () => this.renderScene()))
   }
 
   render() {

@@ -4,62 +4,24 @@
  * Description: A THREE loader for PLY ASCII files (known as the Polygon
  * File Format or the Stanford Triangle Format).
  *
- * Limitations: ASCII decoding assumes file is UTF-8.
- *
- * Usage:
- *  var loader = new THREE.PLYLoader();
- *  loader.load('./models/ply/ascii/dolphins.ply', function (geometry) {
- *
- *    scene.add( new THREE.Mesh( geometry ) );
- *
- *  } );
- *
- * If the PLY file uses non standard property names, they can be mapped while
- * loading. For example, the following maps the properties
- * “diffuse_(red|green|blue)” in the file to standard color names.
- *
- * loader.setPropertyNameMapping( {
- *  diffuse_red: 'red',
- *  diffuse_green: 'green',
- *  diffuse_blue: 'blue'
- * } );
- *
  */
+import * as THREE from 'three'
 
-
-THREE.PLYLoader = function ( manager ) {
-
-  this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
-
+function PLYLoader( manager ) {
   this.propertyNameMapping = {};
 
-};
+  this.load = function ( data ) {
+    return new Promise((resolve, reject) => {
+      try {
+        const geom = this.parse(data) 
+        resolve(geom)
+      } catch(e) {
+        reject(e)
+      }
+    })
+  }
 
-THREE.PLYLoader.prototype = {
-
-  constructor: THREE.PLYLoader,
-
-  load: function ( url, onLoad, onProgress, onError ) {
-
-    var scope = this;
-
-    var loader = new THREE.FileLoader( this.manager );
-    loader.setResponseType( 'arraybuffer' );
-    loader.load( url, function ( text ) {
-
-      onLoad( scope.parse( text ) );
-
-    }, onProgress, onError );
-
-  },
-
-  setPropertyNameMapping: function ( mapping ) {
-
-    this.propertyNameMapping = mapping;
-
-  },
-
-  parse: function ( data ) {
+  this.parse = function ( data ) {
 
     function parseHeader( data ) {
 
@@ -326,11 +288,11 @@ THREE.PLYLoader.prototype = {
 
       if ( elementName === 'vertex' ) {
 
-        buffer.vertices.push( element.x, element.y, element.z );
+        buffer.vertices.push( element.x, element.z, element.y );
 
         if ( 'nx' in element && 'ny' in element && 'nz' in element ) {
 
-          buffer.normals.push( element.nx, element.ny, element.nz );
+          buffer.normals.push( element.nx, element.nz, element.ny );
 
         }
 
@@ -352,7 +314,7 @@ THREE.PLYLoader.prototype = {
 
         if ( vertex_indices.length === 3 ) {
 
-          buffer.indices.push( vertex_indices[ 0 ], vertex_indices[ 1 ], vertex_indices[ 2 ] );
+          buffer.indices.push( vertex_indices[ 0 ], vertex_indices[ 2 ], vertex_indices[ 1 ] );
 
         } else if ( vertex_indices.length === 4 ) {
 
@@ -463,11 +425,9 @@ THREE.PLYLoader.prototype = {
 
       var text = THREE.LoaderUtils.decodeText( new Uint8Array( data ) );
       var header = parseHeader( text );
-
       geometry = header.format === 'ascii' ? parseASCII( text, header ) : parseBinary( data, header );
 
-    } else {
-
+    } else if ( data ) {
       geometry = parseASCII( data, parseHeader( data ) );
 
     }
@@ -477,3 +437,5 @@ THREE.PLYLoader.prototype = {
   }
 
 };
+
+export default PLYLoader

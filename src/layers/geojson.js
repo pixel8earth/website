@@ -1,45 +1,23 @@
 import * as THREE from 'three'
-import SphericalMercator from 'sphericalmercator'
 import pako from 'pako'
-
-const basePlaneDimension = 65024
-const mercator = new SphericalMercator({size: basePlaneDimension})
-
-function generateSprite() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 20;
-  canvas.height = 20;
-  const ctx = canvas.getContext('2d');
-  const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
-  gradient.addColorStop(0, 'rgba(255,255,255,1)');
-  gradient.addColorStop(0.2, 'rgba(0,255,255,1)');
-  gradient.addColorStop(0.4, 'rgba(0,0,64,1)');
-  gradient.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const texture = new THREE.Texture(canvas);
-  texture.needsUpdate = true;
-  return texture;
-}
+import { llPixel } from '../lib/utils'
 
 class GeoJSON {
   type = 'GeoJSON'
   loaded = false
 
-  constructor(name, url, color=0xffff00) {
+  constructor(name, url, color=0xffff00, size=65024) {
     this.name = name
     this.url = url
     this.color = color
+    this.size = size 
   }
 
-  update = (tiles, scene, offsets, centerTile, render) => {
+  update = (tiles, scene, offsets, render) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 3.0,
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        map: generateSprite()
+        color: 0x00ffff,
+        size: 0.00015
       })
   
       this.fetchData(this.url, offsets)
@@ -47,7 +25,7 @@ class GeoJSON {
           this.loaded = true
           const geom = new THREE.BufferGeometry()
           geom.addAttribute( 'position', vertices )
-          const points = new THREE.Points( geom, mat) //new THREE.PointsMaterial( { color: 0x00ff55, size: 2.0 } ) )
+          const points = new THREE.Points( geom, mat) 
           scene.add(points)
           render()
         })
@@ -71,11 +49,12 @@ class GeoJSON {
         .then(geojson => {
           // create an array of vertices 
           const data = []
-          geojson.features.forEach(f => {
-            const xy = mercator.forward([f.geometry.coordinates[0], f.geometry.coordinates[1]])
-            data.push(xy[0] - offsets[0]) // x
-            data.push(20) // z //TODO what to do about elevation
-            data.push(-1 * (xy[1] - offsets[1])) // y
+          geojson.features.forEach((f,i) => {
+            let px = llPixel(f.geometry.coordinates, 0, this.size)
+            px = {x: px[0] - this.size / 2, y: 0, z: px[1] - this.size / 2}
+            data.push(px.x - offsets.x) 
+            data.push(0) 
+            data.push(px.z - offsets.z)
           })
           resolve(new THREE.Float32BufferAttribute( data, 3 ))
         })

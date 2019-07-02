@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import pako from 'pako'
+import { llPixel } from '../lib/utils'
+import SphericalMercator from 'sphericalmercator'
 
 class PointTiles {
   type = 'PointTiles'
@@ -15,7 +17,7 @@ class PointTiles {
         vUv = position;
         vec4 worldPosition = modelMatrix * vec4(position, 1.0);
         //vColor = normalize(abs(worldPosition.xyz));
-        gl_PointSize = min(size * vUv.y, 2.0);
+        gl_PointSize = min(max(size * vUv.y, 0.5), 2.0);
         gl_Position = projectionMatrix * viewMatrix * worldPosition;
     }
   `
@@ -29,13 +31,13 @@ class PointTiles {
     void main()
     {
         //gl_FragColor = vec4(vColor, 1.0);
-        gl_FragColor = vec4(mix(colorA, colorB, vUv.y), 1.0);
+        gl_FragColor = vec4(mix(colorA, colorB, (vUv.y*100.0)), 1.0);
         gl_FragColor.a = 1.0;
     }
   `
   material = new THREE.ShaderMaterial( {
     uniforms: { 
-      size: { type: 'f', value: 0.15 },
+      size: { type: 'f', value: 100.0 },
       colorB: {type: 'vec3', value: new THREE.Color(0xACB6E5)},
       colorA: {type: 'vec3', value: new THREE.Color(0xACE6EE)}
     },
@@ -46,13 +48,15 @@ class PointTiles {
     fragmentShader: this.frag,
   })
 
-  constructor(name, url, color=0xffff00) {
+  constructor(name, url, color=0xffff00, size=65024) {
     this.name = name
     this.urlTemplate = url
     this.color = color
+    this.size = size
+    this.mercator = new SphericalMercator({size: this.size});
   }
 
-  update = (tiles, scene, offsets, centerTile, render) => {
+  update = (tiles, scene, offsets, render) => {
     // takes a list of tiles, fetches, adds to map, then removes uneeded tiles
     // TODO - the fetchTile promise needs some logic around cancelation i think
     // TODO - we may need some state on this component that keeps track of the 
@@ -120,9 +124,12 @@ class PointTiles {
               try {
                 const rData = row.split(",").map(v => parseFloat(v))
                 if (rData.length > 1) { 
-                  data.push(rData[0] - offsets[0]) // x
-                  data.push(rData[2] - 130) // z
-                  data.push(-1 * (rData[1] - offsets[1])) // y
+                  const ll = this.mercator.inverse([rData[0], rData[1]])
+                  let px = llPixel(ll, 0, this.size)
+                  px = {x: px[0] - this.size / 2, y: 0, z: px[1] - this.size / 2}
+                  data.push(px.x - offsets.x)
+                  data.push((rData[2] * 0.5 / 686) - 0.1) // umm ok... some z level scaling gonna need to be figured out 
+                  data.push(px.z - offsets.z)
                 }
               } catch(e) {}
             }

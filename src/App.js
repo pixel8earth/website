@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 
 import ThreeMap from './lib/threemap';
 import PointTiles from './layers/point_tiles'
+import PlyTiles from './layers/ply_tiles'
 import ImageTiles from './layers/image_tiles'
 import GeoJSON from './layers/geojson'
+import PointCloud from './layers/pointcloud'
 
 import './App.css';
 
@@ -25,15 +27,16 @@ import './App.css';
  
 */
 //const template = 'http://localhost/~chelm/hdiz/austin/lidar_tiles/{z}/{x}/{y}.csv.gz'
-const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
-const pointTiles = new PointTiles('lidar', template)
+//const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
+const points = new PointTiles('lidar', 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz')
 const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
-
 const images = new ImageTiles('aerial', 'http://localhost/~chelm/hdiz/austin/imagery/image_tiles/{z}/{x}/{y}.jpg')
+const mesh = new PlyTiles('mesh', 'http://localhost/~chelm/hdiz/austin/meshes/{z}/{x}/{y}.ply')
+const pc = new PointCloud('cloud', 'http://localhost/~chelm/hdiz/austin/collects/1561993727406-raw.csv', {proj: 'EPSG:32614'})
 
 export default class App extends Component {
   render() {
-    return (<ThreeMap center={[-97.739310, 30.257733]} cam_zoom={150} layers={[pointTiles, images, mapillaryTracks]}/>);
+    return (<ThreeMap center={[-97.739677,30.257936]} cam_zoom={1} layers={[mapillaryTracks, pc, points]}/>);
   }
 }
 
