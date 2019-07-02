@@ -57,7 +57,7 @@ class ThreeMap extends Component {
     this.layers.forEach( layer => {
       if (!!layer.getGroup) {
         const group = layer.getGroup();
-        this.groups.push(group.name);
+        this.groups.push(group);
         this.scene.add(group);
       }
     })
@@ -233,18 +233,31 @@ class ThreeMap extends Component {
 
   updateLayers(tiles) {
     this.layers.forEach(l => l.update({
-        tiles, scene:
-        this.scene,
+        tiles,
+        scene: this.scene,
         offsets: this.offsets,
         render: () => this.renderScene()
       })
     );
   }
 
+  addGroupToScene = group => {
+    this.scene.add(group);
+  }
+
+  removeGroupFromScene = group => {
+    this.scene.remove(group);
+  }
+
   render() {
     return(
       <div style={{ display: 'inline-flex' }}>
-        <Sidebar />
+        <Sidebar
+          groups={this.groups}
+          add={this.addGroupToScene}
+          remove={this.removeGroupFromScene}
+          render={this.renderScene}
+        />
         <div
           style={{ width: window.innerWidth, height: window.innerHeight }}
           ref={(mount) => { this.mount = mount }}
