@@ -11,7 +11,7 @@ const worker = () => {
     if (!e) return;
 
     else if (e.data.job === 'fetchTile') {
-      self.fetchTile(e.data.url, e.data.offsets, e.data.size);
+      self.fetchTile(e.data.url, e.data.offsets, e.data.coords, e.data.size);
     } else {
       postMessage(e.data);
     }
@@ -32,7 +32,7 @@ const worker = () => {
     return [x, y];
   }
 
-  self.fetchTile = function(url, offsets, size) {
+  self.fetchTile = function(url, offsets, coords, size) {
     try {
       fetch(url).then(async res => {
         if (res.ok) {
@@ -57,7 +57,7 @@ const worker = () => {
               }
             }
           });
-          postMessage({ job: 'fetchTileComplete', result: data, url: url });
+          postMessage({ job: 'fetchTileComplete', result: data, url: url, coords: coords });
         } else throw new Error('failed to fetch')
       });
     } catch (err) {
