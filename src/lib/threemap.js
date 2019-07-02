@@ -3,11 +3,12 @@ import * as THREE from 'three'
 import MapControls from './MapControls'
 import SphericalMercator from 'sphericalmercator'
 import cover from '@mapbox/tile-cover'
-import { getBaseLog, pointToTile, llPixel } from './utils' 
-
+import { getBaseLog, pointToTile, llPixel } from './utils';
+import Sidebar from '../Sidebar';
 
 class ThreeMap extends Component {
   layers = []
+  groups = []
   loadedTiles = []
   tile_zoom = 18
   mouse = new THREE.Vector2()
@@ -31,7 +32,7 @@ class ThreeMap extends Component {
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
     //this.controls.zoomSpeed = 0.25
-    this.controls.maxPolarAngle = 1.35 
+    this.controls.maxPolarAngle = 1.35
     this.controls.addEventListener('change', this.renderScene)
 
     this.raycaster = new THREE.Raycaster();
@@ -49,10 +50,17 @@ class ThreeMap extends Component {
 
     this.tile = this.centerTile()
     this.offsets = this.getOffsets()
-    
+
     this.axes = new THREE.AxesHelper( .25 );
     this.scene.add( this.axes );
-    this.layers = this.props.layers
+    this.layers = this.props.layers;
+    this.layers.forEach( layer => {
+      if (!!layer.getGroup) {
+        const group = layer.getGroup();
+        this.groups.push(group.name);
+        this.scene.add(group);
+      }
+    })
 
     window.addEventListener('resize', this.onWindowResize.bind(this), false)
     window.addEventListener('mouseup', this.onUp.bind(this), false)
@@ -139,8 +147,8 @@ class ThreeMap extends Component {
   }
 
   onUp(e) {
-    //compute the center tile... from controls.target 
-    const newCenter = this.getCenter() 
+    //compute the center tile... from controls.target
+    const newCenter = this.getCenter()
     const t = pointToTile(newCenter[0], newCenter[1], this.tile_zoom) // thinking that merc or mercator should do this...
     const newTile = new THREE.Vector3(t[0], t[1], t[2])
 
@@ -156,14 +164,14 @@ class ThreeMap extends Component {
 
     //this.flag = 0; // turn off mouse move handler
     //TODO: possibly need a strategy to find the screen coords in scene world coords
-    // could use this to compute the viewable bbox in lat/lon and get tiles at a given zoom 
+    // could use this to compute the viewable bbox in lat/lon and get tiles at a given zoom
     // Another option is to use raycasting onto the base plane and find all tiles (but tricky at low angles)
     //var v = new THREE.Vector3( 0, 150, 0 )//.unproject( this.camera );
 
     // these scales are probably an issue, need to find a way to not use them
-    // but they slow down the impact of panning on tile requests    
-    /*const scaleX = 0.035 // these suck to have FYI... just hardcoded scale factors... 
-    const scaleY = 0.035 
+    // but they slow down the impact of panning on tile requests
+    /*const scaleX = 0.035 // these suck to have FYI... just hardcoded scale factors...
+    const scaleY = 0.035
 
     const lngLat = this.unproject(this.controls.target, scaleX, scaleY)
     const lng = (lngLat[0] * scaleX) + this.props.center[0]
@@ -194,14 +202,14 @@ class ThreeMap extends Component {
       })
 
       const box = {
-        "type": "Polygon", 
+        "type": "Polygon",
         "coordinates": [corners.map( c => this.unproject(c) )]
       }
 
       // using tile-cover, figure out which tiles are inside viewshed and put in zxy order
       var bboxTiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
           .map(([x,y,z]) => new THREE.Vector3(x, y, z));
-   
+
       console.log('raycasted tiles', bboxTiles.length)
       // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
       this.updateLayers(bboxTiles)
@@ -224,15 +232,24 @@ class ThreeMap extends Component {
   }
 
   updateLayers(tiles) {
-    this.layers.forEach(l => l.update(tiles, this.scene, this.offsets, () => this.renderScene()))
+    this.layers.forEach(l => l.update({
+        tiles, scene:
+        this.scene,
+        offsets: this.offsets,
+        render: () => this.renderScene()
+      })
+    );
   }
 
   render() {
     return(
-      <div
-        style={{ width: window.innerWidth, height: window.innerHeight }}
-        ref={(mount) => { this.mount = mount }}
-      />
+      <div style={{ display: 'inline-flex' }}>
+        <Sidebar />
+        <div
+          style={{ width: window.innerWidth, height: window.innerHeight }}
+          ref={(mount) => { this.mount = mount }}
+        />
+      </div>
     )
   }
 }

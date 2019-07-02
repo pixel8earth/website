@@ -33,7 +33,7 @@ class PointTiles {
     }
   `
   material = new THREE.ShaderMaterial( {
-    uniforms: { 
+    uniforms: {
       size: { type: 'f', value: 100.0 },
       colorB: {type: 'vec3', value: new THREE.Color(0xACB6E5)},
       colorA: {type: 'vec3', value: new THREE.Color(0xACE6EE)}
@@ -52,27 +52,26 @@ class PointTiles {
     this.size = size
     this.worker = new WebWorker(worker, { type: "module" });
     this.worker.addEventListener('message', this.receiveMessage, false);
-    this.updateContext = null;
     this.coordsList = [];
     this.fetchingUrls = [];
+    this.group = new THREE.Group();
+    this.group.name = 'lidar';
   }
 
   receiveMessage = async (e) => {
     const { result, job, error, url, coords } = e.data;
     if (job === 'fetchTileComplete' && !error) {
-      const { render, scene } = this.updateContext;
       const fetchIndex = this.fetchingUrls.indexOf(url);
       if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1);
       const vertices = new THREE.Float32BufferAttribute( result, 3 );
       this.cachedTiles[coords] = vertices;
-      this.addTile(coords, vertices, scene, render);
+      this.addTile(coords, vertices);
     } else if (error) {
       console.log('Error fetching tile: ', error)
     }
   }
 
   removeOldTiles = (tiles, key) => {
-    const { scene } = this.updateContext;
     const stringTiles = tiles.map( t => `${t.x}-${t.y}-${t.z}`);
     const toRemove = this.loadedTiles.reduce((acc, item) => {
       // remove uuid from tile name to compare to tiles coming in on update
@@ -81,16 +80,17 @@ class PointTiles {
       return acc;
     }, []);
     toRemove.forEach(item => {
-      let selectedObject = scene.getObjectByName(item);
+      let selectedObject = this.group.getObjectByName(item);
       if (selectedObject) {
-        scene.remove(selectedObject);
+        this.group.remove(selectedObject);
+        this.renderScene();
         const index = this.loadedTiles.indexOf(item);
         if (index > -1) this.loadedTiles.splice(index, 1);
       }
     });
   }
 
-  update = async (tiles, scene, offsets, render) => {
+  update = async ({ tiles, offsets, render }) => {
     this.coordsList = [];
     const key = Date.now().toString();
 
@@ -106,11 +106,11 @@ class PointTiles {
       const loaded = lt.indexOf(coords) > 0;
       if (!loaded) {
         if (this.cachedTiles[coords]) {
-          this.addTile(coords, this.cachedTiles[coords], scene, render, key);
+          this.addTile(coords, this.cachedTiles[coords]);
         } else if (!currentlyFetching) {
           try {
             this.fetchingUrls.push(url);
-            this.updateContext = { scene, render };
+            if (!this.renderScene) this.renderScene = render;
             this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size });
           } catch (err) {
             console.log('Error fetching tile: ', err)
@@ -123,20 +123,21 @@ class PointTiles {
     });
   }
 
-  async addTile(coords, vertices, scene, render) {
-    await new Promise((resolve, reject) => {
-      if (vertices && vertices.count) {
-        const geom = new THREE.BufferGeometry()
-        geom.addAttribute('position', vertices)
-        const points = new THREE.Points(geom, this.material);
-        const tileName = `${coords}-${points.uuid}`;
-        points.name = tileName;
-        this.loadedTiles.push(tileName);
-        scene.add(points);
-        render();
-        resolve();
-      } else resolve();
-    });
+  addTile(coords, vertices) {
+    if (vertices && vertices.count) {
+      const geom = new THREE.BufferGeometry()
+      geom.addAttribute('position', vertices)
+      const points = new THREE.Points(geom, this.material);
+      const tileName = `${coords}-${points.uuid}`;
+      points.name = tileName;
+      this.loadedTiles.push(tileName);
+      this.group.add(points);
+      this.renderScene();
+    }
+  }
+
+  getGroup() {
+    return this.group;
   }
 }
 

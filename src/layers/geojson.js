@@ -10,23 +10,25 @@ class GeoJSON {
     this.name = name
     this.url = url
     this.color = color
-    this.size = size 
+    this.size = size
+    this.group = new THREE.Group()
+    this.group.name = 'mapillary'
   }
 
-  update = (tiles, scene, offsets, render) => {
+  update = ({ tiles, offsets, render }) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         color: this.color,
         size: 0.0005
       })
-  
+
       this.fetchData(this.url, offsets)
         .then(vertices => {
           this.loaded = true
           const geom = new THREE.BufferGeometry()
           geom.addAttribute( 'position', vertices )
-          const points = new THREE.Points( geom, mat) 
-          scene.add(points)
+          const points = new THREE.Points( geom, mat)
+          this.group.add(points)
           render()
         })
     }
@@ -47,19 +49,23 @@ class GeoJSON {
           return res.json()
         })
         .then(geojson => {
-          // create an array of vertices 
+          // create an array of vertices
           const data = []
           geojson.features.forEach((f,i) => {
             let px = llPixel(f.geometry.coordinates, 0, this.size)
             px = {x: px[0] - this.size / 2, y: 0, z: px[1] - this.size / 2}
-            data.push(px.x - offsets.x) 
-            data.push(0) 
+            data.push(px.x - offsets.x)
+            data.push(0)
             data.push(px.z - offsets.z)
           })
           resolve(new THREE.Float32BufferAttribute( data, 3 ))
         })
         .catch(reject)
     })
+  }
+
+  getGroup() {
+    return this.group;
   }
 }
 
