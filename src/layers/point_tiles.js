@@ -133,8 +133,6 @@ class PointTiles {
   update = async (tiles, scene, offsets, render) => {
     this.coordsList = [];
     const key = Date.now().toString();
-    // fetch handler blob
-    //const blob = new Blob(["(" + this.fetchHandler.toString() + ")()"]);
 
     tiles.forEach((t, i) => {
       const coords = [t.x, t.y, t.z].join('-')
@@ -153,7 +151,6 @@ class PointTiles {
           try {
             this.fetchingUrls.push(url);
             this.updateContext = { scene, render };
-            //this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: URL.createObjectURL(blob) });
             this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
           } catch (err) {
             console.log('Error fetching tile: ', err)
