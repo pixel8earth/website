@@ -66,6 +66,7 @@ class ThreeMap extends Component {
     window.addEventListener('mouseup', this.onUp.bind(this), false)
     window.addEventListener('mousedown', this.onDown.bind(this), false)
     window.addEventListener('mousemove', this.onMove.bind(this), false)
+    window.addEventListener('click', this.onClick.bind(this), false)
     this.renderScene()
     this.updateTiles()
   }
@@ -154,6 +155,24 @@ class ThreeMap extends Component {
   onDown(e) {
     // turn on mouse move handler
     this.flag = 1;
+  }
+
+  onClick(e) {
+    const canvas = this.renderer.domElement
+    const rect = canvas.getBoundingClientRect();
+    let x = e.clientX - rect.left
+    let y = e.clientY - rect.top
+    x = (x / rect.width) * 2 - 1;     
+    y = - (y / rect.height) * 2 + 1;      
+    console.log('click', x, y)
+
+    const pos = new THREE.Vector3(x, y, 0.0)
+    pos.unproject(this.camera)
+    pos.sub(this.camera.position).normalize()
+    var distance = -this.camera.position.z / pos.z
+    var scaled = pos.multiplyScalar(distance)
+    var coords = this.camera.position.clone().add(scaled)
+    console.log(coords, this.unproject(coords))
   }
 
   onUp(e) {
