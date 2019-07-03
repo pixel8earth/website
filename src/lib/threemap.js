@@ -74,7 +74,6 @@ class ThreeMap extends Component {
     window.addEventListener('mouseup', this.onUp.bind(this), false)
     window.addEventListener('mousedown', this.onDown.bind(this), false)
     window.addEventListener('mousemove', this.onMove.bind(this), false)
-    window.addEventListener('click', this.onClick.bind(this), false)
     this.renderScene()
     this.updateTiles()
   }
