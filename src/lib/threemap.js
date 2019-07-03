@@ -64,7 +64,7 @@ class ThreeMap extends Component {
     })
 
     this.workerPool = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 6; i++) {
       const w = new WebWorker(worker, { type: "module" });
       w.addEventListener('message', this.onMessage, false)
       this.workerPool.push(w)
@@ -136,13 +136,29 @@ class ThreeMap extends Component {
     return lngLat.map(function(num){return num.toFixed(5)/1})
   }
 
-  projectToScene(px) {
+  /*projectToScene(px) {
     const width = window.innerWidth
     const height = window.innerHeight
     var screenPosition = {x: (px[0]/width-0.5)*2, y:(0.5-px[1]/height)*2};
     this.raycaster.setFromCamera(screenPosition, this.camera);
     var pt = this.raycaster.intersectObject(this.plane)[0].point;
     return pt;
+  }*/
+
+  projectToScene(pt) {
+    const canvas = this.renderer.domElement
+    const rect = canvas.getBoundingClientRect();
+    let x = pt[0] - rect.left
+    let y = pt[1] - rect.top
+    x = (x / rect.width) * 2 - 1;
+    y = - (y / rect.height) * 2 + 1;
+    const pos = new THREE.Vector3(x, y, 0.0)
+    pos.unproject(this.camera)
+    pos.sub(this.camera.position).normalize()
+    var distance = -this.camera.position.y / pos.y
+    var scaled = pos.multiplyScalar(distance)
+    var coords = this.camera.position.clone().add(scaled)
+    return this.unproject(coords)
   }
 
   project(lnglat) {
@@ -165,24 +181,6 @@ class ThreeMap extends Component {
     this.flag = 1;
   }
 
-  onClick(e) {
-    const canvas = this.renderer.domElement
-    const rect = canvas.getBoundingClientRect();
-    let x = e.clientX - rect.left
-    let y = e.clientY - rect.top
-    x = (x / rect.width) * 2 - 1;     
-    y = - (y / rect.height) * 2 + 1;      
-    console.log('click', x, y)
-
-    const pos = new THREE.Vector3(x, y, 0.0)
-    pos.unproject(this.camera)
-    pos.sub(this.camera.position).normalize()
-    var distance = -this.camera.position.z / pos.z
-    var scaled = pos.multiplyScalar(distance)
-    var coords = this.camera.position.clone().add(scaled)
-    console.log(coords, this.unproject(coords))
-  }
-
   onUp(e) {
     //compute the center tile... from controls.target
     const newCenter = this.getCenter()
@@ -190,16 +188,16 @@ class ThreeMap extends Component {
     const newTile = new THREE.Vector3(t[0], t[1], t[2])
 
     if (newTile.x !== this.tile.x || newTile.y !== this.tile.y) {
-      console.log('New Tile', newTile, this.tile)
+      //console.log('New Tile', newTile, this.tile)
       this.tile = newTile
       this.updateTiles()
     }
   }
 
   updateTiles(e) {
-    console.log('updateTiles')
-    /*try {
-      const ul = {x:-1,y:-1,z:-1}
+    const buf = 3
+    try {
+      /*const ul = {x:-1,y:-1,z:-1}
       const ur = {x:1,y:-1,z:-1}
       const lr = {x:1,y:1,z:1}
       const ll = {x:-1,y:1,z:1}
@@ -222,9 +220,30 @@ class ThreeMap extends Component {
 
       console.log('raycasted tiles', bboxTiles.length)
       // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
-      this.updateLayers(bboxTiles)
-    } catch(e) {*/
-      const buf = 1
+      this.updateLayers(bboxTiles)*/
+
+      const canvas = this.renderer.domElement
+      const rect = canvas.getBoundingClientRect();
+      const ul = this.projectToScene([rect.left, rect.top])
+      const lr = this.projectToScene([rect.right, rect.bottom])
+      const coords = [[ul[0], lr[1]], ul, [lr[0], ul[1]], lr, [ul[0], lr[1]]]
+      const box = {
+        "type": "Polygon",
+        "coordinates": [coords]
+      }
+      const tiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
+        .map(([x,y,z]) => new THREE.Vector3(x, y, z))
+
+      const closeTiles = []
+      tiles.forEach(t => {
+        const dx = Math.abs(this.tile.x - t.x)
+        const dy = Math.abs(this.tile.y - t.y)
+        if (dx <= buf && dy <= buf) {
+          closeTiles.push(t)
+        }
+      })
+      this.updateLayers(closeTiles)
+    } catch(e) {
       const minx = this.tile.x - (buf) // extra tile in x dir
       const maxx = this.tile.x + (buf) // extra tile in x dir
       const miny = this.tile.y - buf
@@ -236,9 +255,8 @@ class ThreeMap extends Component {
           newTiles.push(new THREE.Vector3(x, y, 18))
         }
       }
-      console.log('raycaster failed', e, newTiles.length)
       this.updateLayers(newTiles)
-    //}
+    }
   }
 
   updateLayers(tiles) {

@@ -144,8 +144,8 @@ class PointTiles {
           try {
             this.fetchingUrls.push(url);
             if (!this.renderScene) this.renderScene = render;
-            var workerIndex = 2 * (t.x % 2) + t.z % 2
-            workerPool[workerIndex].postMessage({ name: this.name, job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
+            const wIndex = i % workerPool.length
+            workerPool[wIndex].postMessage({ name: this.name, job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
           } catch (err) {
             console.log('Error fetching tile: ', err)
           }
