@@ -1,14 +1,6 @@
 import React, {Component} from 'react';
-
 import ThreeMap from './lib/threemap';
-//import PointTiles from './layers/point_tiles'
-//import PlyTiles from './layers/ply_tiles'
-//import ImageTiles from './layers/image_tiles'
-//import GeoJSON from './layers/geojson'
-//import PointCloud from './layers/pointcloud'
-
 import Layers from './layers'
-
 import './App.css';
 
 /**
@@ -27,8 +19,7 @@ import './App.css';
   6. animate ground level things... move along a path etc
 
 */
-//const template = 'http://localhost/~chelm/hdiz/austin/lidar_tiles/{z}/{x}/{y}.csv.gz'
-//const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
+
 //const points = new PointTiles('lidar', 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz')
 const mapillaryTracks = new Layers.GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
 //const images = new ImageTiles('aerial', 'https://pixel8austin.storage.googleapis.com/imagery/{z}/{x}/{y}.jpg')
