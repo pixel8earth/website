@@ -51,7 +51,7 @@ class PointTiles {
     this.coordsList = [];
     this.fetchingUrls = [];
     this.group = new THREE.Group();
-    this.group.name = 'lidar';
+    this.group.name = this.name;
   }
 
   receiveMessage = async (e) => {
