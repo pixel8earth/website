@@ -1,6 +1,4 @@
 import * as THREE from 'three'
-//import { llPixel } from '../lib/utils'
-import SphericalMercator from 'sphericalmercator'
 
 class PointTiles {
   type = 'PointTiles'

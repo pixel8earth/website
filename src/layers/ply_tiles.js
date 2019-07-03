@@ -1,13 +1,8 @@
 import * as THREE from 'three'
-import SphericalMercator from 'sphericalmercator'
 import PointTiles from './point_tiles'
-//import { llPixel } from '../lib/utils'
-import PLYLoader from '../lib/plyloader'
 
 class PlyTiles extends PointTiles {
   type = 'PlyTiles'
-  loader = new PLYLoader()
-  mercator = new SphericalMercator({size: 65024})
 
   receiveMessage = async (e) => {
     const { result, job, error, url, coords } = e.data;
