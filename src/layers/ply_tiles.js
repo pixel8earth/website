@@ -45,6 +45,8 @@ class PlyTiles extends PointTiles {
           return parseInt( n );
         case 'float': case 'double': case 'float32': case 'float64':
           return parseFloat( n );
+        default:
+          return parseFloat( n );
       }
     }
 
