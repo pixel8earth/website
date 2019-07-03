@@ -24,14 +24,13 @@ import './App.css';
 
   6. animate ground level things... move along a path etc
 
-
 */
 //const template = 'http://localhost/~chelm/hdiz/austin/lidar_tiles/{z}/{x}/{y}.csv.gz'
 //const template = 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz'
 const points = new PointTiles('lidar', 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz')
 const mapillaryTracks = new GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
-//const images = new ImageTiles('aerial', 'http://localhost/~chelm/hdiz/austin/imagery/image_tiles/{z}/{x}/{y}.jpg')
-// const mesh = new PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapis.com/mesh/ground/{z}/{x}/{y}.ply')
+//const images = new ImageTiles('aerial', 'https://pixel8austin.storage.googleapis.com/imagery/{z}/{x}/{y}.jpg')
+//const mesh = new PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapis.com/mesh/ground/{z}/{x}/{y}.ply')
 //const mesh = new PlyTiles('ground-mesh', 'http://localhost/~chelm/hdiz/austin/meshes/{z}/{x}/{y}.ply')
 //const pc = new PointCloud('cloud', 'http://localhost/~chelm/hdiz/austin/collects/1561993727406-raw.csv', {proj: 'EPSG:32614'})
 

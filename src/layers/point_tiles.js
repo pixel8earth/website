@@ -1,8 +1,6 @@
 import * as THREE from 'three'
-import { llPixel } from '../lib/utils'
+//import { llPixel } from '../lib/utils'
 import SphericalMercator from 'sphericalmercator'
-import worker from '../lib/worker';
-import WebWorker from '../lib/WebWorker';
 
 class PointTiles {
   type = 'PointTiles'
@@ -50,8 +48,6 @@ class PointTiles {
     this.urlTemplate = url
     this.color = color
     this.size = size
-    this.worker = new WebWorker(worker, { type: "module" });
-    this.worker.addEventListener('message', this.receiveMessage, false);
     this.coordsList = [];
     this.fetchingUrls = [];
     this.group = new THREE.Group();
@@ -90,7 +86,44 @@ class PointTiles {
     });
   }
 
-  update = async ({ tiles, offsets, render }) => {
+  fetchHandler = (raw, offsets, size) => {
+    const llPixel = (ll, zoom, _size) => {
+      var size = _size * Math.pow(2, zoom);
+      var d = size / 2;
+      var bc = (size / 360);
+      var cc = (size / (2 * Math.PI));
+      var ac = size;
+      var f = Math.min(Math.max(Math.sin((Math.PI / 180) * ll[1]), -0.9999), 0.9999);
+      var x = d + ll[0] * bc;
+      var y = d + 0.5 * Math.log((1 + f) / (1 - f)) * -cc;
+      (x > ac) && (x = ac);
+      (y > ac) && (y = ac);
+      return [x, y];
+    }
+
+    const rows = raw.split('\n')
+    const data = []
+    rows.forEach((row, idx) => {
+      if (idx > 0) {
+        const rData = row.split(",").map(v => parseFloat(v))
+        if (rData.length > 1) {
+          // taken from sphericalmercator.js - including here cuz the imports are funky
+          const ll =  [
+            (rData[0] * (180 / Math.PI) / 6378137.0),
+            ((Math.PI*0.5) - 2.0 * Math.atan(Math.exp(-rData[1] / 6378137.0))) * (180 / Math.PI)
+          ]
+          let px = llPixel(ll, 0, size)
+          px = {x: px[0] - size / 2, y: 0, z: px[1] - size / 2}
+          data.push(px.x - offsets.x)
+          data.push((rData[2] * 0.5 / 686) - 0.1) // umm ok... some z level scaling gonna need to be figured out
+          data.push(px.z - offsets.z)
+        }
+      }
+    });
+    return data
+  }
+
+  update = async ({ tiles, offsets, render, workerPool }) => {
     this.coordsList = [];
     const key = Date.now().toString();
 
@@ -111,7 +144,8 @@ class PointTiles {
           try {
             this.fetchingUrls.push(url);
             if (!this.renderScene) this.renderScene = render;
-            this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size });
+            var workerIndex = 2 * (t.x % 2) + t.z % 2
+            workerPool[workerIndex].postMessage({ name: this.name, job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
           } catch (err) {
             console.log('Error fetching tile: ', err)
           }
