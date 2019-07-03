@@ -1,8 +1,6 @@
 import * as THREE from 'three'
 //import { llPixel } from '../lib/utils'
 import SphericalMercator from 'sphericalmercator'
-import worker from '../lib/worker';
-import WebWorker from '../lib/WebWorker';
 
 class PointTiles {
   type = 'PointTiles'
@@ -50,8 +48,6 @@ class PointTiles {
     this.urlTemplate = url
     this.color = color
     this.size = size
-    this.worker = new WebWorker(worker, { type: "module" });
-    this.worker.addEventListener('message', this.receiveMessage, false);
     this.updateContext = null;
     this.coordsList = [];
     this.fetchingUrls = [];
@@ -92,8 +88,6 @@ class PointTiles {
   }
 
   fetchHandler = (raw, offsets, size) => {
-    console.log('In the fetch handler, must be pure')
-
     const llPixel = (ll, zoom, _size) => {
       var size = _size * Math.pow(2, zoom);
       var d = size / 2;
@@ -130,7 +124,7 @@ class PointTiles {
     return data
   }
 
-  update = async (tiles, scene, offsets, render) => {
+  update = async (tiles, scene, offsets, workerPool, render) => {
     this.coordsList = [];
     const key = Date.now().toString();
 
@@ -151,7 +145,8 @@ class PointTiles {
           try {
             this.fetchingUrls.push(url);
             this.updateContext = { scene, render };
-            this.worker.postMessage({ job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
+            var workerIndex = 2 * (t.x % 2) + t.z % 2
+            workerPool[workerIndex].postMessage({ name: this.name, job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
           } catch (err) {
             console.log('Error fetching tile: ', err)
           }

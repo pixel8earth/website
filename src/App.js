@@ -35,7 +35,7 @@ const mesh = new PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapi
 
 export default class App extends Component {
   render() {
-    return (<ThreeMap center={[-97.739677,30.257936]} cam_zoom={1} layers={[mapillaryTracks, points, images]} />);
+    return (<ThreeMap center={[-97.739677,30.257936]} cam_zoom={1} layers={[mapillaryTracks, points]} />);
   }
 }
 

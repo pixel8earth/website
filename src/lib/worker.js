@@ -24,7 +24,7 @@ const worker = () => {
     return new Function(argName, funcStr);
   };
 
-  self.fetchTile = function({url, offsets, coords, size, handler}) {
+  self.fetchTile = function({name, url, offsets, coords, size, handler}) {
     const handlerFn = self.getFunc(handler)
     try {
       fetch(url).then(async res => {
@@ -32,7 +32,7 @@ const worker = () => {
           const arrayBuff = await res.arrayBuffer();
           const raw = await self.pako.inflate(arrayBuff, { to: 'string' });
           const data = handlerFn(raw, offsets, size)
-          postMessage({ job: 'fetchTileComplete', result: data, url: url, coords: coords });
+          postMessage({ job: 'fetchTileComplete', result: data, url: url, coords: coords, name });
         } else throw new Error('failed to fetch')
       });
     } catch (err) {

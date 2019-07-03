@@ -3,7 +3,9 @@ import * as THREE from 'three'
 import MapControls from './MapControls'
 import SphericalMercator from 'sphericalmercator'
 import cover from '@mapbox/tile-cover'
-import { getBaseLog, pointToTile, llPixel } from './utils' 
+import { getBaseLog, pointToTile, llPixel } from './utils'
+import worker from '../lib/worker';
+import WebWorker from '../lib/WebWorker'; 
 
 
 class ThreeMap extends Component {
@@ -46,13 +48,19 @@ class ThreeMap extends Component {
     //Add light for meshes
     this.scene.add( new THREE.HemisphereLight( 0x443333, 0xffffff ) );
 
-
     this.tile = this.centerTile()
     this.offsets = this.getOffsets()
     
     this.axes = new THREE.AxesHelper( .25 );
     this.scene.add( this.axes );
     this.layers = this.props.layers
+
+    this.workerPool = [];
+    for (let i = 0; i < 4; i++) {
+      const w = new WebWorker(worker, { type: "module" });
+      w.addEventListener('message', this.onMessage, false)
+      this.workerPool.push(w)
+    }
 
     window.addEventListener('resize', this.onWindowResize.bind(this), false)
     window.addEventListener('mouseup', this.onUp.bind(this), false)
@@ -64,6 +72,16 @@ class ThreeMap extends Component {
 
   componentWillUnmount(){
     this.mount.removeChild(this.renderer.domElement)
+  }
+
+  // gets messages from workers and delegates to correct layer
+  onMessage = e => {
+    const lyr = this.getLayerByName(e.data.name)
+    lyr.receiveMessage(e)
+  }
+
+  getLayerByName = name => {
+    return this.layers.find(l => l.name === name)
   }
 
   onWindowResize = () => {
@@ -197,7 +215,7 @@ class ThreeMap extends Component {
   }
 
   updateLayers(tiles) {
-    this.layers.forEach(l => l.update(tiles, this.scene, this.offsets, () => this.renderScene()))
+    this.layers.forEach(l => l.update(tiles, this.scene, this.offsets, this.workerPool, () => this.renderScene()))
   }
 
   render() {

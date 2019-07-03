@@ -13,7 +13,7 @@ class GeoJSON {
     this.size = size 
   }
 
-  update = (tiles, scene, offsets, render) => {
+  update = (tiles, scene, offsets, wPool, render) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         color: this.color,
