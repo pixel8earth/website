@@ -24,17 +24,18 @@ class ThreeMap extends Component {
     this.scene = new THREE.Scene()
     //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
-    this.camera.position.y = 0.5 //this.props.cam_zoom || 100
+    this.camera.position.z = 0.5 //this.props.cam_zoom || 100
+    this.camera.up = new THREE.Vector3(0,0,1)
     this.camera.lookAt(this.scene.position)
     //ADD RENDERER
-    this.renderer = new THREE.WebGLRenderer({ antialias: true })
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha:true })
     this.renderer.setClearColor('#000000')
     this.renderer.setSize(width, height)
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
     //this.controls.zoomSpeed = 0.25
-    this.controls.maxPolarAngle = 1.35
+    //this.controls.maxPolarAngle = 1.35
     this.controls.addEventListener('change', this.renderScene)
 
     this.raycaster = new THREE.Raycaster();
@@ -43,17 +44,22 @@ class ThreeMap extends Component {
     var mat = new THREE.MeshBasicMaterial({wireframe: true, opacity:0, transparent: true});
 
     this.plane = new THREE.Mesh( basePlane, mat );
-    this.plane.rotation.x = -0.5*Math.PI;
+    //this.plane.rotation.x = -Math.PI/2;
     this.scene.add( this.plane );
 
     //Add light for meshes
-    this.scene.add( new THREE.HemisphereLight( 0x443333, 0xffffff ) );
+    const light = new THREE.HemisphereLight( 0x443333, 0xffffff )
+    //light.rotation.x = -Math.PI;
+    //var light = new THREE.DirectionalLight( 0xFFFFFF );
+    //var helper = new THREE.DirectionalLightHelper( light, 5 );
+
+    this.scene.add(light);
 
     this.tile = this.centerTile()
     this.offsets = this.getOffsets()
 
-    //this.axes = new THREE.AxesHelper( .25 );
-    //this.scene.add( this.axes );
+    this.axes = new THREE.AxesHelper( .25 );
+    this.scene.add( this.axes );
 
     this.layers = this.props.layers;
     this.layers.forEach( layer => {
@@ -101,8 +107,8 @@ class ThreeMap extends Component {
   }
 
   renderScene = () => {
-    if (this.camera.position.y > 600) {
-      this.camera.position.y = 600
+    if (this.camera.position.z > 600) {
+      this.camera.position.z = 600
     }
     this.renderer.render(this.scene, this.camera)
   }
@@ -125,12 +131,12 @@ class ThreeMap extends Component {
 
   getOffsets() {
     var px = llPixel(this.props.center, 0, this.size);
-    px = {x: px[0] - this.size/ 2, y: 0, z: px[1] - this.size / 2 };
+    px = {x: px[0] - this.size/ 2, y: px[1] - this.size / 2, z: 0};
     return px
   }
 
   unproject(pt) {
-    var lngLat = this.mercator.ll([pt.x + this.size / 2, pt.z + this.size / 2 ], 0);
+    var lngLat = this.mercator.ll([pt.x + this.size / 2, pt.y + this.size / 2 ], 0);
     lngLat[0] += this.props.center[0]
     lngLat[1] += this.props.center[1]
     return lngLat.map(function(num){return num.toFixed(5)/1})
@@ -155,7 +161,7 @@ class ThreeMap extends Component {
     const pos = new THREE.Vector3(x, y, 0.0)
     pos.unproject(this.camera)
     pos.sub(this.camera.position).normalize()
-    var distance = -this.camera.position.y / pos.y
+    var distance = -this.camera.position.z / pos.z
     var scaled = pos.multiplyScalar(distance)
     var coords = this.camera.position.clone().add(scaled)
     return this.unproject(coords)
@@ -163,7 +169,7 @@ class ThreeMap extends Component {
 
   project(lnglat) {
     let px = this.mercator.px(lnglat,0);
-    px = {x:px[0]-this.size/2, y:0, z:px[1]-this.size/2};
+    px = {x:px[0]-this.size/2, y:px[1]-this.size/2, z: 0};
     return px
   }
 
@@ -195,8 +201,9 @@ class ThreeMap extends Component {
   }
 
   updateTiles(e) {
+    //console.log('POLAR', this.controls.getPolarAngle())
     const buf = 3
-    try {
+    if (this.controls.getPolarAngle() < 1.0) {
       /*const ul = {x:-1,y:-1,z:-1}
       const ur = {x:1,y:-1,z:-1}
       const lr = {x:1,y:1,z:1}
@@ -243,7 +250,7 @@ class ThreeMap extends Component {
         }
       })
       this.updateLayers(closeTiles)
-    } catch(e) {
+    } else {
       const minx = this.tile.x - (buf) // extra tile in x dir
       const maxx = this.tile.x + (buf) // extra tile in x dir
       const miny = this.tile.y - buf

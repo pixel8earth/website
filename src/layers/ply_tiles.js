@@ -5,23 +5,31 @@ class PlyTiles extends PointTiles {
   type = 'PlyTiles'
 
   receiveMessage = async (e) => {
-    const { result, job, error, url, coords } = e.data;
+    const { result, job, error, url, coords } = e.data
     if (job === 'fetchTileComplete' && !error) {
-      const geometry = new THREE.BufferGeometry();
+      const geometry = new THREE.BufferGeometry()
       if ( result.indices.length > 0 ) {
-        geometry.setIndex( result.indices );
+        geometry.setIndex( result.indices )
       }
-      geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( result.vertices, 3 ) );
-      geometry.computeBoundingSphere();
-      geometry.computeVertexNormals();
-      const material = new THREE.MeshStandardMaterial({color: this.color, wireframe: true});
-      const mesh = new THREE.Mesh(geometry, material);
+      geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( result.vertices, 3 ) )
+      //geometry.addAttribute( 'normals', new THREE.Float32BufferAttribute( result.normals, 3 ) )
+      geometry.computeBoundingSphere()
+      geometry.computeVertexNormals()
 
-      const fetchIndex = this.fetchingUrls.indexOf(url);
-      if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1);
+      const tile = coords.split('-')
+      const url = `https://pixel8austin.storage.googleapis.com/imagery/${tile[2]}/${tile[0]}/${tile[1]}.jpg`
+      //const material = new THREE.MeshStandardMaterial({wireframe: true});
+      //const material = new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load(url)});
+      const material = new THREE.MeshPhongMaterial({color: 0x00ffff, wireframe: false})
+      const mesh = new THREE.Mesh(geometry, material)
 
-      this.cachedTiles[coords] = mesh;
-      this.addTile(coords, mesh);
+      console.log(geometry.attributes)
+
+      const fetchIndex = this.fetchingUrls.indexOf(url)
+      if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1)
+
+      this.cachedTiles[coords] = mesh
+      this.addTile(coords, mesh)
     } else if (error) {
       console.log('Error fetching tile: ', error)
     }
@@ -29,11 +37,12 @@ class PlyTiles extends PointTiles {
 
   addTile(coords, mesh) {
     if (mesh) {
-      const tileName = `${coords}-${mesh.uuid}`;
-      mesh.name = tileName;
-      this.loadedTiles.push(tileName);
-      this.group.add(mesh);
-      this.renderScene();
+      const tileName = `${coords}-${mesh.uuid}`
+      mesh.name = tileName
+      //mesh.rotation.x = -Math.PI/2
+      this.loadedTiles.push(tileName)
+      this.group.add(mesh)
+      this.renderScene()
     }  
   }
 
@@ -42,11 +51,11 @@ class PlyTiles extends PointTiles {
       switch ( type ) {
         case 'char': case 'uchar': case 'short': case 'ushort': case 'int': case 'uint':
         case 'int8': case 'uint8': case 'int16': case 'uint16': case 'int32': case 'uint32':
-          return parseInt( n );
+          return parseInt( n )
         case 'float': case 'double': case 'float32': case 'float64':
-          return parseFloat( n );
+          return parseFloat( n )
         default:
-          return parseFloat( n );
+          return parseFloat( n )
       }
     }
 
@@ -70,15 +79,18 @@ class PlyTiles extends PointTiles {
 
     function handleElement( buffer, elementName, element ) {
       if ( elementName === 'vertex' ) {
+
         const ll =  [
           (element.x * (180 / Math.PI) / 6378137.0),
           ((Math.PI*0.5) - 2.0 * Math.atan(Math.exp(-element.y / 6378137.0))) * (180 / Math.PI)
         ]
+
         let px = llPixel(ll, 0, size)
-        px = {x: px[0] - size / 2, y: 0, z: px[1] - size / 2}
-        buffer.vertices.push( px.x - offsets.x, (element.z * 0.5 / 686) - 0.1, px.z - offsets.z);
-        if ( 'nx' in element && 'ny' in element && 'nz' in element ) {
-          buffer.normals.push( element.nx, element.nz, element.ny );
+        px = {x: px[0] - size / 2, y: px[1] - size / 2, z: 0}
+
+        buffer.vertices.push( px.x - offsets.x, px.y - offsets.y, (element.z * 0.5 / 686) - 0.1);
+        if ( element.normalx && element.normaly && element.normalz ) {
+          buffer.normals.push( element.normalx, element.normaly, element.normalz );
         }
         if ( 's' in element && 't' in element ) {
           buffer.uvs.push( element.s, element.t );
@@ -208,7 +220,7 @@ class PlyTiles extends PointTiles {
       handleElement( buffer, header.elements[ currentElement ].name, element );
       currentElementCount ++;
     }
-
+    //console.log('buffer', buffer)
     return buffer
   }
 

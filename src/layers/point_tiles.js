@@ -12,7 +12,7 @@ class PointTiles {
     {
         vUv = position;
         vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-        gl_PointSize = min(max(size * vUv.y, 0.5), 2.0);
+        gl_PointSize = min(max(size * vUv.z, 0.5), 2.0);
         gl_Position = projectionMatrix * viewMatrix * worldPosition;
     }
   `
@@ -24,7 +24,7 @@ class PointTiles {
     precision mediump float;
     void main()
     {
-        gl_FragColor = vec4(mix(colorA, colorB, (vUv.y*100.0)), 1.0);
+        gl_FragColor = vec4(mix(colorA, colorB, (vUv.z*100.0)), 1.0);
         gl_FragColor.a = 1.0;
     }
   `
@@ -111,10 +111,10 @@ class PointTiles {
             ((Math.PI*0.5) - 2.0 * Math.atan(Math.exp(-rData[1] / 6378137.0))) * (180 / Math.PI)
           ]
           let px = llPixel(ll, 0, size)
-          px = {x: px[0] - size / 2, y: 0, z: px[1] - size / 2}
+          px = {x: px[0] - size / 2, y: px[1] - size / 2, z: 0}
           data.push(px.x - offsets.x)
+          data.push(px.y - offsets.y)
           data.push((rData[2] * 0.5 / 686) - 0.1) // umm ok... some z level scaling gonna need to be figured out
-          data.push(px.z - offsets.z)
         }
       }
     });
