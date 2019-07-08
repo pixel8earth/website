@@ -17,9 +17,6 @@ class ThreeMap extends Component {
     this.loadedTiles = [];
     this.tile_zoom = 18
     this.mouse = new THREE.Vector2();
-    this.state = {
-      controls: null
-    };
   }
 
   componentDidMount() {
@@ -41,11 +38,10 @@ class ThreeMap extends Component {
     this.renderer.sortObjects = false
     this.mount.appendChild(this.renderer.domElement)
 
-    const controls = new MapControls(this.camera, this.renderer.domElement)
+    this.controls = new MapControls(this.camera, this.renderer.domElement)
     //this.state.controls.zoomSpeed = 0.25
     //this.state.controls.maxPolarAngle = 1.35
-    controls.addEventListener('change', this.renderScene)
-    this.setState({ controls });
+    this.controls.addEventListener('change', this.renderScene)
 
     this.raycaster = new THREE.Raycaster();
 
@@ -126,12 +122,12 @@ class ThreeMap extends Component {
   }
 
   getCenter(){
-    var pt = this.state.controls.target;
+    var pt = this.controls.target;
     return this.unproject(pt)
   }
 
   getZoom() {
-    const pt = this.state.controls.target.distanceTo(this.state.controls.object.position);
+    const pt = this.controls.target.distanceTo(this.controls.object.position);
     return Math.round(Math.min(Math.max(getBaseLog(0.5, pt/this.size) + 4, 0), 18));
   }
 
@@ -183,8 +179,8 @@ class ThreeMap extends Component {
   onMove(e) {
     if (this.flag) {
       if (this.axes) {
-        //this.axes.position.x = this.state.controls.target.x
-        //this.axes.position.z = this.state.controls.target.z
+        //this.axes.position.x = this.controls.target.x
+        //this.axes.position.z = this.controls.target.z
       }
     }
   }
@@ -208,7 +204,7 @@ class ThreeMap extends Component {
 
   updateTiles(e) {
     const buf = 3
-    if (this.state.controls && this.state.controls.getPolarAngle() < 0.0) {
+    if (this.controls && this.controls.getPolarAngle() < 0.0) {
       /*const ul = {x:-1,y:-1,z:-1}
       const ur = {x:1,y:-1,z:-1}
       const lr = {x:1,y:1,z:1}
@@ -290,6 +286,17 @@ class ThreeMap extends Component {
     this.scene.remove(group);
   }
 
+  changeZoom = direction => {
+    // granularity: 0.5 is scope.zoomSpeed in mapControls increasing this
+    // number increases the amt of zoom change per click
+    const granularity = 0.5;
+    const scale = Math.pow(0.95, granularity);
+    direction === 'in'
+      ? this.controls.dollyOut(scale)
+      : this.controls.dollyIn(scale);
+    this.controls.update();
+  }
+
   render() {
     return(
       <div style={{ display: 'inline-flex' }}>
@@ -299,7 +306,7 @@ class ThreeMap extends Component {
           remove={this.removeGroupFromScene}
           render={this.renderScene}
         />
-        <ZoomControl camera={this.camera} controls={this.state.controls} />
+        <ZoomControl changeZoom={this.changeZoom} />
         <div
           style={{ width: window.innerWidth, height: window.innerHeight }}
           ref={(mount) => { this.mount = mount }}

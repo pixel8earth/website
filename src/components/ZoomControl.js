@@ -9,47 +9,24 @@ class ZoomControl extends React.Component {
     };
   }
 
-  zoomIn = () => {
-    const { camera, controls } = this.props;
-    if (!this.state.zoomInDisabled) {
-      camera.zoom = camera.position.z = camera.position.z - 0.1;
-      controls.update();
-      if (camera && camera.position.z < 0.1) {
-        this.setState({ zoomInDisabled: true });
-      }
-    }
-    if (this.state.zoomOutDisabled) {
-      this.setState({ zoomOutDisabled: false });
-    }
-  }
+  zoomIn = () => this.props.changeZoom('in')
 
-  zoomOut = () => {
-    const { camera, controls } = this.props;
-    if (!this.state.zoomOutDisabled) {
-      camera.zoom = camera.position.z = camera.position.z + 0.1;
-      controls.update();
-      if (camera && camera.position.z >= 2) {
-        this.setState({ zoomOutDisabled: true });
-      }
-    }
-    if (this.state.zoomInDisabled) {
-      this.setState({ zoomInDisabled: false });
-    }
-  }
+  zoomOut = () => this.props.changeZoom('out')
 
   render() {
-    const { camera, controls } = this.props;
     const { zoomInDisabled, zoomOutDisabled } = this.state;
 
     return (
       <div style={styles.main}>
-        <div style={zoomInDisabled ? styles.controlsDisabled : styles.controls} onClick={this.zoomIn}>+</div>
+        <div style={styles.controls} onClick={this.zoomIn}>+</div>
         <hr style={{ margin: 0 }}/>
-        <div style={zoomOutDisabled ? styles.controlsDisabled : styles.controls} onClick={this.zoomOut}>-</div>
+        <div style={styles.controls} onClick={this.zoomOut}>-</div>
       </div>
     );
   }
 }
+
+// TODO: disable zoom controls at certain values???
 
 const styles= {
   main: {
