@@ -1,6 +1,6 @@
 //const worker = () => {
   /* eslint-disable no-restricted-globals */
-  self.importScripts('https://cdn.jsdelivr.net/pako/1.0.3/pako.min.js');
+  self.importScripts('https://cdn.jsdelivr.net/pako/1.0.3/pako.min.js')
   self.addEventListener("message", e => {
     // NOTES:
     // older browsers only support passing in a string to postMessage.
@@ -11,17 +11,17 @@
     if (!e) return;
 
     else if (e.data.job === 'fetchTile') {
-      self.fetchTile(e.data);
+      self.fetchTile(e.data)
     } else {
-      postMessage(e.data);
+      postMessage(e.data)
     }
   });
 
   self.getFunc = function (funcStr) {
     // from: https://blog.scottlogic.com/2011/02/24/web-workers-part-3-creating-a-generic-worker.html
-    var argName = funcStr.substring(funcStr.indexOf("(") + 1, funcStr.indexOf(")"));
-    funcStr = funcStr.substring(funcStr.indexOf("{") + 1, funcStr.lastIndexOf("}"));
-    return new Function(argName, funcStr); // eslint-disable-line no-new-func
+    var argName = funcStr.substring(funcStr.indexOf("(") + 1, funcStr.indexOf(")"))
+    funcStr = funcStr.substring(funcStr.indexOf("{") + 1, funcStr.lastIndexOf("}"))
+    return new Function(argName, funcStr) // eslint-disable-line no-new-func
   };
 
   self.fetchTile = function({name, url, offsets, coords, size, handler}) {
@@ -29,14 +29,21 @@
     try {
       fetch(url).then(async res => {
         if (res.ok) {
-          const arrayBuff = await res.arrayBuffer();
-          const raw = await self.pako.inflate(arrayBuff, { to: 'string' });
-          const data = handlerFn(raw, offsets, size)
-          postMessage({ job: 'fetchTileComplete', result: data, url: url, coords: coords, name });
+          const parts = url.split('.')
+          const ext = parts[parts.length - 1]
+          let raw = null
+          if (ext === 'gz') {
+              const arrayBuff = await res.arrayBuffer()
+              raw = await self.pako.inflate(arrayBuff, { to: 'string' })
+          } else {
+              raw = await res.clone().text()
+          }
+          const data = handlerFn(raw, offsets, size, coords)
+          postMessage({ job: 'fetchTileComplete', result: data, url: url, coords: coords, name })
         } else throw new Error('failed to fetch')
       });
     } catch (err) {
-      postMessage({ error: err.message });
+      postMessage({ error: err.message })
     }
   }
 //};

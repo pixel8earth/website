@@ -28,14 +28,15 @@ class ThreeMap extends Component {
     this.camera.up = new THREE.Vector3(0,0,1)
     this.camera.lookAt(this.scene.position)
     //ADD RENDERER
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha:true })
+    this.renderer = new THREE.WebGLRenderer()
     this.renderer.setClearColor('#000000')
     this.renderer.setSize(width, height)
+    this.renderer.sortObjects = false
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
     //this.controls.zoomSpeed = 0.25
-    //this.controls.maxPolarAngle = 1.35
+    this.controls.maxPolarAngle = 1.35
     this.controls.addEventListener('change', this.renderScene)
 
     this.raycaster = new THREE.Raycaster();
@@ -44,15 +45,10 @@ class ThreeMap extends Component {
     var mat = new THREE.MeshBasicMaterial({wireframe: true, opacity:0, transparent: true});
 
     this.plane = new THREE.Mesh( basePlane, mat );
-    //this.plane.rotation.x = -Math.PI/2;
     this.scene.add( this.plane );
 
     //Add light for meshes
-    const light = new THREE.HemisphereLight( 0x443333, 0xffffff )
-    //light.rotation.x = -Math.PI;
-    //var light = new THREE.DirectionalLight( 0xFFFFFF );
-    //var helper = new THREE.DirectionalLightHelper( light, 5 );
-
+    const light = new THREE.HemisphereLight( 0x443333, 0xffffff, 1 )
     this.scene.add(light);
 
     this.tile = this.centerTile()
@@ -107,8 +103,8 @@ class ThreeMap extends Component {
   }
 
   renderScene = () => {
-    if (this.camera.position.z > 600) {
-      this.camera.position.z = 600
+    if (this.camera.position.z > 2) {
+      this.camera.position.z = 2
     }
     this.renderer.render(this.scene, this.camera)
   }
@@ -136,7 +132,7 @@ class ThreeMap extends Component {
   }
 
   unproject(pt) {
-    var lngLat = this.mercator.ll([pt.x + this.size / 2, pt.y + this.size / 2 ], 0);
+    var lngLat = this.mercator.ll([pt.x + this.size / 2, -pt.y + this.size / 2 ], 0);
     lngLat[0] += this.props.center[0]
     lngLat[1] += this.props.center[1]
     return lngLat.map(function(num){return num.toFixed(5)/1})
@@ -194,16 +190,14 @@ class ThreeMap extends Component {
     const newTile = new THREE.Vector3(t[0], t[1], t[2])
 
     if (newTile.x !== this.tile.x || newTile.y !== this.tile.y) {
-      //console.log('New Tile', newTile, this.tile)
       this.tile = newTile
       this.updateTiles()
     }
   }
 
   updateTiles(e) {
-    //console.log('POLAR', this.controls.getPolarAngle())
     const buf = 3
-    if (this.controls.getPolarAngle() < 1.0) {
+    if (this.controls.getPolarAngle() < 0.0) {
       /*const ul = {x:-1,y:-1,z:-1}
       const ur = {x:1,y:-1,z:-1}
       const lr = {x:1,y:1,z:1}
@@ -225,15 +219,15 @@ class ThreeMap extends Component {
       var bboxTiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
           .map(([x,y,z]) => new THREE.Vector3(x, y, z));
 
-      console.log('raycasted tiles', bboxTiles.length)
       // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
       this.updateLayers(bboxTiles)*/
 
       const canvas = this.renderer.domElement
       const rect = canvas.getBoundingClientRect();
-      const ul = this.projectToScene([rect.left, rect.top])
-      const lr = this.projectToScene([rect.right, rect.bottom])
-      const coords = [[ul[0], lr[1]], ul, [lr[0], ul[1]], lr, [ul[0], lr[1]]]
+      const ll = this.projectToScene([rect.left, rect.top])
+      const ur = this.projectToScene([rect.right, rect.bottom])
+      const coords = [ll, [ll[0], ur[1]], ur, [ur[0], ll[1]], ll]
+      //const coords = [[ul[0], lr[1]], ul, [lr[0], ul[1]], lr, [ul[0], lr[1]]]
       const box = {
         "type": "Polygon",
         "coordinates": [coords]

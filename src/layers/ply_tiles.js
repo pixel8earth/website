@@ -12,18 +12,37 @@ class PlyTiles extends PointTiles {
         geometry.setIndex( result.indices )
       }
       geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( result.vertices, 3 ) )
-      //geometry.addAttribute( 'normals', new THREE.Float32BufferAttribute( result.normals, 3 ) )
-      geometry.computeBoundingSphere()
-      geometry.computeVertexNormals()
+      geometry.addAttribute( 'normal', new THREE.Float32BufferAttribute( result.normals, 3 ) )
+      //geometry.computeCentroids();
+      //geometry.computeFaceNormals();
 
-      const tile = coords.split('-')
-      const url = `https://pixel8austin.storage.googleapis.com/imagery/${tile[2]}/${tile[0]}/${tile[1]}.jpg`
-      //const material = new THREE.MeshStandardMaterial({wireframe: true});
+      //console.log(geometry)
+      /*for(var i = 0;i<geometry.faces.length;i++){
+        var face = geometry.faces[ i ];
+        if ( face instanceof THREE.Face3 ) {
+            var tmp = face.b;
+            face.b = face.c;
+            face.c = tmp;
+
+        } else if ( face instanceof THREE.Face4 ) {
+            var tmp = face.b;
+            face.b = face.d;
+            face.d = tmp;                
+        }
+      }*/
+
+      //geometry.computeCentroids();
+      //geometry.computeFaceNormals();
+      //geometry.computeVertexNormals();   
+
+      //const tile = coords.split('-')
+      //const url = `https://pixel8austin.storage.googleapis.com/imagery/${tile[2]}/${tile[0]}/${tile[1]}.jpg`
       //const material = new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load(url)});
+      //const material = new THREE.MeshLambertMaterial({color: 0x00ffff, wireframe: false})
       const material = new THREE.MeshPhongMaterial({color: 0x00ffff, wireframe: false})
+      material.side = THREE.DoubleSide
       const mesh = new THREE.Mesh(geometry, material)
-
-      console.log(geometry.attributes)
+      mesh.doubleSided = true;
 
       const fetchIndex = this.fetchingUrls.indexOf(url)
       if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1)
@@ -39,14 +58,13 @@ class PlyTiles extends PointTiles {
     if (mesh) {
       const tileName = `${coords}-${mesh.uuid}`
       mesh.name = tileName
-      //mesh.rotation.x = -Math.PI/2
       this.loadedTiles.push(tileName)
       this.group.add(mesh)
       this.renderScene()
     }  
   }
 
-  fetchHandler = (raw, offsets, size) => {
+  fetchHandler = (raw, offsets, size, coords) => {
     function parseASCIINumber( n, type ) {
       switch ( type ) {
         case 'char': case 'uchar': case 'short': case 'ushort': case 'int': case 'uint':
@@ -77,7 +95,7 @@ class PlyTiles extends PointTiles {
       return element;
     }
 
-    function handleElement( buffer, elementName, element ) {
+    function handleElement( buffer, elementName, element, i ) {
       if ( elementName === 'vertex' ) {
 
         const ll =  [
@@ -87,17 +105,20 @@ class PlyTiles extends PointTiles {
 
         let px = llPixel(ll, 0, size)
         px = {x: px[0] - size / 2, y: px[1] - size / 2, z: 0}
+        buffer.vertices.push( px.x - offsets.x, -1 * px.y + offsets.y, (element.z * 0.5 / 686) - 0.1);
 
-        buffer.vertices.push( px.x - offsets.x, px.y - offsets.y, (element.z * 0.5 / 686) - 0.1);
-        if ( element.normalx && element.normaly && element.normalz ) {
+        if ( 'normalx' in element && 'normaly' in element && 'normalz' in element ) {
           buffer.normals.push( element.normalx, element.normaly, element.normalz );
         }
+
         if ( 's' in element && 't' in element ) {
           buffer.uvs.push( element.s, element.t );
         }
+
         if ( 'red' in element && 'green' in element && 'blue' in element ) {
           buffer.colors.push( element.red / 255.0, element.green / 255.0, element.blue / 255.0 );
         }
+
       } else if ( elementName === 'face' ) {
         var vertex_indices = element.vertex_indices || element.vertex_index; // issue #9338
         if ( vertex_indices.length === 3 ) {
@@ -188,7 +209,7 @@ class PlyTiles extends PointTiles {
     }
 
     const header = parseHeader(raw);
-
+    
     var buffer = {
       indices: [],
       vertices: [],
@@ -211,7 +232,9 @@ class PlyTiles extends PointTiles {
     for ( var i = 0; i < lines.length; i ++ ) {
       var line = lines[ i ];
       line = line.trim();
-      if ( line === '' ) continue
+      if ( line === '' ) {
+        continue
+      }
       if ( currentElementCount >= header.elements[ currentElement ].count ) {
         currentElement ++;
         currentElementCount = 0;
@@ -220,7 +243,6 @@ class PlyTiles extends PointTiles {
       handleElement( buffer, header.elements[ currentElement ].name, element );
       currentElementCount ++;
     }
-    //console.log('buffer', buffer)
     return buffer
   }
 

@@ -55,7 +55,7 @@ class GeoJSON {
             let px = llPixel(f.geometry.coordinates, 0, this.size)
             px = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
             data.push(px.x - offsets.x)
-            data.push(px.y - offsets.y)
+            data.push(-1 * px.y + offsets.y)
             data.push(0.0025)
           })
           resolve(new THREE.Float32BufferAttribute( data, 3 ))

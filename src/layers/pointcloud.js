@@ -23,9 +23,11 @@ class PointCloud {
     this.color = options.color || 0xffff00
     this.size = 65024 
     this.proj = options.proj || "EPSG:4326"
+    this.group = new THREE.Group();
+    this.group.name = this.name;
   }
 
-  update = (tiles, scene, offsets, render) => {
+  update = ({tiles, offsets, render}) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         vertexColors: THREE.VertexColors,
@@ -37,9 +39,10 @@ class PointCloud {
           this.loaded = true
           //const geom = new THREE.BufferGeometry()
           //geom.addAttribute( 'position', vertices )
+          console.log('GEOM', geom)
           const points = new THREE.Points( geom, mat)
           points.position.y = 0
-          scene.add(points)
+          this.group.add(points)
           render()
         })
     }
@@ -67,10 +70,13 @@ class PointCloud {
             if (!isNaN(p[0])) {
               const ll = proj4('EPSG:32614', 'EPSG:4326').forward([p[0], p[1]])
               let px = llPixel(ll, 0, this.size)
-              px = {x: px[0] - this.size / 2, y: 0, z: px[1] - this.size / 2}
+              const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
+              if (i < 10) {
+                //console.log(ll, px, pt, pt.x - offsets.x, pt.y - offsets.y, (p[2] * 0.5 / 686) - 0.11)
+              }
               const color = new THREE.Color();
               color.setRGB(p[3] / 255.0, p[4] / 255.0, p[5] / 255.0)
-              points.vertices.push(new THREE.Vector3(px.x - offsets.x, (p[2] * 0.5 / 686) - 0.11, px.z - offsets.z));
+              points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, (p[2] * 0.5 / 686) - 0.11));
               points.colors.push(color);
             }
           })
@@ -78,6 +84,10 @@ class PointCloud {
         })
         .catch(reject)
     })
+  }
+
+  getGroup() {
+    return this.group;
   }
 }
 
