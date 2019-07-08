@@ -15,11 +15,11 @@ function PositionDisplay(props) {
 
 const styles = {
   main: {
-    backgroundColor: '#000',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     padding: '5px',
     position: 'absolute',
-    bottom: 0,
-    right: 0,
+    bottom: 5,
+    right: 5,
     textAlign: 'center',
     color: '#fff'
   }

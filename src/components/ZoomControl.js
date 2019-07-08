@@ -33,7 +33,8 @@ const styles= {
     backgroundColor: 'transparent',
     position: 'absolute',
     top: 5,
-    right: 0
+    right: 5,
+    border: '1px solid #fff'
   },
   controls: {
     textAlign: 'center',
@@ -41,8 +42,8 @@ const styles= {
     fontSize: 18,
     color: '#fff',
     cursor: 'pointer',
-    padding: '5px',
-    backgroundColor: '#000',
+    padding: '5px 8px',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   controlsDisabled: {
     textAlign: 'center',

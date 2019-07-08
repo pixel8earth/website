@@ -323,7 +323,7 @@ class ThreeMap extends Component {
 
   render() {
     return(
-      <div style={{ display: 'inline-flex' }}>
+      <div>
         <Sidebar
           groups={this.groups}
           showing={this.state.layersShowing}
