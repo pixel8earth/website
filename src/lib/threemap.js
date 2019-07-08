@@ -67,7 +67,7 @@ class ThreeMap extends Component {
     })
 
     this.workerPool = [];
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 4; i++) {
       const w = new WebWorker(worker, { type: "module" });
       w.addEventListener('message', this.onMessage, false)
       this.workerPool.push(w)
