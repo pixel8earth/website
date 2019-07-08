@@ -1,10 +1,7 @@
 import * as THREE from 'three'
+import Base from './base'
 
-class PointTiles {
-  type = 'PointTiles'
-  loadedTiles = []
-  cachedTiles = {}
-
+class PointTiles extends Base {
   vert = `
     uniform float size;
     varying vec3 vUv;
@@ -41,17 +38,6 @@ class PointTiles {
     fragmentShader: this.frag,
   })
 
-  constructor(name, url, color=0xffff00, size=65024) {
-    this.name = name
-    this.urlTemplate = url
-    this.color = color
-    this.size = size
-    this.coordsList = [];
-    this.fetchingUrls = [];
-    this.group = new THREE.Group();
-    this.group.name = this.name;
-  }
-
   receiveMessage = async (e) => {
     const { result, job, error, url, coords } = e.data;
     if (job === 'fetchTileComplete' && !error) {
@@ -63,25 +49,6 @@ class PointTiles {
     } else if (error) {
       console.log('Error fetching tile: ', error)
     }
-  }
-
-  removeOldTiles = (tiles, key) => {
-    const stringTiles = tiles.map( t => `${t.x}-${t.y}-${t.z}`);
-    const toRemove = this.loadedTiles.reduce((acc, item) => {
-      // remove uuid from tile name to compare to tiles coming in on update
-      const i = item.split('-').slice(0, 3).join('-');
-      if (stringTiles.indexOf(i) === -1) acc.push(item);
-      return acc;
-    }, []);
-    toRemove.forEach(item => {
-      let selectedObject = this.group.getObjectByName(item);
-      if (selectedObject) {
-        this.group.remove(selectedObject);
-        this.renderScene();
-        const index = this.loadedTiles.indexOf(item);
-        if (index > -1) this.loadedTiles.splice(index, 1);
-      }
-    });
   }
 
   fetchHandler = (raw, offsets, size) => {
@@ -121,40 +88,6 @@ class PointTiles {
     return data
   }
 
-  update = async ({ tiles, offsets, render, workerPool }) => {
-    this.coordsList = [];
-    const key = Date.now().toString();
-
-    tiles.forEach((t, i) => {
-      const coords = [t.x, t.y, t.z].join('-')
-      this.coordsList.push(coords);
-      const url = this.urlTemplate.replace(/{[^{}]+}/g, key => t[key.replace(/[{}]+/g, "")] || "");
-      const currentlyFetching = this.fetchingUrls.indexOf(url) > -1;
-
-      // if a tile is cached, use the cache, else if another update is NOT
-      // ALREADY FETCHING the same url, fetch it via web worker
-      const lt = this.loadedTiles.map(item => item.split('-').slice(0, 3).join('-'));
-      const loaded = lt.indexOf(coords) > 0;
-      if (!loaded) {
-        if (this.cachedTiles[coords]) {
-          this.addTile(coords, this.cachedTiles[coords]);
-        } else if (!currentlyFetching) {
-          try {
-            this.fetchingUrls.push(url);
-            if (!this.renderScene) this.renderScene = render;
-            const wIndex = i % workerPool.length
-            workerPool[wIndex].postMessage({ name: this.name, job: 'fetchTile', url: url, key, offsets, coords, size: this.size, handler: this.fetchHandler.toString() });
-          } catch (err) {
-            console.log('Error fetching tile: ', err)
-          }
-        }
-      }
-      if (i === (tiles.length - 1)) {
-        this.removeOldTiles(tiles, key);
-      }
-    });
-  }
-
   addTile(coords, vertices) {
     if (vertices && vertices.count) {
       const geom = new THREE.BufferGeometry()
@@ -168,9 +101,6 @@ class PointTiles {
     }
   }
 
-  getGroup() {
-    return this.group;
-  }
 }
 
 export default PointTiles

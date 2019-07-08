@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import pako from 'pako'
 import { llPixel } from '../lib/utils'
 import proj4 from 'proj4'
+import Base from './base'
 
 proj4.defs([
   [
@@ -13,18 +14,12 @@ proj4.defs([
   ]
 ]);
 
-class PointCloud {
-  type = 'PointCloud'
+class PointCloud extends Base {
   loaded = false
 
   constructor(name, url, options) {
-    this.name = name
-    this.url = url
-    this.color = options.color || 0xffff00
-    this.size = 65024 
+    super(name, url, options)
     this.proj = options.proj || "EPSG:4326"
-    this.group = new THREE.Group();
-    this.group.name = this.name;
   }
 
   update = ({tiles, offsets, render}) => {
@@ -37,9 +32,6 @@ class PointCloud {
       this.fetchData(this.url, offsets)
         .then(geom => {
           this.loaded = true
-          //const geom = new THREE.BufferGeometry()
-          //geom.addAttribute( 'position', vertices )
-          console.log('GEOM', geom)
           const points = new THREE.Points( geom, mat)
           points.position.y = 0
           this.group.add(points)
@@ -71,12 +63,9 @@ class PointCloud {
               const ll = proj4('EPSG:32614', 'EPSG:4326').forward([p[0], p[1]])
               let px = llPixel(ll, 0, this.size)
               const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
-              if (i < 10) {
-                //console.log(ll, px, pt, pt.x - offsets.x, pt.y - offsets.y, (p[2] * 0.5 / 686) - 0.11)
-              }
               const color = new THREE.Color();
               color.setRGB(p[3] / 255.0, p[4] / 255.0, p[5] / 255.0)
-              points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, (p[2] * 0.5 / 686) - 0.11));
+              points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, (p[2] / 343) - offsets.z));
               points.colors.push(color);
             }
           })
@@ -86,9 +75,6 @@ class PointCloud {
     })
   }
 
-  getGroup() {
-    return this.group;
-  }
 }
 
 export default PointCloud 

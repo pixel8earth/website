@@ -1,25 +1,23 @@
 import * as THREE from 'three'
 import pako from 'pako'
 import { llPixel } from '../lib/utils'
+import Base from './base'
 
-class GeoJSON {
-  type = 'GeoJSON'
+class GeoJSON extends Base {
   loaded = false
 
-  constructor(name, url, color=0xffff00, size=65024) {
+  constructor(name, url, options={}) {
+    super(name, url, options)
     this.name = name
     this.url = url
-    this.color = color
-    this.size = size
-    this.group = new THREE.Group()
-    this.group.name = 'mapillary'
+    this.feature_size = options.feature_size || 0.005
   }
 
   update = ({ tiles, offsets, render }) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         color: this.color,
-        size: 0.005
+        size: this.feature_size
       })
 
       this.fetchData(this.url, offsets)
@@ -62,10 +60,6 @@ class GeoJSON {
         })
         .catch(reject)
     })
-  }
-
-  getGroup() {
-    return this.group;
   }
 }
 

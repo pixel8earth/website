@@ -1,15 +1,13 @@
 import * as THREE from 'three'
-//import pako from 'pako'
 import SphericalMercator from 'sphericalmercator'
-import PointTiles from './point_tiles'
+import Base from './base'
 import { llPixel } from '../lib/utils'
 
-class ImageTiles extends PointTiles {
+class ImageTiles extends Base {
   type = 'ImageTiles'
   mercator = new SphericalMercator({size: 65024})
 
   update = (tiles, scene, offsets, render) => {
-    console.log('Update Image Tile Layer', this.name, this.urlTemplate)
     var coordsList = []
     tiles.forEach( async (t,i) => {
       const coords = [t.x, t.y, t.z].join('-')

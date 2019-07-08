@@ -1,8 +1,7 @@
 import * as THREE from 'three'
-import PointTiles from './point_tiles'
+import Base from './base'
 
-class PlyTiles extends PointTiles {
-  type = 'PlyTiles'
+class PlyTiles extends Base {
 
   receiveMessage = async (e) => {
     const { result, job, error, url, coords } = e.data
@@ -223,10 +222,6 @@ class PlyTiles extends PointTiles {
       currentElementCount ++;
     }
     return buffer
-  }
-
-  getGroup() {
-    return this.group;
   }
 }
 
