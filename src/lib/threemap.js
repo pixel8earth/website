@@ -6,6 +6,7 @@ import cover from '@mapbox/tile-cover'
 import { getBaseLog, pointToTile, llPixel } from './utils';
 import Sidebar from '../components/Sidebar';
 import ZoomControl from '../components/ZoomControl';
+import PositionDisplay from '../components/PositionDisplay';
 import worker from '../lib/worker';
 import WebWorker from '../lib/WebWorker';
 
@@ -18,7 +19,8 @@ class ThreeMap extends Component {
     this.tile_zoom = 18
     this.mouse = new THREE.Vector2();
     this.state = {
-      layersShowing: null
+      layersShowing: null,
+      center: null
     };
   }
 
@@ -45,6 +47,8 @@ class ThreeMap extends Component {
     //this.state.controls.zoomSpeed = 0.25
     //this.state.controls.maxPolarAngle = 1.35
     this.controls.addEventListener('change', this.renderScene)
+    const center = this.getCenter();
+    this.setState({ center });
 
     this.raycaster = new THREE.Raycaster();
 
@@ -203,6 +207,7 @@ class ThreeMap extends Component {
   onUp(e) {
     //compute the center tile... from controls.target
     const newCenter = this.getCenter()
+    this.setState({ center: newCenter });
     const t = pointToTile(newCenter[0], newCenter[1], this.tile_zoom) // thinking that merc or mercator should do this...
     const newTile = new THREE.Vector3(t[0], t[1], t[2])
 
@@ -325,6 +330,7 @@ class ThreeMap extends Component {
           toggle={this.toggleLayerVisibility}
         />
         <ZoomControl changeZoom={this.changeZoom} />
+        <PositionDisplay center={this.state.center} />
         <div
           style={{ width: window.innerWidth, height: window.innerHeight }}
           ref={(mount) => { this.mount = mount }}

@@ -33,8 +33,7 @@ const styles= {
     backgroundColor: 'transparent',
     position: 'absolute',
     top: 5,
-    right: 0,
-    color: 'red'
+    right: 0
   },
   controls: {
     textAlign: 'center',
