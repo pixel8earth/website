@@ -111,10 +111,10 @@ class PointTiles {
             ((Math.PI*0.5) - 2.0 * Math.atan(Math.exp(-rData[1] / 6378137.0))) * (180 / Math.PI)
           ]
           let px = llPixel(ll, 0, size)
-          px = {x: px[0] - size / 2, y: px[1] - size / 2, z: 0}
+          px = {x: px[0] - size / 2, y: px[1] - size / 2, z: rData[2] / 343}
           data.push(px.x - offsets.x)
-          data.push(px.y - offsets.y)
-          data.push((rData[2] * 0.5 / 686) - 0.1) // umm ok... some z level scaling gonna need to be figured out
+          data.push(-px.y + offsets.y)
+          data.push(px.z - offsets.z)
         }
       }
     });

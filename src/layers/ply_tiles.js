@@ -13,34 +13,10 @@ class PlyTiles extends PointTiles {
       }
       geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( result.vertices, 3 ) )
       geometry.addAttribute( 'normal', new THREE.Float32BufferAttribute( result.normals, 3 ) )
-      //geometry.computeCentroids();
-      //geometry.computeFaceNormals();
-
-      //console.log(geometry)
-      /*for(var i = 0;i<geometry.faces.length;i++){
-        var face = geometry.faces[ i ];
-        if ( face instanceof THREE.Face3 ) {
-            var tmp = face.b;
-            face.b = face.c;
-            face.c = tmp;
-
-        } else if ( face instanceof THREE.Face4 ) {
-            var tmp = face.b;
-            face.b = face.d;
-            face.d = tmp;                
-        }
-      }*/
-
-      //geometry.computeCentroids();
-      //geometry.computeFaceNormals();
-      //geometry.computeVertexNormals();   
-
-      //const tile = coords.split('-')
       //const url = `https://pixel8austin.storage.googleapis.com/imagery/${tile[2]}/${tile[0]}/${tile[1]}.jpg`
       //const material = new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load(url)});
-      //const material = new THREE.MeshLambertMaterial({color: 0x00ffff, wireframe: false})
-      const material = new THREE.MeshPhongMaterial({color: 0x00ffff, wireframe: false})
-      material.side = THREE.DoubleSide
+      const material = new THREE.MeshPhongMaterial({color: 0x666666, wireframe: true})
+      material.side = THREE.DoubleSide // Fixes lighting issues on meshes 
       const mesh = new THREE.Mesh(geometry, material)
       mesh.doubleSided = true;
 
@@ -98,14 +74,17 @@ class PlyTiles extends PointTiles {
     function handleElement( buffer, elementName, element, i ) {
       if ( elementName === 'vertex' ) {
 
+        // converts mercator x/y to latlng
         const ll =  [
           (element.x * (180 / Math.PI) / 6378137.0),
           ((Math.PI*0.5) - 2.0 * Math.atan(Math.exp(-element.y / 6378137.0))) * (180 / Math.PI)
         ]
 
+        // convert ll to world coords (pixel xy)
         let px = llPixel(ll, 0, size)
         px = {x: px[0] - size / 2, y: px[1] - size / 2, z: 0}
-        buffer.vertices.push( px.x - offsets.x, -1 * px.y + offsets.y, (element.z * 0.5 / 686) - 0.1);
+
+        buffer.vertices.push( px.x - offsets.x, -1 * px.y + offsets.y, (element.z / 343) - offsets.z);
 
         if ( 'normalx' in element && 'normaly' in element && 'normalz' in element ) {
           buffer.normals.push( element.normalx, element.normaly, element.normalz );

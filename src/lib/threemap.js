@@ -36,7 +36,7 @@ class ThreeMap extends Component {
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
     //this.controls.zoomSpeed = 0.25
-    this.controls.maxPolarAngle = 1.35
+    //this.controls.maxPolarAngle = 1.35
     this.controls.addEventListener('change', this.renderScene)
 
     this.raycaster = new THREE.Raycaster();
@@ -67,7 +67,7 @@ class ThreeMap extends Component {
     })
 
     this.workerPool = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
       const w = new WebWorker(worker, { type: "module" });
       w.addEventListener('message', this.onMessage, false)
       this.workerPool.push(w)
@@ -105,6 +105,8 @@ class ThreeMap extends Component {
   renderScene = () => {
     if (this.camera.position.z > 2) {
       this.camera.position.z = 2
+    } else if (this.camera.position.z < 0.0) {
+      this.camera.position.z = 0
     }
     this.renderer.render(this.scene, this.camera)
   }
@@ -127,7 +129,7 @@ class ThreeMap extends Component {
 
   getOffsets() {
     var px = llPixel(this.props.center, 0, this.size);
-    px = {x: px[0] - this.size/ 2, y: px[1] - this.size / 2, z: 0};
+    px = {x: px[0] - this.size/ 2, y: px[1] - this.size / 2, z: 0.425};
     return px
   }
 
