@@ -1,20 +1,20 @@
 import React from 'react';
 
 class ZoomControl extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      zoomInDisabled: false,
-      zoomOutDisabled: false
-    };
-  }
+  // constructor() {
+  //   super();
+  //   this.state = {
+  //     zoomInDisabled: false,
+  //     zoomOutDisabled: false
+  //   };
+  // }
 
   zoomIn = () => this.props.changeZoom('in')
 
   zoomOut = () => this.props.changeZoom('out')
 
   render() {
-    const { zoomInDisabled, zoomOutDisabled } = this.state;
+    // const { zoomInDisabled, zoomOutDisabled } = this.state;
 
     return (
       <div style={styles.main}>

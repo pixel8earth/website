@@ -17,6 +17,9 @@ class ThreeMap extends Component {
     this.loadedTiles = [];
     this.tile_zoom = 18
     this.mouse = new THREE.Vector2();
+    this.state = {
+      layersShowing: null
+    };
   }
 
   componentDidMount() {
@@ -69,6 +72,7 @@ class ThreeMap extends Component {
         this.scene.add(group);
       }
     })
+    this.setState({ layersShowing: this.groups.map(g => g.name) });
 
     this.workerPool = [];
     for (let i = 0; i < 4; i++) {
@@ -83,6 +87,12 @@ class ThreeMap extends Component {
     window.addEventListener('mousemove', this.onMove.bind(this), false)
     this.renderScene()
     this.updateTiles()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.layersShowing !== prevState.layersShowing) {
+      this.updateTiles()
+    }
   }
 
   componentWillUnmount(){
@@ -268,22 +278,17 @@ class ThreeMap extends Component {
   }
 
   updateLayers(tiles) {
-    this.layers.forEach(l => l.update({
-        tiles,
-        scene: this.scene,
-        offsets: this.offsets,
-        workerPool: this.workerPool,
-        render: () => this.renderScene()
-      })
-    );
-  }
-
-  addGroupToScene = group => {
-    this.scene.add(group);
-  }
-
-  removeGroupFromScene = group => {
-    this.scene.remove(group);
+    this.layers.forEach(l => {
+      if (this.state.layersShowing ? this.state.layersShowing.indexOf(l.name) > -1 : true) {
+        l.update({
+          tiles,
+          scene: this.scene,
+          offsets: this.offsets,
+          workerPool: this.workerPool,
+          render: () => this.renderScene()
+        });
+      }
+    });
   }
 
   changeZoom = direction => {
@@ -297,14 +302,27 @@ class ThreeMap extends Component {
     this.controls.update();
   }
 
+  toggleLayerVisibility = group => {
+    let showing = [...this.state.layersShowing];
+    const index = showing.indexOf(group.name);
+    if (index < 0) {
+      showing.push(group.name);
+      this.scene.add(group);
+    } else {
+      showing.splice(index, 1);
+      this.scene.remove(group);
+    }
+    this.renderScene();
+    this.setState({ layersShowing: showing });
+  };
+
   render() {
     return(
       <div style={{ display: 'inline-flex' }}>
         <Sidebar
           groups={this.groups}
-          add={this.addGroupToScene}
-          remove={this.removeGroupFromScene}
-          render={this.renderScene}
+          showing={this.state.layersShowing}
+          toggle={this.toggleLayerVisibility}
         />
         <ZoomControl changeZoom={this.changeZoom} />
         <div

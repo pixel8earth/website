@@ -7,7 +7,6 @@ class Sidebar extends React.Component {
     this.mounted = false;
 
     this.state = {
-      showing: null,
       groups: [],
       expanded: false
     };
@@ -17,28 +16,6 @@ class Sidebar extends React.Component {
     this.mounted = true;
     this.setState({ groups: this.props.groups });
   }
-
-  componentDidUpdate() {
-    if (this.mounted && !this.state.showing) {
-      this.setState({
-        showing: this.props.groups.map(g => g.name)
-      });
-    }
-  }
-
-  toggleGroup = (group) => () => {
-    let showing = [...this.state.showing];
-    const index = showing.indexOf(group.name);
-    if (index < 0) {
-      showing.push(group.name);
-      this.props.add(group);
-    } else {
-      showing.splice(index, 1);
-      this.props.remove(group);
-    }
-    this.props.render();
-    this.setState({ showing });
-  };
 
   toggleExpansion = () => {
     this.setState({ expanded: !this.state.expanded });
@@ -61,7 +38,7 @@ class Sidebar extends React.Component {
             return (
               <React.Fragment key={i}>
                 {i === 0 && <hr style={styles.hr} />}
-                <div onClick={this.toggleGroup(g)} style={shown ? styles.groupShown : styles.group}>
+                <div onClick={() => this.props.toggle(g)} style={shown ? styles.groupShown : styles.group}>
                   {g.name}
                 </div>
                 <hr style={styles.hr} />
