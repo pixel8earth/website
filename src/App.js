@@ -22,14 +22,14 @@ import './App.css';
 
 const points = new Layers.PointTiles('lidar', 'https://pixel8austin.storage.googleapis.com/lidar/tiles/{z}/{x}/{y}.csv.gz')
 //const points = new Layers.PointTiles('lidar', 'http://localhost/~chelm/hdiz/austin/mesh_src/{z}/{x}/{y}.csv.gz')
-const mapillaryTracks = new Layers.GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
+//const mapillaryTracks = new Layers.GeoJSON('mapillary', 'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz')
 //const images = new ImageTiles('aerial', 'https://pixel8austin.storage.googleapis.com/imagery/{z}/{x}/{y}.jpg')
-const mesh = new Layers.PlyTiles('ground-mesh', 'http://localhost/~chelm/hdiz/austin/meshes/ground/{z}/{x}/{y}.ply.gz')
+//const mesh = new Layers.PlyTiles('ground-mesh', 'http://localhost/~chelm/hdiz/austin/meshes/ground/{z}/{x}/{y}.ply.gz')
 //const mesh = new Layers.PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapis.com/mesh/ground/{z}/{x}/{y}.ply.gz')
-const pc = new Layers.PointCloud('cloud', 'http://localhost/~chelm/hdiz/austin/collects/1561993727406/geo-model.csv', {proj: 'EPSG:32614'})
+//const pc = new Layers.PointCloud('cloud', 'http://localhost/~chelm/hdiz/austin/collects/1561993727406/geo-model.csv', {proj: 'EPSG:32614'})
 
 export default class App extends Component {
   render() {
-    return (<ThreeMap center={[-97.739677,30.257936]} cam_zoom={1} layers={[points, mesh]}/>);
+    return (<ThreeMap center={[-97.739677,30.257936]} cam_zoom={1} layers={[points]}/>);
   }
 }
