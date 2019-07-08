@@ -134,7 +134,8 @@ class ThreeMap extends Component {
   }
 
   unproject(pt) {
-    var lngLat = this.mercator.ll([pt.x + this.size / 2, -pt.y + this.size / 2 ], 0);
+    const y = -pt.y + (pt.y * 0.15) // scales y to slow down the y dir center tile math
+    var lngLat = this.mercator.ll([pt.x + this.size / 2, y + this.size / 2 ], 0);
     lngLat[0] += this.props.center[0]
     lngLat[1] += this.props.center[1]
     return lngLat.map(function(num){return num.toFixed(5)/1})
