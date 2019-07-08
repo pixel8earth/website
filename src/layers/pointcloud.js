@@ -19,6 +19,7 @@ class PointCloud extends Base {
 
   constructor(name, url, options) {
     super(name, url, options)
+    this.url = url
     this.proj = options.proj || "EPSG:4326"
   }
 

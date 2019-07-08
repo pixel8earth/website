@@ -9,6 +9,7 @@ class Base {
     this.urlTemplate = url
     this.color = options.color || 0xffffff
     this.size = options.size || 65024
+    this.options = options
     this.coordsList = [];
     this.fetchingUrls = [];
     this.group = new THREE.Group();
