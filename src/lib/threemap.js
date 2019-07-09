@@ -4,16 +4,25 @@ import MapControls from './MapControls'
 import SphericalMercator from 'sphericalmercator'
 import cover from '@mapbox/tile-cover'
 import { getBaseLog, pointToTile, llPixel } from './utils';
-import Sidebar from '../Sidebar';
+import Sidebar from '../components/Sidebar';
+import ZoomControl from '../components/ZoomControl';
+import PositionDisplay from '../components/PositionDisplay';
 import worker from '../lib/worker';
-import WebWorker from '../lib/WebWorker'; 
+import WebWorker from '../lib/WebWorker';
 
 class ThreeMap extends Component {
-  layers = []
-  groups = []
-  loadedTiles = []
-  tile_zoom = 18
-  mouse = new THREE.Vector2()
+  constructor() {
+    super();
+    this.layers = [];
+    this.groups = [];
+    this.loadedTiles = [];
+    this.tile_zoom = 18
+    this.mouse = new THREE.Vector2();
+    this.state = {
+      layersShowing: null,
+      center: null
+    };
+  }
 
   componentDidMount() {
     const width = this.mount.clientWidth
@@ -35,9 +44,11 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
-    //this.controls.zoomSpeed = 0.25
-    //this.controls.maxPolarAngle = 1.35
+    //this.state.controls.zoomSpeed = 0.25
+    //this.state.controls.maxPolarAngle = 1.35
     this.controls.addEventListener('change', this.renderScene)
+    const center = this.getCenter();
+    this.setState({ center });
 
     this.raycaster = new THREE.Raycaster();
 
@@ -65,6 +76,7 @@ class ThreeMap extends Component {
         this.scene.add(group);
       }
     })
+    this.setState({ layersShowing: this.groups.map(g => g.name) });
 
     this.workerPool = [];
     for (let i = 0; i < 4; i++) {
@@ -79,6 +91,12 @@ class ThreeMap extends Component {
     window.addEventListener('mousemove', this.onMove.bind(this), false)
     this.renderScene()
     this.updateTiles()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.layersShowing !== prevState.layersShowing) {
+      this.updateTiles()
+    }
   }
 
   componentWillUnmount(){
@@ -189,6 +207,7 @@ class ThreeMap extends Component {
   onUp(e) {
     //compute the center tile... from controls.target
     const newCenter = this.getCenter()
+    this.setState({ center: newCenter });
     const t = pointToTile(newCenter[0], newCenter[1], this.tile_zoom) // thinking that merc or mercator should do this...
     const newTile = new THREE.Vector3(t[0], t[1], t[2])
 
@@ -200,7 +219,7 @@ class ThreeMap extends Component {
 
   updateTiles(e) {
     const buf = 3
-    if (this.controls.getPolarAngle() < 0.0) {
+    if (this.controls && this.controls.getPolarAngle() < 0.0) {
       /*const ul = {x:-1,y:-1,z:-1}
       const ur = {x:1,y:-1,z:-1}
       const lr = {x:1,y:1,z:1}
@@ -264,33 +283,54 @@ class ThreeMap extends Component {
   }
 
   updateLayers(tiles) {
-    this.layers.forEach(l => l.update({
-        tiles,
-        scene: this.scene,
-        offsets: this.offsets,
-        workerPool: this.workerPool,
-        render: () => this.renderScene()
-      })
-    );
+    this.layers.forEach(l => {
+      if (this.state.layersShowing ? this.state.layersShowing.indexOf(l.name) > -1 : true) {
+        l.update({
+          tiles,
+          scene: this.scene,
+          offsets: this.offsets,
+          workerPool: this.workerPool,
+          render: () => this.renderScene()
+        });
+      }
+    });
   }
 
-  addGroupToScene = group => {
-    this.scene.add(group);
+  changeZoom = direction => {
+    // granularity: 0.5 is scope.zoomSpeed in mapControls increasing this
+    // number increases the amt of zoom change per click
+    const granularity = 0.5;
+    const scale = Math.pow(0.95, granularity);
+    direction === 'in'
+      ? this.controls.dollyOut(scale)
+      : this.controls.dollyIn(scale);
+    this.controls.update();
   }
 
-  removeGroupFromScene = group => {
-    this.scene.remove(group);
-  }
+  toggleLayerVisibility = group => {
+    let showing = [...this.state.layersShowing];
+    const index = showing.indexOf(group.name);
+    if (index < 0) {
+      showing.push(group.name);
+      this.scene.add(group);
+    } else {
+      showing.splice(index, 1);
+      this.scene.remove(group);
+    }
+    this.renderScene();
+    this.setState({ layersShowing: showing });
+  };
 
   render() {
     return(
       <div style={{ display: 'inline-flex' }}>
         <Sidebar
           groups={this.groups}
-          add={this.addGroupToScene}
-          remove={this.removeGroupFromScene}
-          render={this.renderScene}
+          showing={this.state.layersShowing}
+          toggle={this.toggleLayerVisibility}
         />
+        <ZoomControl changeZoom={this.changeZoom} />
+        <PositionDisplay center={this.state.center} />
         <div
           style={{ width: window.innerWidth, height: window.innerHeight }}
           ref={(mount) => { this.mount = mount }}

@@ -1,5 +1,5 @@
 import React from 'react';
-import icon from './images/icon.png';
+import icon from '../images/icon.png';
 
 class Sidebar extends React.Component {
   constructor() {
@@ -7,7 +7,6 @@ class Sidebar extends React.Component {
     this.mounted = false;
 
     this.state = {
-      showing: null,
       groups: [],
       expanded: false
     };
@@ -18,28 +17,6 @@ class Sidebar extends React.Component {
     this.setState({ groups: this.props.groups });
   }
 
-  componentDidUpdate() {
-    if (this.mounted && !this.state.showing) {
-      this.setState({
-        showing: this.props.groups.map(g => g.name)
-      });
-    }
-  }
-
-  toggleGroup = (group) => () => {
-    let showing = [...this.state.showing];
-    const index = showing.indexOf(group.name);
-    if (index < 0) {
-      showing.push(group.name);
-      this.props.add(group);
-    } else {
-      showing.splice(index, 1);
-      this.props.remove(group);
-    }
-    this.props.render();
-    this.setState({ showing });
-  };
-
   toggleExpansion = () => {
     this.setState({ expanded: !this.state.expanded });
   }
@@ -49,19 +26,19 @@ class Sidebar extends React.Component {
     return (
       !expanded ?
         <div style={styles.collapsed} onClick={this.toggleExpansion}>
-          <img src={icon} style={styles.pixel8IconSmall} />
+          <img src={icon} style={styles.pixel8IconSmall} alt="pixel8 logo" />
         </div>
         :
         <div id="sidebar" style={styles.main}>
           <div style={styles.imgWrap} onClick={this.toggleExpansion}>
-            <img src={icon} style={styles.pixel8Icon} />
+            <img src={icon} style={styles.pixel8Icon} alt="pixel8 logo" />
           </div>
           { groups.map( (g, i) => {
             const shown = ~(showing || []).indexOf(g.name);
             return (
               <React.Fragment key={i}>
                 {i === 0 && <hr style={styles.hr} />}
-                <div onClick={this.toggleGroup(g)} style={shown ? styles.groupShown : styles.group}>
+                <div onClick={() => this.props.toggle(g)} style={shown ? styles.groupShown : styles.group}>
                   {g.name}
                 </div>
                 <hr style={styles.hr} />
@@ -75,13 +52,13 @@ class Sidebar extends React.Component {
 
 const styles = {
   collapsed: {
-    backgroundColor: '#000',
+    backgroundColor: 'transparent',
     width: '60px',
     height: '60px',
     position: 'absolute',
     top: 0,
     left: 0,
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   main: {
     backgroundColor: '#304D6D',

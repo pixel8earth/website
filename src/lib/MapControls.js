@@ -244,6 +244,9 @@ function MapControls( object, domElement ) {
 
 	};
 
+	this.dollyIn = dollyIn;
+	this.dollyOut = dollyOut;
+
 	//
 	// internals
 	//
@@ -538,7 +541,7 @@ function MapControls( object, domElement ) {
 	function handleMouseWheel( event ) {
 
 		// console.log( 'handleMouseWheel' );
-
+		
 		if ( event.deltaY < 0 ) {
 
 			dollyOut( getZoomScale() );
@@ -1163,4 +1166,4 @@ Object.defineProperties( MapControls.prototype, {
 
 } );
 
-export default MapControls 
+export default MapControls
