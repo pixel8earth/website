@@ -101,6 +101,7 @@ class ThreeMap extends Component {
 
   componentWillUnmount(){
     this.mount.removeChild(this.renderer.domElement)
+    this.workerPool.forEach(worker => worker.terminate())
   }
 
   // gets messages from workers and delegates to correct layer
