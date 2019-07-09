@@ -33,6 +33,7 @@ class PointCloud extends Base {
       this.fetchData(this.url, offsets)
         .then(geom => {
           this.loaded = true
+          console.log(geom)
           const points = new THREE.Points( geom, mat)
           points.position.y = 0
           this.group.add(points)
@@ -64,10 +65,13 @@ class PointCloud extends Base {
               if (!isNaN(p[0])) {
                 const ll = proj4('EPSG:32614', 'EPSG:4326').forward([p[2], p[0]])
                 let px = llPixel(ll, 0, this.size)
-                const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
+                const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: p[1]}
                 const color = new THREE.Color();
                 color.setRGB(p[3] / 255.0, p[4] / 255.0, p[5] / 255.0)
-                points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, (p[1] / 343) - offsets.z));
+                const yMin = this.options.scales[0] || 130;
+                const yMax = this.options.scales[1] || 350;
+                const scaledZ = ((pt.z - yMin) / (yMax - yMin)) * (this.options.scales[2] || 0.5) + yMin;
+                points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, scaledZ));
                 points.colors.push(color);
               }
             }

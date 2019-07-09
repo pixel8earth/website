@@ -1,5 +1,12 @@
 import * as THREE from 'three'
 
+const defaultOptions = {
+  color: 0xffffff,
+  size: 65024,
+  visible: true,
+  scales: []
+}
+
 class Base {
   loadedTiles = []
   cachedTiles = {}
@@ -7,9 +14,9 @@ class Base {
   constructor(name, url, options={}) {
     this.name = name
     this.urlTemplate = url
-    this.color = options.color || 0xffffff
-    this.size = options.size || 65024
-    this.options = options
+    this.options = { ...defaultOptions, ...options }
+    this.color = this.options.color
+    this.size = this.options.size 
     this.coordsList = []
     this.fetchingUrls = []
     this.group = new THREE.Group()

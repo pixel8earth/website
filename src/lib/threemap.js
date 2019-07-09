@@ -34,7 +34,7 @@ class ThreeMap extends Component {
     this.scene = new THREE.Scene()
     //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
-    this.camera.position.z = this.zOffset + 1
+    this.camera.position.z = this.zOffset + (this.props.camZoom || 1)
     this.camera.up = new THREE.Vector3(0,0,1)
     this.camera.lookAt(this.scene.position)
     //ADD RENDERER
@@ -70,9 +70,6 @@ class ThreeMap extends Component {
     this.tile = this.centerTile()
     this.offsets = this.getOffsets()
 
-    //this.axes = new THREE.AxesHelper( .25 );
-    //this.scene.add( this.axes );
-
     this.layers = this.props.layers;
     this.layers.forEach( layer => {
       if (!!layer.getGroup) {
@@ -81,7 +78,7 @@ class ThreeMap extends Component {
         this.scene.add(group);
       }
     })
-    this.setState({ layersShowing: this.groups.map(g => g.name) });
+    this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
 
     this.workerPool = [];
     for (let i = 0; i < 4; i++) {
@@ -127,11 +124,6 @@ class ThreeMap extends Component {
   }
 
   renderScene = () => {
-    /*if (this.camera.position.z > 2) {
-      this.camera.position.z = 2
-      //} else if (this.camera.position.z < -0.25) {
-      //this.camera.position.z = -0.25
-    }*/
     this.renderer.render(this.scene, this.camera)
   }
 
@@ -165,15 +157,6 @@ class ThreeMap extends Component {
     return lngLat.map(function(num){return num.toFixed(5)/1})
   }
 
-  /*projectToScene(px) {
-    const width = window.innerWidth
-    const height = window.innerHeight
-    var screenPosition = {x: (px[0]/width-0.5)*2, y:(0.5-px[1]/height)*2};
-    this.raycaster.setFromCamera(screenPosition, this.camera);
-    var pt = this.raycaster.intersectObject(this.plane)[0].point;
-    return pt;
-  }*/
-
   projectToScene(pt) {
     const canvas = this.renderer.domElement
     const rect = canvas.getBoundingClientRect();
@@ -197,12 +180,7 @@ class ThreeMap extends Component {
   }
 
   onMove(e) {
-    if (this.flag) {
-      if (this.axes) {
-        //this.axes.position.x = this.controls.target.x
-        //this.axes.position.z = this.controls.target.z
-      }
-    }
+    if (this.flag) {}
   }
 
   onDown(e) {
@@ -289,8 +267,9 @@ class ThreeMap extends Component {
   }
 
   updateLayers(tiles) {
+    console.log(this.state.layersShowing)
     this.layers.forEach(l => {
-      if (this.state.layersShowing ? this.state.layersShowing.indexOf(l.name) > -1 : true) {
+      if (this.state.layersShowing && this.state.layersShowing.indexOf(l.name) > -1) {
         l.update({
           tiles,
           scene: this.scene,

@@ -14,23 +14,21 @@ class PlyTiles extends Base {
       geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( result.vertices, 3 ) )
       geometry.addAttribute( 'normal', new THREE.Float32BufferAttribute( result.normals, 3 ) )
 
-      //const t = coords.split('-')
-      //const image = `https://pixel8austin.storage.googleapis.com/imagery/${tile[2]}/${tile[0]}/${tile[1]}.jpg`
-      //const image = `https://a.basemaps.cartocdn.com/rastertiles/dark_all/${t[2]}/${t[0]}/${t[1]}@2x.png`
-      
-      //this.loader.load(image, map => {
-        //const material = new THREE.MeshPhongMaterial({map});
-        const material = new THREE.MeshPhongMaterial({color: 0x666666, wireframe: false, transparent: false})
-        material.side = THREE.DoubleSide // Fixes lighting issues on meshes 
-        const mesh = new THREE.Mesh(geometry, material)
-        mesh.doubleSided = true;
+      const material = new THREE.MeshPhongMaterial({
+        color: this.options.color || 0x666666, 
+        wireframe: this.options.wireframe || true, 
+        transparent: true, 
+        opacity: this.options.opacity || 0.5
+      })
+      material.side = THREE.DoubleSide // Fixes lighting issues on meshes 
+      const mesh = new THREE.Mesh(geometry, material)
+      mesh.doubleSided = true;
 
-        const fetchIndex = this.fetchingUrls.indexOf(url)
-        if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1)
+      const fetchIndex = this.fetchingUrls.indexOf(url)
+      if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1)
 
-        this.cachedTiles[coords] = mesh
-        this.addTile(coords, mesh)
-      //})
+      this.cachedTiles[coords] = mesh
+      this.addTile(coords, mesh)
     } else if (error) {
       console.log('Error fetching tile: ', error)
     }
@@ -46,7 +44,7 @@ class PlyTiles extends Base {
     }  
   }
 
-  fetchHandler = (raw, offsets, size, coords) => {
+  fetchHandler = (raw, offsets, size, coords, options) => {
     function parseASCIINumber( n, type ) {
       switch ( type ) {
         case 'char': case 'uchar': case 'short': case 'ushort': case 'int': case 'uint':
@@ -88,10 +86,12 @@ class PlyTiles extends Base {
 
         // convert ll to world coords (pixel xy)
         let px = llPixel(ll, 0, size)
-        px = {x: px[0] - size / 2, y: px[1] - size / 2, z: 0}
+        px = {x: px[0] - size / 2, y: px[1] - size / 2, z: element.z}
 
-        buffer.vertices.push( px.x - offsets.x, -1 * px.y + offsets.y, (element.z / 343) - offsets.z);
-        //console.log(Math.abs(40075000 * Math.cos(lngLat[1] * Math.PI/180) / (Math.pow(2, 18) * (this.size/(Math.pow(2,22))))));
+        const yMin = options.scales[0] || 0;
+        const yMax = options.scales[1] || 100;
+        const scaledZ = ((px.z - yMin) / (yMax - yMin)) * (options.scales[2] || 0.5) + yMin;  
+        buffer.vertices.push(px.x - offsets.x, -1 * px.y + offsets.y, scaledZ);
 
         if ( 'normalx' in element && 'normaly' in element && 'normalz' in element ) {
           buffer.normals.push( element.normalx, element.normaly, element.normalz );

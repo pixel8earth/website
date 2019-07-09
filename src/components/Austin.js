@@ -1,40 +1,15 @@
 import React from 'react';
-import * as THREE from 'three'
 import Map from './Map';
 import Layers from '../layers'
-
-const vert = `
-  attribute vec3 ca;
-  uniform float size;
-  varying vec3 vUv;
-  varying vec3 vColor;
-  void main()
-  {
-      vColor = ca;
-      vUv = position;
-      vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-      gl_PointSize = min(max(size * vUv.z, 0.25), 1.25);
-      gl_Position = projectionMatrix * viewMatrix * worldPosition;
-  }
-`
-
-const frag = `
-  varying vec3 vColor;
-  precision mediump float;
-  void main()
-  {
-      gl_FragColor = vec4(vColor, 1.0);
-      gl_FragColor.a = 1.0;
-  }
-`
+import shaders from '../layers/shaders'
 
 const points = new Layers.PointTiles('lidar', 
   'https://pixel8austin.storage.googleapis.com/lidar/tiles_classified/{z}/{x}/{y}.csv.gz',
   {
     style: {
-      shaders: { vert, frag },
+      shaders,
       size: 1.25,
-      colorMap: {
+      colorMap: { // RGB
         2: [0.0, 1.0, 1.0],
         3: [0.0, 1.0, 0.0],
         4: [0.0, 1.0, 0.0],
@@ -42,31 +17,45 @@ const points = new Layers.PointTiles('lidar',
         6: [0.5, 0.5, 1.0]
       }
     },
-    visible: false,
+    visible: true,
     scales: [130, 350, .5] // min,max,scale
   }
 )
 
 const tracks = new Layers.GeoJSON('mapillary', 
   'https://pixel8austin.storage.googleapis.com/mapillary/points.json.gz',
-  { color: 0xfff000 }
+  { 
+    color: 0xfff000, 
+    visible: false
+  }
 )
 
 const images = new Layers.ImageTiles('basemap', 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', {domains: ['a', 'b', 'c', 'd']})
-//const mesh = new Layers.PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapis.com/mesh/ground/{z}/{x}/{y}.ply.gz')
-//const pc1 = new Layers.PointCloud('cloud', 'https://pixel8austin.storage.googleapis.com/collects/1561994294655/geo.ply', {proj: 'EPSG:32614'})
-//const pc2 = new Layers.PointCloud('cloud', 'https://pixel8austin.storage.googleapis.com/collects/1561993727406/geo.ply', {proj: 'EPSG:32614'})
-//const pc3 = new Layers.PointCloud('cloud', 'https://pixel8austin.storage.googleapis.com/collects/1562091554229/geo.ply', {proj: 'EPSG:32614'})
 
-const config = {
+const mesh = new Layers.PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapis.com/mesh/ground_buildings/{z}/{x}/{y}.ply.gz', 
+  {
+    wireframe: true,
+    opacity: .9,
+    color: 0x333888,
+    scales: [130, 350, .5],
+    visible: false
+  }
+)
+
+const opts = {proj: 'EPSG:32614', visible: false}
+const pc1 = new Layers.PointCloud('cloud1', 'https://pixel8austin.storage.googleapis.com/collects/1561994294655/geo.ply', opts)
+const pc2 = new Layers.PointCloud('cloud2', 'https://pixel8austin.storage.googleapis.com/collects/1561993727406/geo.ply', opts)
+const pc3 = new Layers.PointCloud('cloud3', 'https://pixel8austin.storage.googleapis.com/collects/1562091554229/geo.ply', opts)
+
+const props = {
   center: [-97.739677,30.257936],
-  layers: [ images, points, tracks ],
-  zOffset: 130
+  layers: [ images, points, mesh, tracks, pc1, pc2, pc3 ],
+  zOffset: 130,
+  camZoom: .5
 }
 
-
 function Austin() {
-  return (<Map {...config} />)
+  return (<Map {...props} />)
 }
 
 export default Austin;
