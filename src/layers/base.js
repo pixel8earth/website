@@ -16,11 +16,10 @@ class Base {
     this.urlTemplate = url
     this.options = { ...defaultOptions, ...options }
     this.color = this.options.color
-    this.size = this.options.size 
+    this.size = this.options.size
     this.coordsList = []
     this.fetchingUrls = []
     this.group = new THREE.Group()
-    this.group.name = this.name
   }
 
   receiveMessage = async (e) => {
@@ -77,11 +76,11 @@ class Base {
             const wIndex = i % workerPool.length
             workerPool[wIndex].postMessage({
               name: this.name,
-              job: 'fetchTile', 
+              job: 'fetchTile',
               size: this.size,
               handler: this.fetchHandler.toString(),
               options: this.options,
-              url, 
+              url,
               key,
               offsets,
               coords
@@ -101,6 +100,7 @@ class Base {
   fetchHandler = (raw, offsets, size) => {}
 
   getGroup() {
+    this.group.name = this.name;
     return this.group;
   }
 }

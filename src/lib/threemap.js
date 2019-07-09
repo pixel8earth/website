@@ -267,7 +267,6 @@ class ThreeMap extends Component {
   }
 
   updateLayers(tiles) {
-    console.log(this.state.layersShowing)
     this.layers.forEach(l => {
       if (this.state.layersShowing && this.state.layersShowing.indexOf(l.name) > -1) {
         l.update({
@@ -302,8 +301,8 @@ class ThreeMap extends Component {
       showing.splice(index, 1);
       this.scene.remove(group);
     }
-    this.renderScene();
     this.setState({ layersShowing: showing });
+    this.renderScene();
   };
 
   render() {
