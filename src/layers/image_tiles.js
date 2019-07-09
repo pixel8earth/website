@@ -46,7 +46,7 @@ class ImageTiles extends Base {
 
               grid.position.x = px.x - offsets.x
               grid.position.y = -px.y + offsets.y
-              grid.position.z = 0
+              grid.position.z = -0.005
 
               this.cachedTiles[coords] = grid;
               this.addTile(coords, grid)

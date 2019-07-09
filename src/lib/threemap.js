@@ -54,8 +54,8 @@ class ThreeMap extends Component {
     this.tile = this.centerTile()
     this.offsets = this.getOffsets()
 
-    this.axes = new THREE.AxesHelper( .25 );
-    this.scene.add( this.axes );
+    //this.axes = new THREE.AxesHelper( .25 );
+    //this.scene.add( this.axes );
 
     this.layers = this.props.layers;
     this.layers.forEach( layer => {
@@ -105,8 +105,8 @@ class ThreeMap extends Component {
   renderScene = () => {
     if (this.camera.position.z > 2) {
       this.camera.position.z = 2
-    } else if (this.camera.position.z < 0.0) {
-      this.camera.position.z = 0
+      //} else if (this.camera.position.z < -0.25) {
+      //this.camera.position.z = -0.25
     }
     this.renderer.render(this.scene, this.camera)
   }

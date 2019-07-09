@@ -27,7 +27,7 @@ class PointCloud extends Base {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         vertexColors: THREE.VertexColors,
-        size: 0.00015
+        size: 0.0005
       })
   
       this.fetchData(this.url, offsets)
@@ -59,15 +59,17 @@ class PointCloud extends Base {
           // create an array of vertices
           const points = new THREE.Geometry();
           raw.split('\n').forEach( (line, i) => {
-            const p = line.trim().split(',').map( j => parseFloat(j))
-            if (!isNaN(p[0])) {
-              const ll = proj4('EPSG:32614', 'EPSG:4326').forward([p[0], p[1]])
-              let px = llPixel(ll, 0, this.size)
-              const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
-              const color = new THREE.Color();
-              color.setRGB(p[3] / 255.0, p[4] / 255.0, p[5] / 255.0)
-              points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, (p[2] / 343) - offsets.z));
-              points.colors.push(color);
+            if (i >= 10) {
+              const p = line.trim().split(' ').map( j => parseFloat(j))
+              if (!isNaN(p[0])) {
+                const ll = proj4('EPSG:32614', 'EPSG:4326').forward([p[2], p[0]])
+                let px = llPixel(ll, 0, this.size)
+                const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
+                const color = new THREE.Color();
+                color.setRGB(p[3] / 255.0, p[4] / 255.0, p[5] / 255.0)
+                points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, (p[1] / 343) - offsets.z));
+                points.colors.push(color);
+              }
             }
           })
           resolve(points)
