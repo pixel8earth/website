@@ -2,46 +2,24 @@ import * as THREE from 'three'
 import Base from './base'
 
 class PointTiles extends Base {
-  vert = `
-    attribute vec3 ca;
-    uniform float size;
-    varying vec3 vUv;
-    varying vec3 vColor;
-    void main()
-    {
-        vColor = ca;
-        vUv = position;
-        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-        gl_PointSize = min(max(size * vUv.z, 0.5), 2.0);
-        gl_Position = projectionMatrix * viewMatrix * worldPosition;
-    }
-  `
 
-  frag = `
-    varying vec3 vColor;
-    precision mediump float;
-    void main()
-    {
-        gl_FragColor = vec4(vColor, 1.0);
-        gl_FragColor.a = 1.0;
+  constructor(name, url, options={}) {
+    super(name, url, options)
+    if (options.style && options.style.shaders ) {
+      const { vert, frag } = options.style.shaders
+      this.material = new THREE.ShaderMaterial( {
+        uniforms: {
+          size: { type: 'f', value: options.style.size || 1.0 }
+        },
+        depthTest: false,
+        depthWrite: false,
+        transparent:  true,
+        vertexShader: vert,
+        fragmentShader: frag,
+      })
+    } else {
+      this.material = new THREE.PointsMaterial({color: this.color, size: options.style.size || 1.0 })
     }
-  `
-  material = new THREE.ShaderMaterial( {
-    uniforms: {
-      size: { type: 'f', value: 100.0 },
-      color:  {type: 'vec3',  value: new THREE.Color( 0xffffff ) }
-    },
-    depthTest: false,
-    depthWrite: false,
-    transparent:  true,
-    vertexShader: this.vert,
-    fragmentShader: this.frag,
-  })
-
-  colorMap = {
-    2: [0.0, 1.0, 1.0],
-    3: [0.0, 1.0, 0.0],
-    6: [0.5, 0.75, 0.3]
   }
 
   receiveMessage = async (e) => {
@@ -61,7 +39,7 @@ class PointTiles extends Base {
     }
   }
 
-  fetchHandler = (raw, offsets, size) => {
+  fetchHandler = (raw, offsets, size, coords, options) => {
     const llPixel = (ll, zoom, _size) => {
       var size = _size * Math.pow(2, zoom);
       var d = size / 2;
@@ -89,17 +67,19 @@ class PointTiles extends Base {
             ((Math.PI*0.5) - 2.0 * Math.atan(Math.exp(-rData[1] / 6378137.0))) * (180 / Math.PI)
           ]
           let px = llPixel(ll, 0, size)
-          px = {x: px[0] - size / 2, y: px[1] - size / 2, z: rData[2] / 343}
+          px = {x: px[0] - size / 2, y: px[1] - size / 2, z: rData[2]}
           data.push(px.x - offsets.x)
           data.push(-px.y + offsets.y)
-          data.push(px.z - offsets.z)
-          // TODO must completely refactor all styling to be a bit more robust for different data
-          if (rData[3] === 2) {
-            colors.push(0.0, 1.0 , 1.0)
-          } else if (rData[3] === 6) {
-            colors.push(.5, .5, 1)
+
+          const yMin = options.scales[0] || 0;
+          const yMax = options.scales[1] || 100;
+          const scaledZ = ((px.z - yMin) / (yMax - yMin)) * (options.scales[2] || 0.5) + yMin;
+          data.push(scaledZ)
+
+          if (options.style && options.style.colorMap && options.style.colorMap[rData[3]]) {
+            colors.push(...options.style.colorMap[rData[3]])
           } else {
-            colors.push(0.0, .9, 0.0)
+            colors.push(0.0, 0.0, 0.0)
           }
         }
       }

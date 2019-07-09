@@ -51,10 +51,10 @@ class GeoJSON extends Base {
           const data = []
           geojson.features.forEach((f,i) => {
             let px = llPixel(f.geometry.coordinates, 0, this.size)
-            px = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
+            px = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: offsets.z}
             data.push(px.x - offsets.x)
             data.push(-1 * px.y + offsets.y)
-            data.push(0.0025)
+            data.push(px.z)
           })
           resolve(new THREE.Float32BufferAttribute( data, 3 ))
         })

@@ -20,6 +20,6 @@ import ThreeMap from '../lib/threemap';
 
 export default class Map extends Component {
   render() {
-    return (<ThreeMap center={this.props.center} cam_zoom={1} layers={this.props.layers} />);
+    return (<ThreeMap {...this.props} />);
   }
 }

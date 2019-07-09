@@ -24,7 +24,7 @@
     return new Function(argName, funcStr) // eslint-disable-line no-new-func
   };
 
-  self.fetchTile = function({name, url, offsets, coords, size, handler}) {
+  self.fetchTile = function({name, url, offsets, coords, size, handler, options}) {
     const handlerFn = self.getFunc(handler)
     try {
       fetch(url).then(async res => {
@@ -38,7 +38,7 @@
           } else {
               raw = await res.clone().text()
           }
-          const data = handlerFn(raw, offsets, size, coords)
+          const data = handlerFn(raw, offsets, size, coords, options)
           postMessage({ job: 'fetchTileComplete', result: data, url: url, coords: coords, name })
         } else throw new Error('failed to fetch')
       });

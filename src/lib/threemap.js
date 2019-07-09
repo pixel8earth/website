@@ -28,12 +28,13 @@ class ThreeMap extends Component {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
     this.size = 65024 // the base plane size (full extent of the map)
-    this.mercator = new SphericalMercator({size: this.size});
+    this.mercator = new SphericalMercator({size: this.size})
+    this.zOffset = this.props.zOffset || 0
     //ADD SCENE
     this.scene = new THREE.Scene()
     //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
-    this.camera.position.z = 0.5 //this.props.cam_zoom || 100
+    this.camera.position.z = this.zOffset + 1
     this.camera.up = new THREE.Vector3(0,0,1)
     this.camera.lookAt(this.scene.position)
     //ADD RENDERER
@@ -44,8 +45,12 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
-    //this.state.controls.zoomSpeed = 0.25
-    //this.state.controls.maxPolarAngle = 1.35
+    //this.controls.zoomSpeed = 0.25
+    this.controls.minZoom = this.zOffset
+    //this.controls.zoomSpeed = 0.005
+    //this.controls.panSpeed = 0.005
+    //this.controls.maxPolarAngle = 1.35
+    this.controls.target.z = this.zOffset
     this.controls.addEventListener('change', this.renderScene)
     const center = this.getCenter();
     this.setState({ center });
@@ -122,11 +127,11 @@ class ThreeMap extends Component {
   }
 
   renderScene = () => {
-    if (this.camera.position.z > 2) {
+    /*if (this.camera.position.z > 2) {
       this.camera.position.z = 2
       //} else if (this.camera.position.z < -0.25) {
       //this.camera.position.z = -0.25
-    }
+    }*/
     this.renderer.render(this.scene, this.camera)
   }
 
@@ -148,7 +153,7 @@ class ThreeMap extends Component {
 
   getOffsets() {
     var px = llPixel(this.props.center, 0, this.size);
-    px = {x: px[0] - this.size/ 2, y: px[1] - this.size / 2, z: 0.425};
+    px = {x: px[0] - this.size/ 2, y: px[1] - this.size / 2, z: this.zOffset} //z: 0.425};
     return px
   }
 
@@ -300,7 +305,7 @@ class ThreeMap extends Component {
   changeZoom = direction => {
     // granularity: 0.5 is scope.zoomSpeed in mapControls increasing this
     // number increases the amt of zoom change per click
-    const granularity = 0.5;
+    const granularity = 5.0;
     const scale = Math.pow(0.95, granularity);
     direction === 'in'
       ? this.controls.dollyOut(scale)
