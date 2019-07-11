@@ -27,13 +27,12 @@ class PointCloud extends Base {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         vertexColors: THREE.VertexColors,
-        size: 0.0005
+        size: 0.001
       })
   
       this.fetchData(this.url, offsets)
         .then(geom => {
           this.loaded = true
-          console.log(geom)
           const points = new THREE.Points( geom, mat)
           points.position.y = 0
           this.group.add(points)
