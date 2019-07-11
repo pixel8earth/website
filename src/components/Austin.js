@@ -18,7 +18,7 @@ const points = new Layers.PointTiles('lidar',
       }
     },
     visible: true,
-    scales: [130, 350, .5] // min,max,scale
+    scales: [160, 350, .5] // min,max,scale
   }
 )
 
@@ -30,14 +30,20 @@ const tracks = new Layers.GeoJSON('mapillary',
   }
 )
 
-const images = new Layers.ImageTiles('basemap', 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', {domains: ['a', 'b', 'c', 'd']})
+const images = new Layers.ImageTiles('basemap', 
+  'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', 
+  {
+    domains: ['a', 'b', 'c', 'd']
+  }
+)
 
-const mesh = new Layers.PlyTiles('ground-mesh', 'https://pixel8austin.storage.googleapis.com/mesh/ground_buildings/{z}/{x}/{y}.ply.gz', 
+const mesh = new Layers.PlyTiles('ground-mesh', 
+  'https://pixel8austin.storage.googleapis.com/lidar/mesh/ground_buildings/{z}/{x}/{y}.ply.gz',
   {
     wireframe: true,
     opacity: .9,
     color: 0x333888,
-    scales: [130, 350, .5],
+    scales: [160, 350, .5],
     visible: false
   }
 )
@@ -50,7 +56,7 @@ const pc3 = new Layers.PointCloud('cloud3', 'https://pixel8austin.storage.google
 const props = {
   center: [-97.739677,30.257936],
   layers: [ images, points, mesh, tracks, pc1, pc2, pc3 ],
-  zOffset: 130,
+  zOffset: 160,
   camZoom: .5
 }
 
