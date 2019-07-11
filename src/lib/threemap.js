@@ -13,6 +13,7 @@ import WebWorker from '../lib/WebWorker';
 class ThreeMap extends Component {
   constructor() {
     super();
+    this.mounted = false;
     this.layers = [];
     this.groups = [];
     this.loadedTiles = [];
@@ -25,6 +26,7 @@ class ThreeMap extends Component {
   }
 
   componentDidMount() {
+    this.mounted = true;
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
     this.size = 65024 // the base plane size (full extent of the map)
@@ -96,20 +98,31 @@ class ThreeMap extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.layersShowing !== prevState.layersShowing) {
+    if (this.mounted && this.state.layersShowing !== prevState.layersShowing) {
       this.updateTiles()
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
+    this.mounted = false;
+    this.controls.removeEventListener('change', this.renderScene)
+    window.removeEventListener('resize', this.onWindowResize.bind(this))
+    window.removeEventListener('mouseup', this.onUp.bind(this))
+    window.removeEventListener('mousedown', this.onDown.bind(this))
+    window.removeEventListener('mousemove', this.onMove.bind(this))
     this.mount.removeChild(this.renderer.domElement)
-    this.workerPool.forEach(worker => worker.terminate())
+    this.workerPool.forEach(worker => {
+      worker.removeEventListener('message', this.onMessage)
+      worker.terminate()
+    })
   }
 
   // gets messages from workers and delegates to correct layer
   onMessage = e => {
-    const lyr = this.getLayerByName(e.data.name)
-    lyr.receiveMessage(e)
+    if (this.mounted) {
+      const lyr = this.getLayerByName(e.data.name)
+      lyr.receiveMessage(e)
+    }
   }
 
   getLayerByName = name => {
@@ -124,7 +137,9 @@ class ThreeMap extends Component {
   }
 
   renderScene = () => {
-    this.renderer.render(this.scene, this.camera)
+    if (this.mounted) {
+      this.renderer.render(this.scene, this.camera)
+    }
   }
 
   // convert center lat/lon to web mercator tile coords
@@ -158,19 +173,21 @@ class ThreeMap extends Component {
   }
 
   projectToScene(pt) {
-    const canvas = this.renderer.domElement
-    const rect = canvas.getBoundingClientRect();
-    let x = pt[0] - rect.left
-    let y = pt[1] - rect.top
-    x = (x / rect.width) * 2 - 1;
-    y = - (y / rect.height) * 2 + 1;
-    const pos = new THREE.Vector3(x, y, 0.0)
-    pos.unproject(this.camera)
-    pos.sub(this.camera.position).normalize()
-    var distance = -this.camera.position.z / pos.z
-    var scaled = pos.multiplyScalar(distance)
-    var coords = this.camera.position.clone().add(scaled)
-    return this.unproject(coords)
+    if (this.mounted) {
+      const canvas = this.renderer.domElement
+      const rect = canvas.getBoundingClientRect();
+      let x = pt[0] - rect.left
+      let y = pt[1] - rect.top
+      x = (x / rect.width) * 2 - 1;
+      y = - (y / rect.height) * 2 + 1;
+      const pos = new THREE.Vector3(x, y, 0.0)
+      pos.unproject(this.camera)
+      pos.sub(this.camera.position).normalize()
+      var distance = -this.camera.position.z / pos.z
+      var scaled = pos.multiplyScalar(distance)
+      var coords = this.camera.position.clone().add(scaled)
+      return this.unproject(coords)
+    }
   }
 
   project(lnglat) {
@@ -189,121 +206,130 @@ class ThreeMap extends Component {
   }
 
   onUp(e) {
-    //compute the center tile... from controls.target
-    const newCenter = this.getCenter()
-    this.setState({ center: newCenter });
-    const t = pointToTile(newCenter[0], newCenter[1], this.tile_zoom) // thinking that merc or mercator should do this...
-    const newTile = new THREE.Vector3(t[0], t[1], t[2])
+    if (this.mounted) {
+      //compute the center tile... from controls.target
+      const newCenter = this.getCenter()
+      this.setState({ center: newCenter });
+      const t = pointToTile(newCenter[0], newCenter[1], this.tile_zoom) // thinking that merc or mercator should do this...
+      const newTile = new THREE.Vector3(t[0], t[1], t[2])
 
-    if (newTile.x !== this.tile.x || newTile.y !== this.tile.y) {
-      this.tile = newTile
-      this.updateTiles()
+      if (newTile.x !== this.tile.x || newTile.y !== this.tile.y) {
+        this.tile = newTile
+        this.updateTiles()
+      }
     }
   }
 
   updateTiles(e) {
-    const buf = 3
-    if (this.controls && this.controls.getPolarAngle() < 0.0) {
-      /*const ul = {x:-1,y:-1,z:-1}
-      const ur = {x:1,y:-1,z:-1}
-      const lr = {x:1,y:1,z:1}
-      const ll = {x:-1,y:1,z:1}
+    if (this.mounted) {
+      const buf = 3
+      if (this.controls && this.controls.getPolarAngle() < 0.0) {
+        /*const ul = {x:-1,y:-1,z:-1}
+        const ur = {x:1,y:-1,z:-1}
+        const lr = {x:1,y:1,z:1}
+        const ll = {x:-1,y:1,z:1}
 
-      // NOTe - this fails as low polar angles, it needs to see the baseplane
-      // when this fails i think we convert to the other tile loading...
-      var corners = [ul, ur, lr, ll, ul].map( corner => {
-          this.raycaster.setFromCamera(corner, this.camera);
-          return this.raycaster.intersectObject(this.plane)[0].point;
-      })
+        // NOTe - this fails as low polar angles, it needs to see the baseplane
+        // when this fails i think we convert to the other tile loading...
+        var corners = [ul, ur, lr, ll, ul].map( corner => {
+            this.raycaster.setFromCamera(corner, this.camera);
+            return this.raycaster.intersectObject(this.plane)[0].point;
+        })
 
-      const box = {
-        "type": "Polygon",
-        "coordinates": [corners.map( c => this.unproject(c) )]
-      }
-
-      // using tile-cover, figure out which tiles are inside viewshed and put in zxy order
-      var bboxTiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
-          .map(([x,y,z]) => new THREE.Vector3(x, y, z));
-
-      // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
-      this.updateLayers(bboxTiles)*/
-
-      const canvas = this.renderer.domElement
-      const rect = canvas.getBoundingClientRect();
-      const ll = this.projectToScene([rect.left, rect.top])
-      const ur = this.projectToScene([rect.right, rect.bottom])
-      const coords = [ll, [ll[0], ur[1]], ur, [ur[0], ll[1]], ll]
-      //const coords = [[ul[0], lr[1]], ul, [lr[0], ul[1]], lr, [ul[0], lr[1]]]
-      const box = {
-        "type": "Polygon",
-        "coordinates": [coords]
-      }
-      const tiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
-        .map(([x,y,z]) => new THREE.Vector3(x, y, z))
-
-      const closeTiles = []
-      tiles.forEach(t => {
-        const dx = Math.abs(this.tile.x - t.x)
-        const dy = Math.abs(this.tile.y - t.y)
-        if (dx <= buf && dy <= buf) {
-          closeTiles.push(t)
+        const box = {
+          "type": "Polygon",
+          "coordinates": [corners.map( c => this.unproject(c) )]
         }
-      })
-      this.updateLayers(closeTiles)
-    } else {
-      const minx = this.tile.x - (buf) // extra tile in x dir
-      const maxx = this.tile.x + (buf) // extra tile in x dir
-      const miny = this.tile.y - buf
-      const maxy = this.tile.y + buf
 
-      const newTiles = []
-      for ( let x = minx; x < maxx+1; x++ ) {
-        for ( let y = miny; y < maxy+1; y++ ) {
-          newTiles.push(new THREE.Vector3(x, y, 18))
+        // using tile-cover, figure out which tiles are inside viewshed and put in zxy order
+        var bboxTiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
+            .map(([x,y,z]) => new THREE.Vector3(x, y, z));
+
+        // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
+        this.updateLayers(bboxTiles)*/
+
+        const canvas = this.renderer.domElement
+        const rect = canvas.getBoundingClientRect();
+        const ll = this.projectToScene([rect.left, rect.top])
+        const ur = this.projectToScene([rect.right, rect.bottom])
+        const coords = [ll, [ll[0], ur[1]], ur, [ur[0], ll[1]], ll]
+        //const coords = [[ul[0], lr[1]], ul, [lr[0], ul[1]], lr, [ul[0], lr[1]]]
+        const box = {
+          "type": "Polygon",
+          "coordinates": [coords]
         }
+        const tiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
+          .map(([x,y,z]) => new THREE.Vector3(x, y, z))
+
+        const closeTiles = []
+        tiles.forEach(t => {
+          const dx = Math.abs(this.tile.x - t.x)
+          const dy = Math.abs(this.tile.y - t.y)
+          if (dx <= buf && dy <= buf) {
+            closeTiles.push(t)
+          }
+        })
+        this.updateLayers(closeTiles)
+      } else {
+        const minx = this.tile.x - (buf) // extra tile in x dir
+        const maxx = this.tile.x + (buf) // extra tile in x dir
+        const miny = this.tile.y - buf
+        const maxy = this.tile.y + buf
+
+        const newTiles = []
+        for ( let x = minx; x < maxx+1; x++ ) {
+          for ( let y = miny; y < maxy+1; y++ ) {
+            newTiles.push(new THREE.Vector3(x, y, 18))
+          }
+        }
+        this.updateLayers(newTiles)
       }
-      this.updateLayers(newTiles)
     }
   }
 
   updateLayers(tiles) {
-    console.log(this.state.layersShowing)
-    this.layers.forEach(l => {
-      if (this.state.layersShowing && this.state.layersShowing.indexOf(l.name) > -1) {
-        l.update({
-          tiles,
-          scene: this.scene,
-          offsets: this.offsets,
-          workerPool: this.workerPool,
-          render: () => this.renderScene()
-        });
-      }
-    });
+    if (this.mounted) {
+      this.layers.forEach(l => {
+        if (this.state.layersShowing && this.state.layersShowing.indexOf(l.name) > -1) {
+          l.update({
+            tiles,
+            scene: this.scene,
+            offsets: this.offsets,
+            workerPool: this.workerPool,
+            render: () => this.renderScene()
+          });
+        }
+      });
+    }
   }
 
   changeZoom = direction => {
-    // granularity: 0.5 is scope.zoomSpeed in mapControls increasing this
-    // number increases the amt of zoom change per click
-    const granularity = 5.0;
-    const scale = Math.pow(0.95, granularity);
-    direction === 'in'
-      ? this.controls.dollyOut(scale)
-      : this.controls.dollyIn(scale);
-    this.controls.update();
+    if (this.mounted) {
+      // granularity: 0.5 is scope.zoomSpeed in mapControls increasing this
+      // number increases the amt of zoom change per click
+      const granularity = 5.0;
+      const scale = Math.pow(0.95, granularity);
+      direction === 'in'
+        ? this.controls.dollyOut(scale)
+        : this.controls.dollyIn(scale);
+      this.controls.update();
+    }
   }
 
   toggleLayerVisibility = group => {
-    let showing = [...this.state.layersShowing];
-    const index = showing.indexOf(group.name);
-    if (index < 0) {
-      showing.push(group.name);
-      this.scene.add(group);
-    } else {
-      showing.splice(index, 1);
-      this.scene.remove(group);
+    if (this.mounted) {
+      let showing = [...this.state.layersShowing];
+      const index = showing.indexOf(group.name);
+      if (index < 0) {
+        showing.push(group.name);
+        this.scene.add(group);
+      } else {
+        showing.splice(index, 1);
+        this.scene.remove(group);
+      }
+      this.setState({ layersShowing: showing });
+      this.renderScene();
     }
-    this.renderScene();
-    this.setState({ layersShowing: showing });
   };
 
   render() {

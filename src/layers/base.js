@@ -16,15 +16,14 @@ class Base {
     this.urlTemplate = url
     this.options = { ...defaultOptions, ...options }
     this.color = this.options.color
-    this.size = this.options.size 
+    this.size = this.options.size
     this.coordsList = []
     this.fetchingUrls = []
     this.group = new THREE.Group()
-    this.group.name = this.name
   }
 
   receiveMessage = async (e) => {
-    const { result, job, error, url, coords } = e.data
+    const { job, error, url} = e.data
     if (job === 'fetchTileComplete' && !error) {
       const fetchIndex = this.fetchingUrls.indexOf(url)
       if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1)
@@ -33,7 +32,7 @@ class Base {
     }
   }
 
-  removeOldTiles = (tiles, key) => {
+  removeOldTiles = tiles => {
     const stringTiles = tiles.map( t => `${t.x}-${t.y}-${t.z}`)
     const toRemove = this.loadedTiles.reduce((acc, item) => {
       // remove uuid from tile name to compare to tiles coming in on update
@@ -55,11 +54,10 @@ class Base {
 
   update = async ({ tiles, offsets, render, workerPool }) => {
     this.coordsList = [];
-    const key = Date.now().toString()
 
     tiles.forEach((t, i) => {
-      const coords = [t.x, t.y, t.z].join('-')
-      this.coordsList.push(coords)
+      const coords = [t.x, t.y, t.z].join('-');
+      this.coordsList.push(coords);
       const url = this.urlTemplate.replace(/{[^{}]+}/g, key => t[key.replace(/[{}]+/g, "")] || "")
       const currentlyFetching = this.fetchingUrls.indexOf(url) > -1
 
@@ -77,12 +75,11 @@ class Base {
             const wIndex = i % workerPool.length
             workerPool[wIndex].postMessage({
               name: this.name,
-              job: 'fetchTile', 
+              job: 'fetchTile',
               size: this.size,
               handler: this.fetchHandler.toString(),
               options: this.options,
-              url, 
-              key,
+              url,
               offsets,
               coords
             })
@@ -92,7 +89,7 @@ class Base {
         }
       }
       if (i === (tiles.length - 1)) {
-        this.removeOldTiles(tiles, key)
+        this.removeOldTiles(tiles)
       }
     });
   }
@@ -101,6 +98,7 @@ class Base {
   fetchHandler = (raw, offsets, size) => {}
 
   getGroup() {
+    this.group.name = this.name;
     return this.group;
   }
 }

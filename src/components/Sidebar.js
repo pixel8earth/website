@@ -22,7 +22,7 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { groups, showing, expanded } = this.state;
+    const { groups, expanded } = this.state;
     return (
       !expanded ?
         <div style={styles.collapsed} onClick={this.toggleExpansion}>
@@ -34,14 +34,12 @@ class Sidebar extends React.Component {
             <img src={icon} style={styles.pixel8Icon} alt="pixel8 logo" />
           </div>
           { groups.map( (g, i) => {
-            const shown = ~(showing || []).indexOf(g.name);
+            const shown = ~(this.props.showing || []).indexOf(g.name);
             return (
               <React.Fragment key={i}>
-                {i === 0 && <hr style={styles.hr} />}
                 <div onClick={() => this.props.toggle(g)} style={shown ? styles.groupShown : styles.group}>
                   {g.name}
                 </div>
-                <hr style={styles.hr} />
               </React.Fragment>
             );
           })}
@@ -66,13 +64,18 @@ const styles = {
   },
   group: {
     padding: '10px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    color: '#A9A9A9',
+    fontWeight: 'bold',
+    borderBottom: '2px solid #2f4d6a'
   },
   groupShown: {
     padding: '10px',
     cursor: 'pointer',
     fontWeight: 'bold',
+    color: '#fff',
     backgroundColor: '#263f59',
+    borderBottom: '2px solid #2f4d6a'
   },
   imgWrap: {
     textAlign: 'center',
@@ -88,7 +91,8 @@ const styles = {
     padding: '5px'
   },
   hr: {
-    margin: 0
+    margin: 0,
+    color: '#808080'
   }
 };
 

@@ -15,12 +15,12 @@ class ImageTiles extends Base {
     tiles.forEach( async (t,i) => {
       const coords = [t.x, t.y, t.z].join('-')
       coordsList.push(coords)
-      if (this.options.domains) {
-        const {domains} = this.options
-        t['s'] = this.options.domains[i % this.options.domains.length]
+      const { domains } = this.options
+      if (domains) {
+        t['s'] = domains[i % domains.length]
       }
       const url = this.urlTemplate.replace(/{[^{}]+}/g, key => t[key.replace(/[{}]+/g, "")] || "a");
-      const currentlyFetching = this.fetchingUrls.indexOf(url) > -1; 
+      const currentlyFetching = this.fetchingUrls.indexOf(url) > -1;
       const lt = this.loadedTiles.map(item => item.split('-').slice(0, 3).join('-'));
       const loaded = lt.indexOf(coords) > 0;
       if (!loaded) {
@@ -52,7 +52,7 @@ class ImageTiles extends Base {
               this.addTile(coords, grid)
               render()
             })
-            
+
           } catch (err) {
             console.log('Error fetching tile: ', err)
           }
