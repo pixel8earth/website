@@ -78,7 +78,7 @@ class PointCloud extends Base {
                 const zMin = this.options.scales[0] || 130;
                 const zMax = this.options.scales[1] || 350;
                 const scaledZ = ((pt.z - zMin) / (zMax - zMin)) * (this.options.scales[2] || 0.5) + zMin;
-                points.vertices.push(new THREE.Vector3(pt.x - offsets.x, pt.y - offsets.y, scaledZ));
+                points.vertices.push(new THREE.Vector3(pt.x - offsets.x, -pt.y + offsets.y, scaledZ));
                 points.colors.push(color);
               }
             }
