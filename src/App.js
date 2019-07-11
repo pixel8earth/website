@@ -4,6 +4,7 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import Austin from './components/Austin';
 import AustinClouds from './components/AustinClouds';
 import Boulder from './components/Boulder';
+import BoulderClouds from './components/BoulderClouds';
 import Home from './components/Home';
 import './App.css';
 
@@ -22,6 +23,7 @@ function App() {
         <Route exact path="/" component={Home} />
         <Route path="/austin" component={Austin} />
         <Route path="/austinclouds" component={AustinClouds} />
+        <Route path="/boulderclouds" component={BoulderClouds} />
         <Route path="/boulder" component={Boulder} />
       </div>
     </Router>
