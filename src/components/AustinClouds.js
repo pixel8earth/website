@@ -9,7 +9,8 @@ const scales = [160, 350, .5]
 const basemap = new Layers.ImageTiles('basemap', 
   'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', 
   {
-    domains: ['a', 'b', 'c', 'd']
+    domains: ['a', 'b', 'c', 'd'],
+    visible: false
   }
 )
 
@@ -32,35 +33,24 @@ const points = new Layers.PointTiles('lidar',
   }
 )
 
-const opts = {proj: 'EPSG:32614', visible: false, scales}
+const opts = {proj: 'EPSG:32614', visible: true, scales}
 
 const collects = [
-  '1561993539276',
-  '1561993323744',
-  '1561993935331',
-  '1562091866831',
-  '1561993985425',
-  '1561993019219',
-  '1562091122579',
-  '1561993911215',
-  '1562091031534',
-  '1561993577452',
-  '1561993502445',
-  '1561993764361',
-  '1562090922948',
-  '1561994036550',
-  '1561994012859',
-  '1561993871722',
-  '1561993637518',
-  '1561994294655',
-  '1561993727406'
+  '1562868948939',
+  '1562869030524', 
+  '1562869106351', 
+  '1562869165006', 
+  '1562869326666',
+  '1562869429612', 
+  '1562869503401', 
+  '1562869606715',
 ]
 
 const layers = collects.map((s,i) => {
   if (i === 0) {
-    return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo.ply`, {...opts, visible: true})
+    return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo-model.csv`, {...opts, visible: true})
   }
-  return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo.ply`, opts)
+  return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo-model.csv`, opts)
 })
 
 const props = {
