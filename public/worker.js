@@ -20,6 +20,7 @@
   self.getFunc = function (funcStr) {
     // from: https://blog.scottlogic.com/2011/02/24/web-workers-part-3-creating-a-generic-worker.html
     var argName = funcStr.substring(funcStr.indexOf("(") + 1, funcStr.indexOf(")"))
+    console.log('NAME', argName)
     funcStr = funcStr.substring(funcStr.indexOf("{") + 1, funcStr.lastIndexOf("}"))
     return new Function(argName, funcStr) // eslint-disable-line no-new-func
   };
