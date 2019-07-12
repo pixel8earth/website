@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import Base from './base'
-import worker from '../lib/lidar_worker';
 import WebWorker from '../lib/WebWorker';
 
 class PointTiles extends Base {
@@ -25,7 +24,7 @@ class PointTiles extends Base {
 
     this.workerPool = [];
     for (let i = 0; i < 4; i++) {
-      const w = new WebWorker(worker, { type: "module" });
+      const w = new WebWorker('lidar_worker.js', { type: "module" });
       w.addEventListener('message', this.receiveMessage, false)
       this.workerPool.push(w)
     }

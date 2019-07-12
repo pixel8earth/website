@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import Base from './base'
-import worker from '../lib/mesh_worker';
 import WebWorker from '../lib/WebWorker';
 
 class PlyTiles extends Base {
@@ -10,7 +9,7 @@ class PlyTiles extends Base {
     super(name, url, options)
     this.workerPool = [];
     for (let i = 0; i < 4; i++) {
-      const w = new WebWorker(worker, { type: "module" });
+      const w = new WebWorker('mesh_worker.js', { type: "module" });
       w.addEventListener('message', this.receiveMessage, false)
       this.workerPool.push(w)
     }

@@ -1,8 +1,8 @@
 export default class WebWorker {
   constructor(worker) {
-    const code = worker.toString();
-    const blob = new Blob(["(" + code + ")()"]);
+    //const code = worker.toString();
+    //const blob = new Blob(["(" + code + ")()"]);
     //return new Worker(URL.createObjectURL(blob));
-    return new Worker('lidar_worker.js');
+    return new Worker(worker);
   }
 }
