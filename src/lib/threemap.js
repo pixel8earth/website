@@ -7,8 +7,6 @@ import { getBaseLog, pointToTile, llPixel } from './utils';
 import Sidebar from '../components/Sidebar';
 import ZoomControl from '../components/ZoomControl';
 import PositionDisplay from '../components/PositionDisplay';
-import worker from '../lib/worker';
-import WebWorker from '../lib/WebWorker';
 
 class ThreeMap extends Component {
   constructor() {
@@ -82,13 +80,6 @@ class ThreeMap extends Component {
     })
     this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
 
-    this.workerPool = [];
-    for (let i = 0; i < 4; i++) {
-      const w = new WebWorker(worker, { type: "module" });
-      w.addEventListener('message', this.onMessage, false)
-      this.workerPool.push(w)
-    }
-
     window.addEventListener('resize', this.onWindowResize.bind(this), false)
     window.addEventListener('mouseup', this.onUp.bind(this), false)
     window.addEventListener('mousedown', this.onDown.bind(this), false)
@@ -111,18 +102,6 @@ class ThreeMap extends Component {
     window.removeEventListener('mousedown', this.onDown.bind(this))
     window.removeEventListener('mousemove', this.onMove.bind(this))
     this.mount.removeChild(this.renderer.domElement)
-    this.workerPool.forEach(worker => {
-      worker.removeEventListener('message', this.onMessage)
-      worker.terminate()
-    })
-  }
-
-  // gets messages from workers and delegates to correct layer
-  onMessage = e => {
-    if (this.mounted) {
-      const lyr = this.getLayerByName(e.data.name)
-      lyr.receiveMessage(e)
-    }
   }
 
   getLayerByName = name => {
@@ -295,7 +274,6 @@ class ThreeMap extends Component {
             tiles,
             scene: this.scene,
             offsets: this.offsets,
-            workerPool: this.workerPool,
             render: () => this.renderScene()
           });
         }

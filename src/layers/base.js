@@ -52,7 +52,7 @@ class Base {
   }
 
 
-  update = async ({ tiles, offsets, render, workerPool }) => {
+  update = async ({ tiles, offsets, render }) => {
     this.coordsList = [];
 
     tiles.forEach((t, i) => {
@@ -72,8 +72,8 @@ class Base {
           try {
             this.fetchingUrls.push(url);
             if (!this.renderScene) this.renderScene = render
-            const wIndex = i % workerPool.length
-            workerPool[wIndex].postMessage({
+            const wIndex = i % this.workerPool.length
+            this.workerPool[wIndex].postMessage({
               name: this.name,
               job: 'fetchTile',
               size: this.size,
