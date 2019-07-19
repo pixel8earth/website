@@ -60,8 +60,9 @@ class PointCloud extends Base {
         .then(raw => {
           // create an array of vertices
           const points = new THREE.Geometry();
+          const nHead = ext === 'ply' ? 10 : 1;
           raw.split('\n').forEach( (line, i) => {
-            if (i >= 10) {
+            if (i >= nHead) {
               const p = this.splitLine(ext, line)
               if (!isNaN(p[0])) {
                 // NOTE: corrects for order of X/Y/Z in source data

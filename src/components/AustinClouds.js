@@ -4,13 +4,13 @@ import Layers from '../layers'
 import shaders from '../layers/shaders'
 
 // minz, maxz, scale factor
-const scales = [160, 350, .5]
+const scales = [130, 350, .5]
 
 const basemap = new Layers.ImageTiles('basemap', 
   'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', 
   {
     domains: ['a', 'b', 'c', 'd'],
-    visible: false
+    visible: true
   }
 )
 
@@ -47,17 +47,15 @@ const collects = [
 ]
 
 const layers = collects.map((s,i) => {
-  if (i === 0) {
-    return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo-model.csv`, {...opts, visible: true})
-  }
-  return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo-model.csv`, opts)
+  return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo.ply`, opts)
 })
 
 const props = {
   center: [-97.739677,30.257936],
-  layers: [basemap, points, ...layers],
+  layers: [...layers, basemap],
   zOffset: scales[0],
-  camZoom: .5
+  camZoom: .5,
+  showSidebar: true
 }
 
 function Austin() {

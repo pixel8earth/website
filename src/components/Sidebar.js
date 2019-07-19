@@ -14,7 +14,7 @@ class Sidebar extends React.Component {
 
   componentDidMount() {
     this.mounted = true;
-    this.setState({ groups: this.props.groups });
+    this.setState({ groups: this.props.groups, expanded: this.props.expanded });
   }
 
   toggleExpansion = () => {

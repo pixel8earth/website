@@ -45,10 +45,7 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
-    //this.controls.zoomSpeed = 0.25
     this.controls.minZoom = this.zOffset
-    //this.controls.zoomSpeed = 0.005
-    //this.controls.panSpeed = 0.005
     //this.controls.maxPolarAngle = 1.35
     this.controls.target.z = this.zOffset
     this.controls.addEventListener('change', this.renderScene)
@@ -66,6 +63,15 @@ class ThreeMap extends Component {
     //Add light for meshes
     const light = new THREE.HemisphereLight( 0x443333, 0xffffff, 1 )
     this.scene.add(light);
+
+    if (this.props.showGrid) {
+      var plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(5*5, 5*5, 100, 100),
+        new THREE.MeshBasicMaterial({color: 0x203020, wireframe: true})
+      );
+      plane.position.z = this.zOffset
+      this.scene.add(plane);
+    }
 
     this.tile = this.centerTile()
     this.offsets = this.getOffsets()
@@ -311,9 +317,11 @@ class ThreeMap extends Component {
   };
 
   render() {
+    const { showSidebar } = this.props
     return(
       <div style={{ display: 'inline-flex' }}>
         <Sidebar
+          expanded={showSidebar}
           groups={this.groups}
           showing={this.state.layersShowing}
           toggle={this.toggleLayerVisibility}
