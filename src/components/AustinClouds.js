@@ -36,14 +36,14 @@ const points = new Layers.PointTiles('lidar',
 const opts = {proj: 'EPSG:32614', visible: true, scales}
 
 const collects = [
-  '1562868948939',
+  //'1562868948939',
   '1562869030524',
   '1562869106351',
-  '1562869165006',
-  '1562869326666',
+  //'1562869165006',
+  //'1562869326666',
   '1562869429612',
   '1562869503401',
-  '1562869606715',
+  //'1562869606715',
 ]
 
 const layers = collects.map((s,i) => {
@@ -57,8 +57,9 @@ const props = {
   center: [-97.739677,30.257936],
   layers: [...layers],
   zOffset: 140,
-  camZoom: .5,
-  proj: 'EPSG:32614'
+  camZoom: 75,
+  proj: 'EPSG:32614',
+  showSidebar: true
 }
 
 function Austin() {

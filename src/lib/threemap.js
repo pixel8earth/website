@@ -66,8 +66,7 @@ class ThreeMap extends Component {
     // positive X is to the user's right
     // positive Y is up
     // positive Z is behind the user
-    console.log('zOffset ', this.zOffset)
-    this.camera.position.y = this.zOffset + (this.props.camZoom || 1);
+    //this.camera.position.y = this.zOffset + (this.props.camZoom || 1);
     this.camera.lookAt(this.scene.position)
     //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer()
@@ -112,7 +111,7 @@ class ThreeMap extends Component {
         this.geo.add(group);
       }
     })
-    this.camera.position.y = 25;
+    this.camera.position.y = this.props.camZoom || 25;
     this.camera.updateMatrix();
     this.root.updateMatrixWorld();
     this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
@@ -349,9 +348,11 @@ class ThreeMap extends Component {
   };
 
   render() {
+    const { showSidebar } = this.props
     return(
       <div style={{ display: 'inline-flex' }}>
         <Sidebar
+          expanded={showSidebar}
           groups={this.groups}
           showing={this.state.layersShowing}
           toggle={this.toggleLayerVisibility}
