@@ -29,6 +29,7 @@ class PointCloud extends Base {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         vertexColors: THREE.VertexColors,
+        color: this.color ? this.color : null,
         size: 0.001
       })
   
