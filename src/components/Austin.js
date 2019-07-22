@@ -52,13 +52,12 @@ const mesh = new Layers.PlyTiles('ground-mesh',
 )
 
 const opts = {proj: 'EPSG:32614', visible: false, scales}
-const pc1 = new Layers.PointCloud('cloud1', 'https://pixel8austin.storage.googleapis.com/collects/1561994294655/geo.ply', opts)
-const pc2 = new Layers.PointCloud('cloud2', 'https://pixel8austin.storage.googleapis.com/collects/1561993727406/geo.ply', opts)
-const pc3 = new Layers.PointCloud('cloud3', 'https://pixel8austin.storage.googleapis.com/collects/1562091554229/geo.ply', opts)
+const pc1 = new Layers.PointCloud('cloud1', 'http://54.91.27.23/clouds/1562869429612/model.ply', opts)
+const pc2 = new Layers.PointCloud('cloud2', 'http://54.91.27.23/clouds/1562869503401/model.ply', opts)
 
 const props = {
   center: [-97.739677,30.257936],
-  layers: [ pc1, pc2, pc3 ],
+  layers: [ pc1, pc2 ],
   zOffset: scales[0],
   camZoom: .5
 }

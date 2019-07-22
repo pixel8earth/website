@@ -33,12 +33,12 @@ class PointCloud extends Base {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         vertexColors: THREE.VertexColors,
-        size: 0.001
+        size: 0.15
       })
 
       this.fetchData(this.url, offsets)
-        .then(({ data, transforms, poses }) => {
-          const { com_i, com_f, rmat, scale } = transforms;
+        .then(({ data, poses }) => {
+          const { com_i, com_f, rmat, scale } = poses.transforms;
           const r = [rmat[0], rmat[1], rmat[2], 0,
                     rmat[3], rmat[4], rmat[5], 0,
                     rmat[6], rmat[7], rmat[8], 0,
@@ -96,7 +96,7 @@ class PointCloud extends Base {
   }
 
   createOffsetsAndPoints = (cloudData, poses) => {
-    const posesLength = poses.map(p => p.image).length;
+    const posesLength = poses.poses.map(p => p.image).length;
     const data = cloudData; // remove camera poses from data -> cloudData.slice(this.poses.length);
     // use the avg as the offsets for the first cloud
     // where the arg passed to _computeOffsets is NOT a camera pose
@@ -120,39 +120,17 @@ class PointCloud extends Base {
 
   fetchData(url, offsets) {
     return new Promise(async (resolve, reject) => {
-      const parts = url.split('.');
-      const ext = parts[parts.length - 1];
-      const parts2 = url.split('/');
-      const streamId = parts2[parts2.length - 2];
-      const transforms = await fetch(`https://pixel8austin.storage.googleapis.com/collects/${streamId}/transforms.json`)
-        .then( async res => {
-          if (!res.ok) {
-            return reject('not found');
-          }
-          return res.json();
-        });
+      const urlObj = new URL(url)
+      const parts = url.split('/');
+      const streamId = parts[parts.length - 2];
 
-      const poses = await fetch(`https://pixel8austin.storage.googleapis.com/collects/${streamId}/sfm.sfm`)
+      const poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
         .then( async res => {
           if (!res.ok) {
             return reject('not found');
           }
           return res.json();
         })
-        .then(data => {
-          const poses = data.poses.reduce((acc, pose) => {
-            const view = data.views.find(view => view.poseId === pose.poseId);
-            const splitPath = view.path.split('/');
-            const imageName = splitPath[splitPath.length - 1];
-            acc.push({
-              image: imageName,
-              rotation: pose.pose.transform.rotation.map(r => parseFloat(r)),
-              center: pose.pose.transform.center.map(r => parseFloat(r))
-            });
-            return acc;
-          }, [])
-          return poses;
-        });
 
       this.geo.position.set(-offsets.x, -offsets.y, -offsets.z);
       this.geo.updateMatrix();
@@ -206,7 +184,7 @@ class PointCloud extends Base {
           //   }
           // })
 
-          resolve({ data, transforms, poses })
+          resolve({ data, poses })
         })
         .catch(reject)
     })
