@@ -30,9 +30,7 @@ class ImageTiles extends Base {
           try {
             this.fetchingUrls.push(url);
             if (!this.renderScene) this.renderScene = render;
-            const tileSize = 131 ; //this.size/(Math.pow(2,18));
-
-            console.log(tileSize)
+            const tileSize = 131 // this.size/(Math.pow(2,18));
 
             this.loader.load(url, map => {
               const mat = new THREE.MeshBasicMaterial({ map })
@@ -51,8 +49,9 @@ class ImageTiles extends Base {
               grid.position.x = utm[1]
               grid.position.y = offsets.z
               grid.position.z = utm[0]
-
-              grid.rotateX(Math.PI / 2);
+              grid.rotateX(Math.PI/2)
+              grid.rotateY(Math.PI)
+              grid.rotateZ(Math.PI/2)
 
               this.cachedTiles[coords] = grid;
               this.addTile(coords, grid)
