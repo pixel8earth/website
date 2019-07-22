@@ -48,8 +48,9 @@ class ImageTiles extends Base {
               grid.position.x = utm[1]
               grid.position.y = offsets.z
               grid.position.z = utm[0]
-
-              grid.rotateX(Math.PI / 2);
+              grid.rotateX(Math.PI/2)
+              grid.rotateY(Math.PI)
+              grid.rotateZ(Math.PI/2)
 
               this.cachedTiles[coords] = grid;
               this.addTile(coords, grid)
