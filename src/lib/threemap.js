@@ -55,7 +55,6 @@ class ThreeMap extends Component {
     this.geo.position.x = -xyOffset[1];
     this.geo.position.y = -this.zOffset;
     this.geo.updateMatrix();
-    console.log('geo pos', this.geo.position);
 
     this.root.add(this.geo);
     this.root.updateMatrixWorld();
@@ -164,9 +163,11 @@ class ThreeMap extends Component {
     return {x: tile[0], y: tile[1], z: tile[2]}
   }
 
-  getCenter(){
-    var pt = this.controls.target;
-    return this.unproject(pt);
+  getCenter() {
+    // IMPORTANT to clone target here, as we do not want to disrupt any scene/group matrices
+    var pt = this.controls.target.clone();
+    const utmPoint = this.geo.localToWorld(pt);
+    return this.unproject(utmPoint);
   }
 
   getZoom() {
