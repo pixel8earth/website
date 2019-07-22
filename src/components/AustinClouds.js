@@ -48,9 +48,9 @@ const collects = [
 
 const layers = collects.map((s,i) => {
   if (i === 0) {
-    return new Layers.PointCloud(s, `http://54.91.27.23/clouds/${s}/model.ply`, {...opts, visible: true})
+    return new Layers.PointCloud(s, `http://localhost:3000/clouds/${s}/model.ply`, {...opts, visible: true})
   }
-  return new Layers.PointCloud(s, `http://54.91.27.23/clouds/${s}/model.ply`, opts)
+  return new Layers.PointCloud(s, `http://localhost:3000/clouds/${s}/model.ply`, opts)
 })
 
 const props = {
