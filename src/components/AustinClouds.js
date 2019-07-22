@@ -53,9 +53,20 @@ const layers = collects.map((s,i) => {
   return new Layers.PointCloud(s, `http://localhost:3000/clouds/${s}/model.ply`, opts)
 })
 
+const geojsonLayers = collects.map((s,i) => {
+  return new Layers.GeoJSON(`${s}-gps`,
+    `http://localhost/~chelm/hdiz/wrld_expo/notebooks/georef-theory/austin_cams/${s}.geojson`,
+    {
+      color: 0xfff000,
+      feature_size: 0.75,
+      visible: false
+    }
+  )
+})
+
 const props = {
   center: [-97.739677,30.257936],
-  layers: [...layers],
+  layers: [...layers, ...geojsonLayers],
   zOffset: 140,
   camZoom: 75,
   proj: 'EPSG:32614',

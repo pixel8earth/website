@@ -206,10 +206,8 @@ class ThreeMap extends Component {
     }
   }
 
-  project(lnglat) {
-    let px = this.mercator.px(lnglat,0);
-    px = {x:px[0]-this.size/2, y:px[1]-this.size/2, z: 0};
-    return px
+  project(lngLat) {
+    return proj4('EPSG:4326', this.props.proj).forward(lngLat);
   }
 
   onMove(e) {
@@ -311,6 +309,7 @@ class ThreeMap extends Component {
             tiles,
             scene: this.scene,
             offsets: this.offsets,
+            project: this.project.bind(this),
             render: () => this.renderScene()
           });
         }
