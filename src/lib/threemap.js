@@ -51,6 +51,7 @@ class ThreeMap extends Component {
     this.scene.add(this.root);
     // Geo Group setup to adjust for offsets
     const xyOffset = proj4('EPSG:4326', this.props.proj).forward(this.props.center);
+    console.log(this.props.center, xyOffset)
     this.geo.position.z = -xyOffset[0];
     this.geo.position.x = -xyOffset[1];
     this.geo.position.y = -this.zOffset;
@@ -182,11 +183,7 @@ class ThreeMap extends Component {
   }
 
   unproject(pt) {
-    const y = -pt.y + (pt.y * 0.15) // scales y to slow down the y dir center tile math
-    var lngLat = this.mercator.ll([pt.x + this.size / 2, y + this.size / 2 ], 0);
-    lngLat[0] += this.props.center[0]
-    lngLat[1] += this.props.center[1]
-    return lngLat.map(function(num){return num.toFixed(5)/1})
+    return proj4('EPSG:4326', this.props.proj).inverse([-pt.z, -pt.x]);
   }
 
   projectToScene(pt) {
@@ -237,69 +234,20 @@ class ThreeMap extends Component {
 
   updateTiles(e) {
     if (this.mounted) {
-      const buf = 3
-      if (this.controls && this.controls.getPolarAngle() < 0.0) {
-        /*const ul = {x:-1,y:-1,z:-1}
-        const ur = {x:1,y:-1,z:-1}
-        const lr = {x:1,y:1,z:1}
-        const ll = {x:-1,y:1,z:1}
+      const buf = 2
+      const minx = this.tile.x - (buf) // extra tile in x dir
+      const maxx = this.tile.x + (buf) // extra tile in x dir
+      const miny = this.tile.y - buf
+      const maxy = this.tile.y + buf
 
-        // NOTe - this fails as low polar angles, it needs to see the baseplane
-        // when this fails i think we convert to the other tile loading...
-        var corners = [ul, ur, lr, ll, ul].map( corner => {
-            this.raycaster.setFromCamera(corner, this.camera);
-            return this.raycaster.intersectObject(this.plane)[0].point;
-        })
-
-        const box = {
-          "type": "Polygon",
-          "coordinates": [corners.map( c => this.unproject(c) )]
+      const newTiles = []
+      for ( let x = minx; x < maxx+1; x++ ) {
+        for ( let y = miny; y < maxy+1; y++ ) {
+          newTiles.push(new THREE.Vector3(x, y, 18))
         }
-
-        // using tile-cover, figure out which tiles are inside viewshed and put in zxy order
-        var bboxTiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
-            .map(([x,y,z]) => new THREE.Vector3(x, y, z));
-
-        // TODO protect the length of tiles here. At low angles and high zooms this number of tiles gets BIGGG
-        this.updateLayers(bboxTiles)*/
-
-        const canvas = this.renderer.domElement
-        const rect = canvas.getBoundingClientRect();
-        const ll = this.projectToScene([rect.left, rect.top])
-        const ur = this.projectToScene([rect.right, rect.bottom])
-        const coords = [ll, [ll[0], ur[1]], ur, [ur[0], ll[1]], ll]
-        //const coords = [[ul[0], lr[1]], ul, [lr[0], ul[1]], lr, [ul[0], lr[1]]]
-        const box = {
-          "type": "Polygon",
-          "coordinates": [coords]
-        }
-        const tiles = cover.tiles(box,{min_zoom: this.tile_zoom, max_zoom: this.tile_zoom})
-          .map(([x,y,z]) => new THREE.Vector3(x, y, z))
-
-        const closeTiles = []
-        tiles.forEach(t => {
-          const dx = Math.abs(this.tile.x - t.x)
-          const dy = Math.abs(this.tile.y - t.y)
-          if (dx <= buf && dy <= buf) {
-            closeTiles.push(t)
-          }
-        })
-        this.updateLayers(closeTiles)
-      } else {
-        const minx = this.tile.x - (buf) // extra tile in x dir
-        const maxx = this.tile.x + (buf) // extra tile in x dir
-        const miny = this.tile.y - buf
-        const maxy = this.tile.y + buf
-
-        const newTiles = []
-        for ( let x = minx; x < maxx+1; x++ ) {
-          for ( let y = miny; y < maxy+1; y++ ) {
-            newTiles.push(new THREE.Vector3(x, y, 18))
-          }
-        }
-        this.updateLayers(newTiles)
       }
-    }
+      this.updateLayers(newTiles)
+    } 
   }
 
   updateLayers(tiles) {
