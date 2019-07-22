@@ -185,6 +185,10 @@ class ThreeMap extends Component {
   unproject(pt) {
     return proj4('EPSG:4326', this.props.proj).inverse([-pt.z, -pt.x]);
   }
+  
+  project(lngLat) {
+    return proj4('EPSG:4326', this.props.proj).forward(lngLat);
+  }
 
   projectToScene(pt) {
     if (this.mounted) {
@@ -202,10 +206,6 @@ class ThreeMap extends Component {
       var coords = this.camera.position.clone().add(scaled)
       return this.unproject(coords)
     }
-  }
-
-  project(lngLat) {
-    return proj4('EPSG:4326', this.props.proj).forward(lngLat);
   }
 
   onMove(e) {
@@ -259,6 +259,7 @@ class ThreeMap extends Component {
             scene: this.scene,
             offsets: this.offsets,
             project: this.project.bind(this),
+            unproject: this.unproject.bind(this),
             render: () => this.renderScene()
           });
         }

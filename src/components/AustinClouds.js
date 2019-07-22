@@ -10,7 +10,7 @@ const basemap = new Layers.ImageTiles('basemap',
   'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png',
   {
     domains: ['a', 'b', 'c', 'd'],
-    visible: false
+    visible: true
   }
 )
 
@@ -66,7 +66,7 @@ const geojsonLayers = collects.map((s,i) => {
 
 const props = {
   center: [-97.739677,30.257936],
-  layers: [...layers, ...geojsonLayers],
+  layers: [...layers, ...geojsonLayers, basemap],
   zOffset: 140,
   camZoom: 75,
   proj: 'EPSG:32614',
