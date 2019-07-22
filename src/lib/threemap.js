@@ -112,6 +112,7 @@ class ThreeMap extends Component {
       }
     })
     this.camera.position.y = this.props.camZoom || 25;
+    this.camera.position.z = -25;
     this.camera.updateMatrix();
     this.root.updateMatrixWorld();
     this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
@@ -167,7 +168,7 @@ class ThreeMap extends Component {
   getCenter() {
     // IMPORTANT to clone target here, as we do not want to disrupt any scene/group matrices
     var pt = this.controls.target.clone();
-    // need to negate x/z to center moves in the correct direction 
+    // need to negate x/z to center moves in the correct direction
     pt.x = -pt.x
     pt.z = -pt.z
     const utmPoint = this.geo.localToWorld(pt);
@@ -188,7 +189,7 @@ class ThreeMap extends Component {
   unproject(pt) {
     return proj4('EPSG:4326', this.props.proj).inverse([-pt.z, -pt.x]);
   }
-  
+
   project(lngLat) {
     return proj4('EPSG:4326', this.props.proj).forward(lngLat);
   }
@@ -250,7 +251,7 @@ class ThreeMap extends Component {
         }
       }
       this.updateLayers(newTiles)
-    } 
+    }
   }
 
   updateLayers(tiles) {
