@@ -4,7 +4,7 @@ import Layers from '../layers'
 import shaders from '../layers/shaders'
 
 // minz, maxz, scale factor
-const scales = [160, 350, .5]
+const scales = [140, 350, .5]
 
 const points = new Layers.PointTiles('lidar',
   'https://pixel8austin.storage.googleapis.com/lidar/tiles_classified/{z}/{x}/{y}.csv.gz',
@@ -59,8 +59,9 @@ const pc3 = new Layers.PointCloud('cloud3', 'https://pixel8austin.storage.google
 const props = {
   center: [-97.739677,30.257936],
   layers: [ pc1, pc2, pc3 ],
-  zOffset: scales[0],
-  camZoom: .5
+  zOffset: 140,
+  camZoom: .5,
+  proj: 'EPSG:32614'
 }
 
 function Austin() {

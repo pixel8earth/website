@@ -7,6 +7,20 @@ import { getBaseLog, pointToTile, llPixel } from './utils';
 import Sidebar from '../components/Sidebar';
 import ZoomControl from '../components/ZoomControl';
 import PositionDisplay from '../components/PositionDisplay';
+import proj4 from 'proj4';
+
+proj4.defs([
+  [
+    'EPSG:4326',
+    '+proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees'
+  ],[
+    'EPSG:32614',
+    '+proj=utm +zone=14 +datum=WGS84 +units=m +no_defs'
+  ],[
+    'EPSG:32613',
+    '+proj=utm +zone=13 +datum=WGS84 +units=m +no_defs'
+  ]
+]);
 
 class ThreeMap extends Component {
   constructor() {
@@ -15,8 +29,9 @@ class ThreeMap extends Component {
     this.layers = [];
     this.groups = [];
     this.root = new THREE.Group();
+    this.geo = new THREE.Group();
     this.loadedTiles = [];
-    this.tile_zoom = 18
+    this.tile_zoom = 18;
     this.mouse = new THREE.Vector2();
     this.state = {
       layersShowing: null,
@@ -34,6 +49,16 @@ class ThreeMap extends Component {
     //ADD SCENE
     this.scene = new THREE.Scene()
     this.scene.add(this.root);
+    // Geo Group setup to adjust for offsets
+    const xyOffset = proj4('EPSG:4326', this.props.proj).forward(this.props.center);
+    this.geo.position.z = -xyOffset[0];
+    this.geo.position.x = -xyOffset[1];
+    this.geo.position.y = -this.zOffset;
+    this.geo.updateMatrix();
+    console.log('geo pos', this.geo.position);
+
+    this.root.add(this.geo);
+    this.root.updateMatrixWorld();
     //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
     this.root.add(this.camera);
@@ -41,9 +66,9 @@ class ThreeMap extends Component {
     // positive X is to the user's right
     // positive Y is up
     // positive Z is behind the user
-    // this.camera.position.z = this.props.camZoom || 1;
-    // this.camera.up = new THREE.Vector3(0,0,1)
-    this.camera.lookAt(new THREE.Vector3(0,0,0))//this.scene.position)
+    console.log('zOffset ', this.zOffset)
+    this.camera.position.y = this.zOffset + (this.props.camZoom || 1);
+    this.camera.lookAt(this.scene.position)
     //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer()
     this.renderer.setClearColor('#000000')
@@ -52,16 +77,16 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
-    // this.controls.minZoom = this.zOffset
-    // this.controls.target.z = this.zOffset
+    this.controls.minZoom = this.zOffset
+    this.controls.target.y = this.zOffset
     this.controls.target = new THREE.Vector3(0, 0, 0);
     this.controls.addEventListener('change', this.renderScene)
-    // const center = this.getCenter();
-    // this.setState({ center });
+    const center = this.getCenter();
+    this.setState({ center });
 
     this.raycaster = new THREE.Raycaster();
 
-    var basePlane = new THREE.PlaneBufferGeometry(25*25, 25*25, 25, 25)//this.size*100, this.size*100, 1, 1);
+    var basePlane = new THREE.PlaneBufferGeometry(this.size*100, this.size*100, 1, 1);
     var mat = new THREE.MeshBasicMaterial({wireframe: true, /*opacity:0, transparent: true,*/ color: 0x203020,});
 
     this.plane = new THREE.Mesh( basePlane, mat );
@@ -84,7 +109,7 @@ class ThreeMap extends Component {
       if (!!layer.getGroup) {
         const group = layer.getGroup();
         this.groups.push(group);
-        this.root.add(group);
+        this.geo.add(group);
       }
     })
     this.camera.position.y = 25;
@@ -109,12 +134,12 @@ class ThreeMap extends Component {
 
   componentWillUnmount() {
     this.mounted = false;
-    this.controls.removeEventListener('change', this.renderScene)
+    if (this.controls) this.controls.removeEventListener('change', this.renderScene)
     window.removeEventListener('resize', this.onWindowResize.bind(this))
     window.removeEventListener('mouseup', this.onUp.bind(this))
     window.removeEventListener('mousedown', this.onDown.bind(this))
     window.removeEventListener('mousemove', this.onMove.bind(this))
-    this.mount.removeChild(this.renderer.domElement)
+    if (this.mount && this.renderer) this.mount.removeChild(this.renderer.domElement)
   }
 
   getLayerByName = name => {
@@ -142,7 +167,7 @@ class ThreeMap extends Component {
 
   getCenter(){
     var pt = this.controls.target;
-    return this.unproject(pt)
+    return this.unproject(pt);
   }
 
   getZoom() {
@@ -313,10 +338,10 @@ class ThreeMap extends Component {
       const index = showing.indexOf(group.name);
       if (index < 0) {
         showing.push(group.name);
-        this.root.add(group);
+        this.geo.add(group);
       } else {
         showing.splice(index, 1);
-        this.root.remove(group);
+        this.geo.remove(group);
       }
       this.setState({ layersShowing: showing });
       this.renderScene();
