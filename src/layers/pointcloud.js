@@ -23,7 +23,6 @@ class PointCloud extends Base {
     super(name, url, options)
     this.url = url;
     this.group = new THREE.Group();
-    this.geo = new THREE.Group();
     this.sfm = new THREE.Group();
     this.com = new THREE.Group();
     this.proj = options.proj || "EPSG:4326"
@@ -65,14 +64,12 @@ class PointCloud extends Base {
           this.sfm.position.y = com_f[1] + this.sfm.position.y;
           this.sfm.position.z = com_f[2] + this.sfm.position.z;
           this.sfm.updateMatrix();
-          console.log('sfm pos', this.sfm.position);
 
           this.sfm.add(this.com);
           this.group.add(this.sfm);
           this.group.updateMatrixWorld();
 
           const points = this.createPoints(data);
-          console.log('points ', points)
           const model = new THREE.Points(points, mat);
           this.group.add(model);
           this.loaded = true;
@@ -96,17 +93,6 @@ class PointCloud extends Base {
   }
 
   createPoints = cloudData => {
-    // const posesLength = poses.map(p => p.image).length;
-    // const data = cloudData; // remove camera poses from data -> cloudData.slice(this.poses.length);
-    // // use the avg as the offsets for the first cloud
-    // // where the arg passed to _computeOffsets is NOT a camera pose
-    // const offsets = this.computeOffsets(data[posesLength]);
-    // // add offsets to the geo group so they are applied to any children
-    // this.geo.position.x = -offsets[0];
-    // this.geo.position.y = -offsets[1];
-    // this.geo.position.z = -offsets[2];
-    // this.geo.updateMatrix();
-
     const points = new THREE.Geometry();
     cloudData.forEach( (p, i) => {
       const color = new THREE.Color();
@@ -131,9 +117,6 @@ class PointCloud extends Base {
           }
           return res.json();
         })
-
-      this.geo.position.set(-offsets.x, -offsets.y, -offsets.z);
-      this.geo.updateMatrix();
 
       fetch(url)
         .then( async res => {
