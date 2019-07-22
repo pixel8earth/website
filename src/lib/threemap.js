@@ -14,6 +14,7 @@ class ThreeMap extends Component {
     this.mounted = false;
     this.layers = [];
     this.groups = [];
+    this.root = new THREE.Group();
     this.loadedTiles = [];
     this.tile_zoom = 18
     this.mouse = new THREE.Vector2();
@@ -32,11 +33,17 @@ class ThreeMap extends Component {
     this.zOffset = this.props.zOffset || 0
     //ADD SCENE
     this.scene = new THREE.Scene()
+    this.scene.add(this.root);
     //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
-    this.camera.position.z = this.zOffset + (this.props.camZoom || 1)
-    this.camera.up = new THREE.Vector3(0,0,1)
-    this.camera.lookAt(this.scene.position)
+    this.root.add(this.camera);
+    // The standard for WebVR is as follows:
+    // positive X is to the user's right
+    // positive Y is up
+    // positive Z is behind the user
+    // this.camera.position.z = this.props.camZoom || 1;
+    // this.camera.up = new THREE.Vector3(0,0,1)
+    this.camera.lookAt(new THREE.Vector3(0,0,0))//this.scene.position)
     //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer()
     this.renderer.setClearColor('#000000')
@@ -45,27 +52,29 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
-    //this.controls.zoomSpeed = 0.25
-    this.controls.minZoom = this.zOffset
-    //this.controls.zoomSpeed = 0.005
-    //this.controls.panSpeed = 0.005
-    //this.controls.maxPolarAngle = 1.35
-    this.controls.target.z = this.zOffset
+    // this.controls.minZoom = this.zOffset
+    // this.controls.target.z = this.zOffset
+    this.controls.target = new THREE.Vector3(0, 0, 0);
     this.controls.addEventListener('change', this.renderScene)
-    const center = this.getCenter();
-    this.setState({ center });
+    // const center = this.getCenter();
+    // this.setState({ center });
 
     this.raycaster = new THREE.Raycaster();
 
-    var basePlane = new THREE.PlaneBufferGeometry(this.size*100, this.size*100, 1, 1);
-    var mat = new THREE.MeshBasicMaterial({wireframe: true, opacity:0, transparent: true});
+    var basePlane = new THREE.PlaneBufferGeometry(25*25, 25*25, 25, 25)//this.size*100, this.size*100, 1, 1);
+    var mat = new THREE.MeshBasicMaterial({wireframe: true, /*opacity:0, transparent: true,*/ color: 0x203020,});
 
     this.plane = new THREE.Mesh( basePlane, mat );
-    this.scene.add( this.plane );
+    this.plane.rotateX(Math.PI / 2);
+    this.plane.updateMatrix();
+    this.root.add( this.plane );
+
+    var axes = new THREE.AxesHelper( 10 );
+    this.root.add( axes );
 
     //Add light for meshes
     const light = new THREE.HemisphereLight( 0x443333, 0xffffff, 1 )
-    this.scene.add(light);
+    this.root.add(light);
 
     this.tile = this.centerTile()
     this.offsets = this.getOffsets()
@@ -75,9 +84,12 @@ class ThreeMap extends Component {
       if (!!layer.getGroup) {
         const group = layer.getGroup();
         this.groups.push(group);
-        this.scene.add(group);
+        this.root.add(group);
       }
     })
+    this.camera.position.y = 25;
+    this.camera.updateMatrix();
+    this.root.updateMatrixWorld();
     this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
 
     window.addEventListener('resize', this.onWindowResize.bind(this), false)
@@ -300,10 +312,10 @@ class ThreeMap extends Component {
       const index = showing.indexOf(group.name);
       if (index < 0) {
         showing.push(group.name);
-        this.scene.add(group);
+        this.root.add(group);
       } else {
         showing.splice(index, 1);
-        this.scene.remove(group);
+        this.root.remove(group);
       }
       this.setState({ layersShowing: showing });
       this.renderScene();
