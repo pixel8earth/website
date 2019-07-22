@@ -65,16 +65,16 @@ class PointCloud extends Base {
           this.sfm.position.y = com_f[1] + this.sfm.position.y;
           this.sfm.position.z = com_f[2] + this.sfm.position.z;
           this.sfm.updateMatrix();
+          console.log('sfm pos', this.sfm.position);
 
           this.sfm.add(this.com);
-          this.geo.add(this.sfm);
-
-          this.group.add(this.geo);
+          this.group.add(this.sfm);
           this.group.updateMatrixWorld();
 
-          const points = this.createOffsetsAndPoints(data, poses);
+          const points = this.createPoints(data);
+          console.log('points ', points)
           const model = new THREE.Points(points, mat);
-          this.geo.add(model);
+          this.group.add(model);
           this.loaded = true;
           render();
         })
@@ -95,20 +95,20 @@ class PointCloud extends Base {
     return [this.mean(x), this.mean(y), this.mean(z)]
   }
 
-  createOffsetsAndPoints = (cloudData, poses) => {
-    const posesLength = poses.poses.map(p => p.image).length;
-    const data = cloudData; // remove camera poses from data -> cloudData.slice(this.poses.length);
-    // use the avg as the offsets for the first cloud
-    // where the arg passed to _computeOffsets is NOT a camera pose
-    const offsets = this.computeOffsets(data[posesLength]);
-    // add offsets to the geo group so they are applied to any children
-    this.geo.position.x = -offsets[0];
-    this.geo.position.y = -offsets[1];
-    this.geo.position.z = -offsets[2];
-    this.geo.updateMatrix();
+  createPoints = cloudData => {
+    // const posesLength = poses.map(p => p.image).length;
+    // const data = cloudData; // remove camera poses from data -> cloudData.slice(this.poses.length);
+    // // use the avg as the offsets for the first cloud
+    // // where the arg passed to _computeOffsets is NOT a camera pose
+    // const offsets = this.computeOffsets(data[posesLength]);
+    // // add offsets to the geo group so they are applied to any children
+    // this.geo.position.x = -offsets[0];
+    // this.geo.position.y = -offsets[1];
+    // this.geo.position.z = -offsets[2];
+    // this.geo.updateMatrix();
 
     const points = new THREE.Geometry();
-    data.forEach( (p, i) => {
+    cloudData.forEach( (p, i) => {
       const color = new THREE.Color();
       color.setRGB(p[3] / 255.0, p[4] / 255.0, p[5] / 255.0)
       const point = new THREE.Vector3(p[0], p[1], p[2]);
@@ -151,27 +151,27 @@ class PointCloud extends Base {
             }
           });
 
-          // // create an array of vertices
+          // create an array of vertices
           // const points = new THREE.Geometry();
           // raw.split('\n').forEach( (line, i) => {
           //   if (i >= 10) {
           //     const p = this.splitLine(ext, line)
           //     if (!isNaN(p[0])) {
-          //       // // NOTE: corrects for order of X/Y/Z in source data
-          //       // const xyz = ext === 'ply' ? [p[2], p[0], p[1]] : [p[0], p[1], p[2]]
-          //       // // go to LatLng
-          //       // const ll = proj4(this.proj, 'EPSG:4326').forward([xyz[0], xyz[1]])
-          //       // // go to pixels
-          //       // let px = llPixel(ll, 0, this.size)
-          //       // // go to world coords in three.js
-          //       // const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: xyz[2]}
-          //       // // scale the z coord
-          //       // const zMin = this.options.scales[0] || 130;
-          //       // const zMax = this.options.scales[1] || 350;
-          //       // const scaledZ = ((pt.z - zMin) / (zMax - zMin)) * (this.options.scales[2] || 0.5) + zMin;
-          //       // // apply offsets to x/y
-          //       // points.vertices.push(new THREE.Vector3(pt.x - offsets.x, -pt.y + offsets.y, scaledZ));
-          //       // this.geo.position.set(pt.x - offsets.x, -pt.y + offsets.y, scaledZ);
+          //       // NOTE: corrects for order of X/Y/Z in source data
+          //       const xyz = ext === 'ply' ? [p[2], p[0], p[1]] : [p[0], p[1], p[2]]
+          //       // go to LatLng
+          //       const ll = proj4(this.proj, 'EPSG:4326').forward([xyz[0], xyz[1]])
+          //       // go to pixels
+          //       let px = llPixel(ll, 0, this.size)
+          //       // go to world coords in three.js
+          //       const pt = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: xyz[2]}
+          //       // scale the z coord
+          //       const zMin = this.options.scales[0] || 130;
+          //       const zMax = this.options.scales[1] || 350;
+          //       const scaledZ = ((pt.z - zMin) / (zMax - zMin)) * (this.options.scales[2] || 0.5) + zMin;
+          //       // apply offsets to x/y
+          //       points.vertices.push(new THREE.Vector3(pt.x - offsets.x, -pt.y + offsets.y, scaledZ));
+          //       this.geo.position.set(pt.x - offsets.x, -pt.y + offsets.y, scaledZ);
           //
           //       this.geo.position.set(-offsets.x, -offsets.y, -offsets.z);
           //       this.geo.updateMatrix();
