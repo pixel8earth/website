@@ -32,8 +32,6 @@ class ImageTiles extends Base {
             if (!this.renderScene) this.renderScene = render;
             const tileSize = 131 ; //this.size/(Math.pow(2,18));
 
-            console.log(tileSize)
-
             this.loader.load(url, map => {
               const mat = new THREE.MeshBasicMaterial({ map })
               mat.side = THREE.DoubleSide
@@ -46,7 +44,6 @@ class ImageTiles extends Base {
               const lnglat = [bbox[0] + (bbox[2] - bbox[0])/2, bbox[1] + (bbox[3] - bbox[1])/2]
 
               const utm = project(lnglat)
-              console.log(lnglat, utm)
 
               grid.position.x = utm[1]
               grid.position.y = offsets.z

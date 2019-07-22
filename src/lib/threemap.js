@@ -167,6 +167,9 @@ class ThreeMap extends Component {
   getCenter() {
     // IMPORTANT to clone target here, as we do not want to disrupt any scene/group matrices
     var pt = this.controls.target.clone();
+    // need to negate x/z to center moves in the correct direction 
+    pt.x = -pt.x
+    pt.z = -pt.z
     const utmPoint = this.geo.localToWorld(pt);
     return this.unproject(utmPoint);
   }
