@@ -33,23 +33,22 @@ class ImageTiles extends Base {
             const bbox = this.mercator.bbox(t.x, t.y, t.z)
             const lowerLeftUTM = project([bbox[0], bbox[1]]);
             const upperRightUTM = project([bbox[2], bbox[3]]);
-            const threeLowerLeft = this.group.parent.worldToLocal(new THREE.Vector3(lowerLeftUTM[1], 0, lowerLeftUTM[0]))
-            const threeUpperRight = this.group.parent.worldToLocal(new THREE.Vector3(upperRightUTM[1], 0, upperRightUTM[0]))
+            const threeLowerLeft = this.group.parent.localToWorld(new THREE.Vector3(lowerLeftUTM[1], 0, lowerLeftUTM[0]))
+            const threeUpperRight = this.group.parent.localToWorld(new THREE.Vector3(upperRightUTM[1], 0, upperRightUTM[0]))
             const tileSize = {
-              x: threeUpperRight.x - threeLowerLeft.x,
-              y: threeUpperRight.z - threeLowerLeft.z
+              x: (threeUpperRight.x - threeLowerLeft.x),
+              y: (threeUpperRight.z - threeLowerLeft.z)
             };
 
             this.loader.load(url, map => {
               const mat = new THREE.MeshBasicMaterial({ map })
               mat.side = THREE.DoubleSide
               const grid = new THREE.Mesh(
-                new THREE.PlaneGeometry(tileSize.x, tileSize.y, 10, 10),
+                new THREE.PlaneGeometry(tileSize.x, tileSize.y, 1, 1),
                 mat
               );
 
               const lnglat = [bbox[0] + (bbox[2] - bbox[0])/2, bbox[1] + (bbox[3] - bbox[1])/2]
-
               const utm = project(lnglat)
 
               grid.position.x = utm[1]
