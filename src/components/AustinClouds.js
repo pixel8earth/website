@@ -65,7 +65,7 @@ const geojsonLayers = collects.map((s,i) => {
 })
 
 const props = {
-  center: [-97.739677,30.257936],
+  center: [-97.739124,30.257862],
   layers: [...layers, ...geojsonLayers, basemap],
   zOffset: 140,
   camZoom: 75,
