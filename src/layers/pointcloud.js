@@ -32,7 +32,7 @@ class PointCloud extends Base {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         vertexColors: THREE.VertexColors,
-        size: 0.15
+        size: 0.25
       })
 
       this.fetchData(this.url, offsets)
@@ -80,16 +80,6 @@ class PointCloud extends Base {
 
   splitLine(ext, line) {
     return line.trim().split(ext === 'ply' ? ' ' : ',').map( j => parseFloat(j))
-  }
-
-  mean = values => {
-    const sum = parseInt(values.reduce((previous, current) => current + parseFloat(previous, 0), 0), 0)
-    return parseInt(sum / values.length, 0)
-  };
-
-  computeOffsets = rawModel => {
-    const x = [rawModel[0]], y = [rawModel[1]], z = [rawModel[2]];
-    return [this.mean(x), this.mean(y), this.mean(z)]
   }
 
   createPoints = cloudData => {
