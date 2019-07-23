@@ -8,7 +8,7 @@ class ImageTiles extends Base {
   mercator = new SphericalMercator({size: 65024})
   loader = new THREE.TextureLoader()
 
-  update = ({tiles, offsets, render}) => {
+  update = ({tiles, offsets, render, project}) => {
     var coordsList = []
     const key = Date.now().toString();
 
@@ -30,23 +30,33 @@ class ImageTiles extends Base {
           try {
             this.fetchingUrls.push(url);
             if (!this.renderScene) this.renderScene = render;
-            const tileSize = this.size/(Math.pow(2,18));
+            const bbox = this.mercator.bbox(t.x, t.y, t.z)
+            const lowerLeftUTM = project([bbox[0], bbox[1]]);
+            const upperRightUTM = project([bbox[2], bbox[3]]);
+            const threeLowerLeft = this.group.parent.localToWorld(new THREE.Vector3(lowerLeftUTM[1], 0, lowerLeftUTM[0]))
+            const threeUpperRight = this.group.parent.localToWorld(new THREE.Vector3(upperRightUTM[1], 0, upperRightUTM[0]))
+            const tileSize = {
+              x: (threeUpperRight.x - threeLowerLeft.x),
+              y: (threeUpperRight.z - threeLowerLeft.z)
+            };
 
             this.loader.load(url, map => {
+              const mat = new THREE.MeshBasicMaterial({ map })
+              mat.side = THREE.DoubleSide
               const grid = new THREE.Mesh(
-                new THREE.PlaneGeometry(tileSize, tileSize, 10, 10),
-                new THREE.MeshBasicMaterial({ map })
+                new THREE.PlaneGeometry(tileSize.x, tileSize.y, 1, 1),
+                mat
               );
 
-              const bbox = this.mercator.bbox(t.x, t.y, t.z)
-              const ll = [bbox[0] + (bbox[2] - bbox[0])/2, bbox[1] + (bbox[3] - bbox[1])/2]
+              const lnglat = [bbox[0] + (bbox[2] - bbox[0])/2, bbox[1] + (bbox[3] - bbox[1])/2]
+              const utm = project(lnglat)
 
-              let px = llPixel(ll, 0, this.size)
-              px = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: 0}
-
-              grid.position.x = px.x - offsets.x
-              grid.position.y = -px.y + offsets.y
-              grid.position.z = offsets.z
+              grid.position.x = utm[1]
+              grid.position.y = offsets.z
+              grid.position.z = utm[0]
+              grid.rotateX(Math.PI/2)
+              grid.rotateY(Math.PI)
+              grid.rotateZ(Math.PI/2)
 
               this.cachedTiles[coords] = grid;
               this.addTile(coords, grid)
