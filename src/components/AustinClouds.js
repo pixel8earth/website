@@ -43,7 +43,7 @@ const collects = [
 ]
 
 const layers = collects.map((s,i) => {
-  return new Layers.PointCloud(s, `https://54.91.27.23/clouds/${s}/model.ply`, opts)
+  return new Layers.PointCloud(s, `https://api.pixel8.earth/clouds/${s}/model.ply`, opts)
   //return new Layers.PointCloud(s, `http://localhost:3000/clouds/${s}/model.ply`, opts)
 })
 
