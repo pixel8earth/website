@@ -112,7 +112,7 @@ class ThreeMap extends Component {
       }
     })
     this.camera.position.y = this.props.camZoom || 25;
-    this.camera.position.z = -25;
+    this.camera.position.x = -25;
     this.camera.updateMatrix();
     this.root.updateMatrixWorld();
     this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
