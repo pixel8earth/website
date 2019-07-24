@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import * as THREE from 'three'
 import MapControls from './MapControls'
-import SphericalMercator from 'sphericalmercator'
-import cover from '@mapbox/tile-cover'
-import { getBaseLog, pointToTile, llPixel } from './utils';
+import { getBaseLog, pointToTile } from './utils';
 import Sidebar from '../components/Sidebar';
 import ZoomControl from '../components/ZoomControl';
 import PositionDisplay from '../components/PositionDisplay';
@@ -43,15 +41,12 @@ class ThreeMap extends Component {
     this.mounted = true;
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
-    this.size = 65024 // the base plane size (full extent of the map)
-    this.mercator = new SphericalMercator({size: this.size})
     this.zOffset = this.props.zOffset || 0
     //ADD SCENE
     this.scene = new THREE.Scene()
     this.scene.add(this.root);
     // Geo Group setup to adjust for offsets
     const xyOffset = proj4('EPSG:4326', this.props.proj).forward(this.props.center);
-    console.log(this.props.center, xyOffset)
     this.geo.position.z = -xyOffset[0];
     this.geo.position.x = -xyOffset[1];
     this.geo.position.y = -this.zOffset;
@@ -61,12 +56,12 @@ class ThreeMap extends Component {
     this.root.updateMatrixWorld();
     //ADD CAMERA
     this.camera = new THREE.PerspectiveCamera(70, width / height, 1/99, 100000000000000)
+    //this.camera.up = new THREE.Vector3(0,0,1)
     this.root.add(this.camera);
     // The standard for WebVR is as follows:
     // positive X is to the user's right
     // positive Y is up
     // positive Z is behind the user
-    //this.camera.position.y = this.zOffset + (this.props.camZoom || 1);
     this.camera.lookAt(this.scene.position)
     //ADD RENDERER
     this.renderer = new THREE.WebGLRenderer()
@@ -76,7 +71,7 @@ class ThreeMap extends Component {
     this.mount.appendChild(this.renderer.domElement)
 
     this.controls = new MapControls(this.camera, this.renderer.domElement)
-    this.controls.minZoom = this.zOffset
+    //this.controls.minZoom = this.zOffset
     this.controls.target.y = this.zOffset
     this.controls.target = new THREE.Vector3(0, 0, 0);
     this.controls.addEventListener('change', this.renderScene)
@@ -84,14 +79,6 @@ class ThreeMap extends Component {
     this.setState({ center });
 
     this.raycaster = new THREE.Raycaster();
-
-    var basePlane = new THREE.PlaneBufferGeometry(this.size*100, this.size*100, 1, 1);
-    var mat = new THREE.MeshBasicMaterial({wireframe: true, /*opacity:0, transparent: true,*/ color: 0x203020,});
-
-    this.plane = new THREE.Mesh( basePlane, mat );
-    this.plane.rotateX(Math.PI / 2);
-    this.plane.updateMatrix();
-    this.root.add( this.plane );
 
     var axes = new THREE.AxesHelper( 10 );
     this.root.add( axes );
@@ -105,12 +92,13 @@ class ThreeMap extends Component {
         new THREE.PlaneGeometry(5*5, 5*5, 100, 100),
         new THREE.MeshBasicMaterial({color: 0x203020, wireframe: true})
       );
-      plane.position.z = this.zOffset
-      this.scene.add(plane);
+      plane.rotateX(Math.PI / 2);
+      plane.position.y = 0
+      this.root.add(plane);
     }
 
     this.tile = this.centerTile()
-    this.offsets = this.getOffsets()
+    this.offsets = new THREE.Vector3(xyOffset[0], xyOffset[1], this.zOffset)
 
     this.layers = this.props.layers;
     this.layers.forEach( layer => {
@@ -186,14 +174,9 @@ class ThreeMap extends Component {
 
   getZoom() {
     const pt = this.controls.target.distanceTo(this.controls.object.position);
-    return Math.round(Math.min(Math.max(getBaseLog(0.5, pt/this.size) + 4, 0), 18));
+    return Math.round(Math.min(Math.max(getBaseLog(0.5, pt/this.size) + 4, 0), this.tile_zoom));
   }
 
-  getOffsets() {
-    var px = llPixel(this.props.center, 0, this.size);
-    px = {x: px[0] - this.size/ 2, y: px[1] - this.size / 2, z: this.zOffset} //z: 0.425};
-    return px
-  }
 
   unproject(pt) {
     return proj4('EPSG:4326', this.props.proj).inverse([-pt.z, -pt.x]);
@@ -201,24 +184,6 @@ class ThreeMap extends Component {
 
   project(lngLat) {
     return proj4('EPSG:4326', this.props.proj).forward(lngLat);
-  }
-
-  projectToScene(pt) {
-    if (this.mounted) {
-      const canvas = this.renderer.domElement
-      const rect = canvas.getBoundingClientRect();
-      let x = pt[0] - rect.left
-      let y = pt[1] - rect.top
-      x = (x / rect.width) * 2 - 1;
-      y = - (y / rect.height) * 2 + 1;
-      const pos = new THREE.Vector3(x, y, 0.0)
-      pos.unproject(this.camera)
-      pos.sub(this.camera.position).normalize()
-      var distance = -this.camera.position.z / pos.z
-      var scaled = pos.multiplyScalar(distance)
-      var coords = this.camera.position.clone().add(scaled)
-      return this.unproject(coords)
-    }
   }
 
   onMove(e) {
@@ -247,7 +212,7 @@ class ThreeMap extends Component {
 
   updateTiles(e) {
     if (this.mounted) {
-      const buf = 2
+      const buf = 1
       const minx = this.tile.x - (buf) // extra tile in x dir
       const maxx = this.tile.x + (buf) // extra tile in x dir
       const miny = this.tile.y - buf
@@ -256,7 +221,7 @@ class ThreeMap extends Component {
       const newTiles = []
       for ( let x = minx; x < maxx+1; x++ ) {
         for ( let y = miny; y < maxy+1; y++ ) {
-          newTiles.push(new THREE.Vector3(x, y, 18))
+          newTiles.push(new THREE.Vector3(x, y, this.tile_zoom))
         }
       }
       this.updateLayers(newTiles)

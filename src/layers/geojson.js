@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import pako from 'pako'
-import { llPixel } from '../lib/utils'
 import Base from './base'
 
 class GeoJSON extends Base {

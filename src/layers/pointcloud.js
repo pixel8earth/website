@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { llPixel } from '../lib/utils'
 import proj4 from 'proj4'
 import Base from './base'
 
