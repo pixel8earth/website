@@ -47,9 +47,11 @@ const layers = collects.map((s,i) => {
   //return new Layers.PointCloud(s, `http://localhost:3000/clouds/${s}/model.ply`, opts)
 })
 
+const mesh = new Layers.Mesh('ground', 'https://pixel8austin.storage.googleapis.com/austin_ground.ply', {visible: false})
+
 const props = {
   center: [-97.739124,30.257862],
-  layers: [...layers, points, basemap],
+  layers: [...layers, points, basemap, mesh],
   zOffset: 136,
   camZoom: 75,
   proj: 'EPSG:32614',

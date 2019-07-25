@@ -9,7 +9,7 @@ class GeoJSON extends Base {
     super(name, url, options)
     this.name = name
     this.url = url
-    this.feature_size = options.feature_size || 0.5
+    this.feature_size = options.feature_size || 1
   }
 
   update = ({ tiles, offsets, render, project}) => {

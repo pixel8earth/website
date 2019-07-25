@@ -47,18 +47,25 @@ const layers = collects.map((s,i) => {
   }
   return new Layers.PointCloud(s, `https://pixel8austin.storage.googleapis.com/collects/${s}/geo-model.csv`, opts)*/
   return new Layers.PointCloud(s, `https://api.pixel8.earth/clouds/${s}/model.ply`, opts)
+  //return new Layers.PointCloud(s, `http://localhost:3000/clouds/${s}/model.ply`, opts)
 })
+
+//const geojson = collects.map((s,i) => {
+//  return new Layers.GeoJSON(`${s}-cams`, `http://localhost/~chelm/hdiz/wrld_expo/notebooks/georef-theory/boulder_cams/${s}.geojson`, {color: 0x00ffff, feature_size: 2})
+//})
+
+const mesh = new Layers.Mesh('ground', 'https://pixel8boulder.storage.googleapis.com/boulder_ground.ply', {visible: false})
 
 const props = {
   center: [-105.266097, 40.009416],
-  layers: [basemap, ...layers],
-  zOffset: 1620,
-  camZoom: 75,
+  layers: [basemap, ...layers, mesh],
+  zOffset: 1635,
+  camZoom: 125,
   proj: "EPSG:32613"
 }
 
-function Austin() {
+function Boulder() {
   return (<Map {...props} />)
 }
 
-export default Austin;
+export default Boulder;
