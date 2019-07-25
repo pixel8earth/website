@@ -10,14 +10,13 @@ import * as THREE from 'three'
 function PLYLoader( manager ) {
   this.propertyNameMapping = {};
 
-  this.load = function ( data ) {
+  this.load = function ( url ) {
     return new Promise((resolve, reject) => {
-      try {
-        const geom = this.parse(data) 
-        resolve(geom)
-      } catch(e) {
-        reject(e)
-      }
+      var loader = new THREE.FileLoader( this.manager );
+      loader.setResponseType( 'arraybuffer' );
+      loader.load( url, text => {
+        resolve(this.parse( text ));
+      });
     })
   }
 

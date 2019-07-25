@@ -85,6 +85,8 @@ class ThreeMap extends Component {
 
     //Add light for meshes
     const light = new THREE.HemisphereLight( 0x443333, 0xffffff, 1 )
+    light.position.y = -1
+    light.position.z = -25
     this.root.add(light);
 
     if (this.props.showGrid) {
