@@ -35,38 +35,39 @@ class PointCloud extends Base {
       })
 
       this.fetchData(this.url, offsets)
-        .then(({ data, poses }) => {
-          const { com_i, com_f, rmat, scale } = poses.transforms;
-          const r = [rmat[0], rmat[1], rmat[2], 0,
-                    rmat[3], rmat[4], rmat[5], 0,
-                    rmat[6], rmat[7], rmat[8], 0,
-                    0,       0,       0,       1];
-
-          const rot = new THREE.Matrix4()
-          rot.fromArray(r);
-
-          this.com.position.x = -com_i[0];
-          this.com.position.y = -com_i[1];
-          this.com.position.z = -com_i[2];
-          this.com.updateMatrix();
-
-          const q = new THREE.Quaternion();
-          q.setFromRotationMatrix(rot)
-          this.sfm.applyQuaternion(q);
-
-          this.sfm.scale.x = scale;
-          this.sfm.scale.y = scale;
-          this.sfm.scale.z = scale;
-          this.sfm.updateMatrix();
-
-          this.sfm.position.x = com_f[0] + this.sfm.position.x;
-          this.sfm.position.y = com_f[1] + this.sfm.position.y;
-          this.sfm.position.z = com_f[2] + this.sfm.position.z;
-          this.sfm.updateMatrix();
-
-          this.sfm.add(this.com);
-          this.group.add(this.sfm);
-          this.group.updateMatrixWorld();
+        .then(({ data/*, poses*/ }) => {
+          // // turning off poses for now, not being used
+          // const { com_i, com_f, rmat, scale } = poses.transforms;
+          // const r = [rmat[0], rmat[1], rmat[2], 0,
+          //           rmat[3], rmat[4], rmat[5], 0,
+          //           rmat[6], rmat[7], rmat[8], 0,
+          //           0,       0,       0,       1];
+          //
+          // const rot = new THREE.Matrix4()
+          // rot.fromArray(r);
+          //
+          // this.com.position.x = -com_i[0];
+          // this.com.position.y = -com_i[1];
+          // this.com.position.z = -com_i[2];
+          // this.com.updateMatrix();
+          //
+          // const q = new THREE.Quaternion();
+          // q.setFromRotationMatrix(rot)
+          // this.sfm.applyQuaternion(q);
+          //
+          // this.sfm.scale.x = scale;
+          // this.sfm.scale.y = scale;
+          // this.sfm.scale.z = scale;
+          // this.sfm.updateMatrix();
+          //
+          // this.sfm.position.x = com_f[0] + this.sfm.position.x;
+          // this.sfm.position.y = com_f[1] + this.sfm.position.y;
+          // this.sfm.position.z = com_f[2] + this.sfm.position.z;
+          // this.sfm.updateMatrix();
+          //
+          // this.sfm.add(this.com);
+          // this.group.add(this.sfm);
+          // this.group.updateMatrixWorld();
 
           const points = this.createPoints(data);
           const model = new THREE.Points(points, mat);
@@ -99,13 +100,13 @@ class PointCloud extends Base {
       const parts = url.split('/');
       const streamId = parts[parts.length - 2];
 
-      const poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
-        .then( async res => {
-          if (!res.ok) {
-            return reject('not found');
-          }
-          return res.json();
-        })
+      // const poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
+      //   .then( async res => {
+      //     if (!res.ok) {
+      //       return reject('not found');
+      //     }
+      //     return res.json();
+      //   })
 
       fetch(url)
         .then( async res => {
@@ -123,7 +124,7 @@ class PointCloud extends Base {
             }
           });
 
-          resolve({ data, poses })
+          resolve({ data/*, poses*/ })
         })
         .catch(reject)
     })
