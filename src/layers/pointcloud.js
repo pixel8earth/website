@@ -104,44 +104,91 @@ class PointCloud extends Base {
       const parts = url.split('/');
       const streamId = parts[parts.length - 2];
       const sfmModel = url.indexOf('sfm') > -1;
+      const ply = url.indexOf('ply') > -1;
       if (sfmModel) this.sfmModel = true;
 
-      let poses = null;
-      if (sfmModel) {
-        poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
+      if (ply) {
+        let poses = null;
+        if (sfmModel) {
+          poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
+            .then( async res => {
+              if (!res.ok) {
+                return reject('not found');
+              }
+              return res.json();
+            })
+        }
+
+        fetch(url)
           .then( async res => {
             if (!res.ok) {
-              return reject('not found');
+              return reject('not found')
             }
-            return res.json();
+            return res.text()
           })
+          .then(raw => {
+            const data = []
+            raw.split('\n').forEach( (line, i) => {
+              if (sfmModel && i >= 10) {
+                const p = line.trim().replace(/ +/g, ' ').split(' ').map( j => parseFloat(j));
+                data.push(p);
+              } else if (!sfmModel) {
+                const vals = line.split(' ').map( j => parseFloat(j))
+                if (!isNaN(vals[0])) {
+                  data.push(vals)
+                }
+              }
+            });
+            resolve({ data, poses })
+          })
+          .catch(reject)
+      } else {
+        this.fetchRawSFM(url, urlObj, streamId)
+          .then( ({ points, poses }) => resolve({ data: points, poses }))
+          .catch(reject)
       }
+    })
+  }
 
-      fetch(url)
+  async fetchRawSFM(url, urlObj, streamId) {
+    const { points, poses } = await fetch(url)
+      .then( async res => {
+        if (!res.ok) {
+          return new Error('raw sfm not found')
+        }
+        return res.json()
+      })
+      .then(raw => {
+        const { structure, poses, views, intrinsics } = raw;
+        const points = structure.map(item => {
+          const [ x, y, z ] = item.X;
+          const [ r, g, b ] = item.color;
+          return [ parseFloat(x), parseFloat(y), parseFloat(z), parseInt(r), parseInt(g), parseInt(b) ];
+        });
+        const data = {
+          intrinsics,
+          poses: poses.map(p => {
+            const view = views.find((v,i) => v.poseId === p.poseId )
+            return {
+              image: view.path.split('/').reverse()[0],
+              rotation: p.pose.transform.rotation.map(r => parseFloat(r)),
+              center: p.pose.transform.center.map(r => parseFloat(r))
+            }
+          })
+        };
+
+        return { points, poses: data };
+      });
+
+      const transforms = await fetch(`${urlObj.origin}/clouds/${streamId}/transforms`)
         .then( async res => {
           if (!res.ok) {
-            return reject('not found')
+            return new Error('transforms.json not found')
           }
-          return res.text()
-        })
-        .then(raw => {
-          const data = []
-          raw.split('\n').forEach( (line, i) => {
-            if (sfmModel && i >= 10) {
-              const p = line.trim().replace(/ +/g, ' ').split(' ').map( j => parseFloat(j));
-              data.push(p);
-            } else if (!sfmModel) {
-              const vals = line.split(' ').map( j => parseFloat(j))
-              if (!isNaN(vals[0])) {
-                data.push(vals)
-              }
-            }
-          });
+          return res.json();
+        });
 
-          resolve({ data, poses })
-        })
-        .catch(reject)
-    })
+    return { points, poses: { ...poses, transforms } };
   }
 
 }

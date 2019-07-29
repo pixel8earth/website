@@ -3,8 +3,8 @@ import Map from './Map';
 import Layers from '../layers'
 import shaders from '../layers/shaders'
 
-const basemap = new Layers.ImageTiles('basemap', 
-  'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', 
+const basemap = new Layers.ImageTiles('basemap',
+  'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png',
   {
     domains: ['a', 'b', 'c', 'd'],
     visible: true
@@ -42,10 +42,21 @@ const collects = [
   '1562869606715',
 ]
 
+// geo.ply rendered
 const layers = collects.map((s,i) => {
   return new Layers.PointCloud(s, `https://api.pixel8.earth/clouds/${s}/model.ply`, opts)
   //return new Layers.PointCloud(s, `http://localhost:3000/clouds/${s}/model.ply`, opts)
 })
+
+// sfm.ply rendered
+// const layers2 = collects.map((s,i) => {
+//   return new Layers.PointCloud(`${s}-SFM`, `https://api.pixel8.earth/clouds/${s}/sfm.ply`, {proj: opts.proj, visible: false})
+// })
+
+// sfm rendered via sfm.sfm info
+// const layers3 = collects.map((s,i) => {
+//   return new Layers.PointCloud(`${s}-SFM.sfm`, `https://api.pixel8.earth/clouds/${s}/sfm.json`, { proj: opts.proj, visible: false })
+// })
 
 const mesh = new Layers.Mesh('ground', 'https://pixel8austin.storage.googleapis.com/austin_ground.ply', {visible: false})
 
