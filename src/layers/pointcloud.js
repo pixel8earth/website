@@ -25,6 +25,7 @@ class PointCloud extends Base {
     this.sfm = new THREE.Group();
     this.com = new THREE.Group();
     this.proj = options.proj || "EPSG:4326"
+    this.sfmModel = false;
   }
 
   update = ({tiles, offsets, render}) => {
@@ -35,43 +36,46 @@ class PointCloud extends Base {
       })
 
       this.fetchData(this.url, offsets)
-        .then(({ data/*, poses*/ }) => {
-          // // turning off poses for now, not being used
-          // const { com_i, com_f, rmat, scale } = poses.transforms;
-          // const r = [rmat[0], rmat[1], rmat[2], 0,
-          //           rmat[3], rmat[4], rmat[5], 0,
-          //           rmat[6], rmat[7], rmat[8], 0,
-          //           0,       0,       0,       1];
-          //
-          // const rot = new THREE.Matrix4()
-          // rot.fromArray(r);
-          //
-          // this.com.position.x = -com_i[0];
-          // this.com.position.y = -com_i[1];
-          // this.com.position.z = -com_i[2];
-          // this.com.updateMatrix();
-          //
-          // const q = new THREE.Quaternion();
-          // q.setFromRotationMatrix(rot)
-          // this.sfm.applyQuaternion(q);
-          //
-          // this.sfm.scale.x = scale;
-          // this.sfm.scale.y = scale;
-          // this.sfm.scale.z = scale;
-          // this.sfm.updateMatrix();
-          //
-          // this.sfm.position.x = com_f[0] + this.sfm.position.x;
-          // this.sfm.position.y = com_f[1] + this.sfm.position.y;
-          // this.sfm.position.z = com_f[2] + this.sfm.position.z;
-          // this.sfm.updateMatrix();
-          //
-          // this.sfm.add(this.com);
-          // this.group.add(this.sfm);
-          // this.group.updateMatrixWorld();
+        .then(({ data, poses }) => {
+          if (poses) {
+            const { com_i, com_f, rmat, scale } = poses.transforms;
+            const r = [rmat[0], rmat[1], rmat[2], 0,
+                      rmat[3], rmat[4], rmat[5], 0,
+                      rmat[6], rmat[7], rmat[8], 0,
+                      0,       0,       0,       1];
+
+            const rot = new THREE.Matrix4()
+            rot.fromArray(r);
+
+            this.com.position.x = -com_i[0];
+            this.com.position.y = -com_i[1];
+            this.com.position.z = -com_i[2];
+            this.com.updateMatrix();
+
+            const q = new THREE.Quaternion();
+            q.setFromRotationMatrix(rot)
+            this.sfm.applyQuaternion(q);
+
+            this.sfm.scale.x = scale;
+            this.sfm.scale.y = scale;
+            this.sfm.scale.z = scale;
+            this.sfm.updateMatrix();
+
+            this.sfm.position.x = com_f[0] + this.sfm.position.x;
+            this.sfm.position.y = com_f[1] + this.sfm.position.y;
+            this.sfm.position.z = com_f[2] + this.sfm.position.z;
+            this.sfm.updateMatrix();
+
+            this.sfm.add(this.com);
+            this.group.add(this.sfm);
+            this.group.updateMatrixWorld();
+          }
 
           const points = this.createPoints(data);
           const model = new THREE.Points(points, mat);
-          this.group.add(model);
+          if (this.sfmModel) {
+            this.sfm.add(model);
+          } else this.group.add(model);
           this.loaded = true;
           render();
         })
@@ -99,14 +103,19 @@ class PointCloud extends Base {
       const urlObj = new URL(url)
       const parts = url.split('/');
       const streamId = parts[parts.length - 2];
+      const sfmModel = url.indexOf('sfm') > -1;
+      if (sfmModel) this.sfmModel = true;
 
-      // const poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
-      //   .then( async res => {
-      //     if (!res.ok) {
-      //       return reject('not found');
-      //     }
-      //     return res.json();
-      //   })
+      let poses = null;
+      if (sfmModel) {
+        poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
+          .then( async res => {
+            if (!res.ok) {
+              return reject('not found');
+            }
+            return res.json();
+          })
+      }
 
       fetch(url)
         .then( async res => {
@@ -118,13 +127,18 @@ class PointCloud extends Base {
         .then(raw => {
           const data = []
           raw.split('\n').forEach( (line, i) => {
-            const vals = line.split(' ').map( j => parseFloat(j))
-            if (!isNaN(vals[0])) {
-              data.push(vals)
+            if (sfmModel && i >= 10) {
+              const p = line.trim().replace(/ +/g, ' ').split(' ').map( j => parseFloat(j));
+              data.push(p);
+            } else if (!sfmModel) {
+              const vals = line.split(' ').map( j => parseFloat(j))
+              if (!isNaN(vals[0])) {
+                data.push(vals)
+              }
             }
           });
 
-          resolve({ data/*, poses*/ })
+          resolve({ data, poses })
         })
         .catch(reject)
     })
