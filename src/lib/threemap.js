@@ -33,7 +33,11 @@ class ThreeMap extends Component {
     this.mouse = new THREE.Vector2();
     this.state = {
       layersShowing: null,
-      center: null
+      center: null,
+      mapDimensions: {
+        width: null,
+        height: null
+      }
     };
   }
 
@@ -116,10 +120,11 @@ class ThreeMap extends Component {
     this.root.updateMatrixWorld();
     this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
 
-    window.addEventListener('resize', this.onWindowResize.bind(this), false)
-    window.addEventListener('mouseup', this.onUp.bind(this), false)
-    window.addEventListener('mousedown', this.onDown.bind(this), false)
-    window.addEventListener('mousemove', this.onMove.bind(this), false)
+    window.addEventListener('resize', this.onWindowResize, false)
+    window.addEventListener('mouseup', this.onUp, false)
+    window.addEventListener('mousedown', this.onDown, false)
+    window.addEventListener('mousemove', this.onMove, false)
+    this.onWindowResize();
     this.controls.update();
     this.renderScene()
     this.updateTiles()
@@ -134,10 +139,10 @@ class ThreeMap extends Component {
   componentWillUnmount() {
     this.mounted = false;
     if (this.controls) this.controls.removeEventListener('change', this.renderScene)
-    window.removeEventListener('resize', this.onWindowResize.bind(this))
-    window.removeEventListener('mouseup', this.onUp.bind(this))
-    window.removeEventListener('mousedown', this.onDown.bind(this))
-    window.removeEventListener('mousemove', this.onMove.bind(this))
+    window.removeEventListener('resize', this.onWindowResize)
+    window.removeEventListener('mouseup', this.onUp)
+    window.removeEventListener('mousedown', this.onDown)
+    window.removeEventListener('mousemove', this.onMove)
     if (this.mount && this.renderer) this.mount.removeChild(this.renderer.domElement)
   }
 
@@ -148,8 +153,12 @@ class ThreeMap extends Component {
   onWindowResize = () => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderScene()
+    this.renderer.setSize(
+      document.getElementById('sidebar') ? window.innerWidth - 200 : window.innerWidth,
+      window.innerHeight
+    );
+    this.getMapDimensions();
+    this.renderScene();
   }
 
   renderScene = () => {
@@ -188,16 +197,16 @@ class ThreeMap extends Component {
     return proj4('EPSG:4326', this.props.proj).forward(lngLat);
   }
 
-  onMove(e) {
+  onMove = (e) => {
     if (this.flag) {}
   }
 
-  onDown(e) {
+  onDown = (e) => {
     // turn on mouse move handler
     this.flag = 1;
   }
 
-  onUp(e) {
+  onUp = (e) => {
     if (this.mounted) {
       //compute the center tile... from controls.target
       const newCenter = this.getCenter()
@@ -276,8 +285,19 @@ class ThreeMap extends Component {
     }
   };
 
+  getMapDimensions = () => {
+    this.setState({
+      mapDimensions: {
+        width: `${document.getElementById('sidebar') ? window.innerWidth - 200 : window.innerWidth}px`,
+        height: `${window.innerHeight}px`
+      }
+    });
+  }
+
   render() {
     const { showSidebar } = this.props
+    const { width, height } = this.state.mapDimensions;
+
     return(
       <div style={{ display: 'inline-flex' }}>
         <Sidebar
@@ -285,11 +305,12 @@ class ThreeMap extends Component {
           groups={this.groups}
           showing={this.state.layersShowing}
           toggle={this.toggleLayerVisibility}
+          toggleSidebarCallback={this.onWindowResize}
         />
         <ZoomControl changeZoom={this.changeZoom} />
         <PositionDisplay center={this.state.center} />
         <div
-          style={{ width: window.innerWidth, height: window.innerHeight }}
+          style={{ width, height }}
           ref={(mount) => { this.mount = mount }}
         />
       </div>

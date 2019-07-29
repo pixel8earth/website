@@ -19,6 +19,7 @@ class Sidebar extends React.Component {
 
   toggleExpansion = () => {
     this.setState({ expanded: !this.state.expanded });
+    setTimeout(this.props.toggleSidebarCallback, 0);
   }
 
   render() {
@@ -33,16 +34,18 @@ class Sidebar extends React.Component {
           <div style={styles.imgWrap} onClick={this.toggleExpansion}>
             <img src={icon} style={styles.pixel8Icon} alt="pixel8 logo" />
           </div>
-          { groups.map( (g, i) => {
-            const shown = ~(this.props.showing || []).indexOf(g.name);
-            return (
-              <React.Fragment key={i}>
-                <div onClick={() => this.props.toggle(g)} style={shown ? styles.groupShown : styles.group}>
-                  {g.name}
-                </div>
-              </React.Fragment>
-            );
-          })}
+          <div style={ styles.layersWrap }>
+            { groups.map( (g, i) => {
+              const shown = ~(this.props.showing || []).indexOf(g.name);
+              return (
+                <React.Fragment key={i}>
+                  <div onClick={() => this.props.toggle(g)} style={shown ? styles.groupShown : styles.group}>
+                    {g.name}
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
     );
   }
@@ -59,8 +62,12 @@ const styles = {
     cursor: 'pointer',
   },
   main: {
+    display: 'flex',
+    height: '100vh',
+    flexDirection: 'column',
+    overflow: 'auto',
     backgroundColor: '#304D6D',
-    color: '#fff'
+    color: '#fff',
   },
   group: {
     padding: '10px',
@@ -93,6 +100,9 @@ const styles = {
   hr: {
     margin: 0,
     color: '#808080'
+  },
+  layersWrap: {
+    // flex: 1
   }
 };
 
