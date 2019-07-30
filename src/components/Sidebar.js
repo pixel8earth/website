@@ -23,7 +23,7 @@ class Sidebar extends React.Component {
     setTimeout(this.props.toggleSidebarCallback, 0);
   }
 
-  changePosition = (event, group, vertex) => {
+  changePosition = (event, group, vertex, updateSFMPosition) => {
     event.preventDefault();
     const allPositions = this.state.positions;
     if (allPositions[group.name]) {
@@ -44,6 +44,7 @@ class Sidebar extends React.Component {
     }
 
     this.setState({ positions: allPositions });
+    updateSFMPosition(allPositions[group.name]);
   }
 
   render() {
@@ -72,13 +73,12 @@ class Sidebar extends React.Component {
                   <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
                     {group.name}
                   </div>
-                  { !!shown && group.children.length > 0 &&
+                  { !!shown && group.children.length > 0 && updateSFMPosition &&
                     <div style={{ position: 'absolute', left: 200 }}>
                       Position
-                      <div>X <input value={xVal} type="number" onChange={(e) => this.changePosition(e, group, 'x')} /></div>
-                      <div>Y <input value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y')} /></div>
-                      <div>Z <input value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z')} /></div>
-                      <button onClick={() => updateSFMPosition({ x: xVal, y: yVal, z: zVal })}>apply</button>
+                      <div>X <input value={xVal} type="number" onChange={(e) => this.changePosition(e, group, 'x', updateSFMPosition)} /></div>
+                      <div>Y <input value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
+                      <div>Z <input value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
                       <button onClick={() => {
                         resetSFMPosition();
                         const newPositions = { ...positions };
