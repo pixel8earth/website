@@ -1,5 +1,6 @@
 import React from 'react';
 import icon from '../images/icon.png';
+import { Slider } from '@material-ui/core';
 
 class Sidebar extends React.Component {
   constructor() {
@@ -9,7 +10,8 @@ class Sidebar extends React.Component {
     this.state = {
       groups: [],
       expanded: false,
-      positions: {}
+      positions: {},
+      controlsShowing: []
     };
   }
 
@@ -23,41 +25,37 @@ class Sidebar extends React.Component {
     setTimeout(this.props.toggleSidebarCallback, 0);
   }
 
-  changePosition = (event, group, vertex, updateSFMPosition) => {
+  toggleControls(id) {
+    let updated  = [ ...this.state.controlsShowing ];
+    const index = updated.indexOf(id);
+    if (index > -1) {
+      updated.splice(index, 1);
+    } else updated.push(id);
+    this.setState({ controlsShowing: updated });
+  }
+
+  changePosition = (event, group, axis, updateSFMPosition, value) => {
     event.preventDefault();
     const allPositions = this.state.positions;
-    if (allPositions[group.name]) {
-      allPositions[group.name][vertex] = parseFloat(event.target.value);
-    } else {
-      allPositions[group.name] = {};
-      allPositions[group.name][vertex] = parseFloat(event.target.value);
-    }
-
-    if (vertex !== 'x' && !allPositions[group.name].x) {
-      allPositions[group.name].x = group.children[0].position.x;
-    }
-    if (vertex !== 'y' && !allPositions[group.name].y) {
-      allPositions[group.name].y = group.children[0].position.y;
-    }
-    if (vertex !== 'z' && !allPositions[group.name].z) {
-      allPositions[group.name].z = group.children[0].position.z;
-    }
-    if (vertex !== 'rX' && !allPositions[group.name].rX) {
-      allPositions[group.name].rX = group.children[0].rotation._x;
-    }
-    if (vertex !== 'rY' && !allPositions[group.name].rY) {
-      allPositions[group.name].rY = group.children[0].rotation._y;
-    }
-    if (vertex !== 'rZ' && !allPositions[group.name].rZ) {
-      allPositions[group.name].rZ= group.children[0].rotation._z;
-    }
+    const sfmGroup = group.children[0];
+    const state = (allPositions[group.name] || {});
+    allPositions[group.name] = {
+      s: state.s || sfmGroup.scale.x,
+      x: state.x || sfmGroup.position.x,
+      y: state.y || sfmGroup.position.y,
+      z: state.z || sfmGroup.position.z,
+      rX: state.rX || sfmGroup.rotation.x,
+      rY: state.rY || sfmGroup.rotation.y,
+      rZ: state.rZ || sfmGroup.rotation.z,
+    };
+    allPositions[group.name][axis] = parseFloat(event.target.value || value);
 
     this.setState({ positions: allPositions });
     updateSFMPosition(allPositions[group.name]);
   }
 
   render() {
-    const { groups, expanded, positions } = this.state;
+    const { groups, expanded, positions, controlsShowing } = this.state;
     return (
       !expanded ?
         <div style={styles.collapsed} onClick={this.toggleExpansion}>
@@ -71,9 +69,13 @@ class Sidebar extends React.Component {
           <div style={ styles.layersWrap }>
             { groups.map( ({ group, updateSFMPosition, resetSFMPosition }, i) => {
               const shown = ~(this.props.showing || []).indexOf(group.name);
+              const showToggle = !!shown && group.children.length > 0 && updateSFMPosition;
+              const showControls = controlsShowing.indexOf(group.uuid) > -1;
               const positionState = positions[group.name];
               const groupPosition = group.children.length > 0 ? group.children[0].position : {};
               const groupRotation = group.children.length > 0 ? group.children[0].rotation : {};
+              const groupScale = group.children.length > 0 ? group.children[0].scale : {};
+
               const xVal = positionState ? positionState.x : groupPosition.x;
               const yVal = positionState ? positionState.y : groupPosition.y;
               const zVal = positionState ? positionState.z : groupPosition.z;
@@ -82,22 +84,71 @@ class Sidebar extends React.Component {
               const rYVal = positionState ? positionState.rY : groupRotation._y;
               const rZVal = positionState ? positionState.rZ : groupRotation._z;
 
+              const scaleVal = positionState ? positionState.s : groupScale.x;
+
               return (
                 <React.Fragment key={i}>
-                  <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
+                  <div onClick={() => this.props.toggle(group)} style={shown ? (!showToggle ? styles.groupShownBorder : styles.groupShown) : styles.group}>
                     {group.name}
                   </div>
-                  { !!shown && group.children.length > 0 && updateSFMPosition &&
-                    <div style={{ position: 'absolute', left: 200 }}>
+                  { showToggle && shown &&
+                    <div onClick={() => this.toggleControls(group.uuid)} style={showControls ? styles.groupShown : styles.groupShownBorder}>
+                      { showControls ? ' - ' : ' + ' }
+                    </div>
+                  }
+                  { showControls && !!shown &&
+                    <div style={styles.groupShownBorder}>
+                      Scale
+                      <div><input step={0.01} value={scaleVal} type="number" onChange={(e) => this.changePosition(e, group, 's', updateSFMPosition)} /></div>
+                      <br/>
                       Position
                       <div>X <input step={0.5} value={xVal} type="number" onChange={(e) => this.changePosition(e, group, 'x', updateSFMPosition)} /></div>
                       <div>Y <input step={0.5} value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
                       <div>Z <input step={0.5} value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
                       <br/>
                       Rotation
-                      <div>X <input step={0.1} value={rXVal} type="number" onChange={(e) => this.changePosition(e, group, 'rX', updateSFMPosition)} /></div>
-                      <div>Y <input step={0.1} value={rYVal} type="number" onChange={(e) => this.changePosition(e, group, 'rY', updateSFMPosition)} /></div>
-                      <div>Z <input step={0.1} value={rZVal} type="number" onChange={(e) => this.changePosition(e, group, 'rZ', updateSFMPosition)} /></div>
+                      <br/>
+                      <br/>
+                      <br/>
+                      X <Slider
+                          valueLabelDisplay="on"
+                          valueLabelFormat={val => `${val}`}
+                          min={-365}
+                          max={360}
+                          value={rXVal}
+                          step={0.01}
+                          onChange={(e, value) => this.changePosition(e, group, 'rX', updateSFMPosition, value)}
+                        />
+                        <br/>
+                        <br/>
+                        <br/>
+                      Y <Slider
+                          valueLabelDisplay="on"
+                          valueLabelFormat={val => `${val}`}
+                          min={-10}
+                          max={10}
+                          value={rYVal}
+                          step={0.01}
+                          onChange={(e, value) => this.changePosition(e, group, 'rY', updateSFMPosition, value)}
+                        />
+                        <br/>
+                        <br/>
+                        <br/>
+                      Z <Slider
+                          valueLabelDisplay="on"
+                          valueLabelFormat={val => `${val}`}
+                          min={-365}
+                          max={360}
+                          value={rZVal}
+                          step={0.01}
+                          onChange={(e, value) => this.changePosition(e, group, 'rZ', updateSFMPosition, value)}
+                        />
+                      {/*
+                        <div>X <input step={0.1} value={rXVal} type="number" onChange={(e) => this.changePosition(e, group, 'rX', updateSFMPosition)} /></div>
+                        <div>Y <input step={0.1} value={rYVal} type="number" onChange={(e) => this.changePosition(e, group, 'rY', updateSFMPosition)} /></div>
+                        <div>Z <input step={0.1} value={rZVal} type="number" onChange={(e) => this.changePosition(e, group, 'rZ', updateSFMPosition)} /></div>
+                      */}
+                      <br/>
                       <button onClick={() => {
                         resetSFMPosition();
                         const newPositions = { ...positions };
@@ -140,13 +191,20 @@ const styles = {
     fontWeight: 'bold',
     borderBottom: '2px solid #2f4d6a'
   },
-  groupShown: {
+  groupShownBorder: {
     padding: '10px',
     cursor: 'pointer',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#263f59',
     borderBottom: '2px solid #2f4d6a'
+  },
+  groupShown: {
+    padding: '10px',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#263f59'
   },
   imgWrap: {
     textAlign: 'center',

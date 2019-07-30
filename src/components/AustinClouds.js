@@ -4,7 +4,7 @@ import Layers from '../layers'
 import shaders from '../layers/shaders'
 
 const basemap = new Layers.ImageTiles('basemap',
-  'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png',
+  'https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}@2x.png',
   {
     domains: ['a', 'b', 'c', 'd'],
     visible: true

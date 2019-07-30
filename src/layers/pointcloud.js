@@ -201,7 +201,7 @@ class PointCloud extends Base {
     return { points, poses: { ...poses, transforms } };
   }
 
-  updateSFMPosition({ x, y, z, rX, rY, rZ }) {
+  updateSFMPosition({ x, y, z, rX, rY, rZ, s }) {
     if (this.sfmModel) {
       this.sfm.position.x = x;
       this.sfm.position.y = y;
@@ -210,7 +210,13 @@ class PointCloud extends Base {
       this.sfm.rotation.x = rX;
       this.sfm.rotation.y = rY;
       this.sfm.rotation.z = rZ;
+
+      this.sfm.scale.x = s;
+      this.sfm.scale.y = s;
+      this.sfm.scale.z = s;
+      
       this.sfm.updateMatrix();
+      this.group.updateMatrixWorld();
       this.render();
     }
   }
