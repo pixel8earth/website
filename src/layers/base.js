@@ -99,7 +99,7 @@ class Base {
 
   getGroup() {
     this.group.name = this.name;
-    return this.group;
+    return { group: this.group };
   }
 }
 

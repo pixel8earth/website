@@ -109,9 +109,9 @@ class ThreeMap extends Component {
     this.layers = this.props.layers;
     this.layers.forEach( layer => {
       if (!!layer.getGroup) {
-        const group = layer.getGroup();
-        this.groups.push(group);
-        this.geo.add(group);
+        const groupInfo = layer.getGroup();
+        this.groups.push(groupInfo);
+        this.geo.add(groupInfo.group);
       }
     })
     this.camera.position.y = this.props.camZoom || 25;

@@ -8,7 +8,8 @@ class Sidebar extends React.Component {
 
     this.state = {
       groups: [],
-      expanded: false
+      expanded: false,
+      positions: {}
     };
   }
 
@@ -22,8 +23,31 @@ class Sidebar extends React.Component {
     setTimeout(this.props.toggleSidebarCallback, 0);
   }
 
+  changePosition = (event, group, vertex) => {
+    event.preventDefault();
+    const allPositions = this.state.positions;
+    if (allPositions[group.name]) {
+      allPositions[group.name][vertex] = parseFloat(event.target.value);
+    } else {
+      allPositions[group.name] = {};
+      allPositions[group.name][vertex] = parseFloat(event.target.value);
+    }
+
+    if (vertex !== 'x' && !allPositions[group.name].x) {
+      allPositions[group.name].x = group.children[0].position.x;
+    }
+    if (vertex !== 'y' && !allPositions[group.name].y) {
+      allPositions[group.name].y = group.children[0].position.y;
+    }
+    if (vertex !== 'z' && !allPositions[group.name].z) {
+      allPositions[group.name].z = group.children[0].position.z;
+    }
+
+    this.setState({ positions: allPositions });
+  }
+
   render() {
-    const { groups, expanded } = this.state;
+    const { groups, expanded, positions } = this.state;
     return (
       !expanded ?
         <div style={styles.collapsed} onClick={this.toggleExpansion}>
@@ -35,13 +59,34 @@ class Sidebar extends React.Component {
             <img src={icon} style={styles.pixel8Icon} alt="pixel8 logo" />
           </div>
           <div style={ styles.layersWrap }>
-            { groups.map( (g, i) => {
-              const shown = ~(this.props.showing || []).indexOf(g.name);
+            { groups.map( ({ group, updateSFMPosition, resetSFMPosition }, i) => {
+              const shown = ~(this.props.showing || []).indexOf(group.name);
+              const positionState = positions[group.name];
+              const groupPosition = group.children.length > 0 ? group.children[0].position : {};
+              const xVal = positionState ? positionState.x : groupPosition.x;
+              const yVal = positionState ? positionState.y : groupPosition.y;
+              const zVal = positionState ? positionState.z : groupPosition.z;
+
               return (
                 <React.Fragment key={i}>
-                  <div onClick={() => this.props.toggle(g)} style={shown ? styles.groupShown : styles.group}>
-                    {g.name}
+                  <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
+                    {group.name}
                   </div>
+                  { !!shown && group.children.length > 0 &&
+                    <div style={{ position: 'absolute', left: 200 }}>
+                      Position
+                      <div>X <input value={xVal} type="number" onChange={(e) => this.changePosition(e, group, 'x')} /></div>
+                      <div>Y <input value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y')} /></div>
+                      <div>Z <input value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z')} /></div>
+                      <button onClick={() => updateSFMPosition({ x: xVal, y: yVal, z: zVal })}>apply</button>
+                      <button onClick={() => {
+                        resetSFMPosition();
+                        const newPositions = { ...positions };
+                        newPositions[group.name] = undefined;
+                        this.setState({ positions });
+                      }}>reset</button>
+                    </div>
+                  }
                 </React.Fragment>
               );
             })}

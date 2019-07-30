@@ -23,7 +23,9 @@ class PointCloud extends Base {
     this.url = url;
     this.group = new THREE.Group();
     this.sfm = new THREE.Group();
+    this.sfm.name = 'sfm';
     this.com = new THREE.Group();
+    this.com.name = 'com';
     this.proj = options.proj || "EPSG:4326"
     this.sfmModel = false;
   }
@@ -34,7 +36,7 @@ class PointCloud extends Base {
         vertexColors: THREE.VertexColors,
         size: 0.25
       })
-
+      this.render = render;
       this.fetchData(this.url, offsets)
         .then(({ data, poses }) => {
           if (poses) {
@@ -68,6 +70,8 @@ class PointCloud extends Base {
 
             this.sfm.add(this.com);
             this.group.add(this.sfm);
+            this.originalSFMScale = this.sfm.scale.clone();
+            this.originalSFMPosition = this.sfm.position.clone();
             this.group.updateMatrixWorld();
           }
 
@@ -109,7 +113,7 @@ class PointCloud extends Base {
 
       if (ply) {
         let poses = null;
-        if (sfmModel) {
+        if (sfmModel && ply) {
           poses = await fetch(`${urlObj.origin}/clouds/${streamId}/poses`)
             .then( async res => {
               if (!res.ok) {
@@ -133,6 +137,7 @@ class PointCloud extends Base {
                 const p = line.trim().replace(/ +/g, ' ').split(' ').map( j => parseFloat(j));
                 data.push(p);
               } else if (!sfmModel) {
+
                 const vals = line.split(' ').map( j => parseFloat(j))
                 if (!isNaN(vals[0])) {
                   data.push(vals)
@@ -189,6 +194,42 @@ class PointCloud extends Base {
         });
 
     return { points, poses: { ...poses, transforms } };
+  }
+
+  updateSFMPosition({ x, y, z }) {
+    if (this.sfmModel) {
+      this.sfm.position.x = x;
+      this.sfm.position.y = y;
+      this.sfm.position.z = z;
+      this.sfm.updateMatrix();
+      this.render();
+    }
+  }
+
+  resetSFMPosition() {
+    if (this.sfmModel) {
+      this.sfm.scale.x = this.originalSFMScale.x;
+      this.sfm.scale.y = this.originalSFMScale.y;
+      this.sfm.scale.z = this.originalSFMScale.z;
+      this.sfm.updateMatrix();
+
+      this.sfm.position.x = this.originalSFMPosition.x;
+      this.sfm.position.y = this.originalSFMPosition.y;
+      this.sfm.position.z = this.originalSFMPosition.z;
+      this.sfm.updateMatrix();
+
+      this.group.updateMatrixWorld();
+      this.render();
+    }
+  }
+
+  getGroup() {
+    this.group.name = this.name;
+    return {
+      group: this.group,
+      updateSFMPosition: this.updateSFMPosition.bind(this),
+      resetSFMPosition: this.resetSFMPosition.bind(this)
+    };
   }
 
 }
