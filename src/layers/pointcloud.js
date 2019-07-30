@@ -72,6 +72,11 @@ class PointCloud extends Base {
             this.group.add(this.sfm);
             this.originalSFMScale = this.sfm.scale.clone();
             this.originalSFMPosition = this.sfm.position.clone();
+            this.originalSFMRotation = {
+              x: this.sfm.rotation.x,
+              y: this.sfm.rotation.y,
+              z: this.sfm.rotation.z
+            };
             this.group.updateMatrixWorld();
           }
 
@@ -196,11 +201,15 @@ class PointCloud extends Base {
     return { points, poses: { ...poses, transforms } };
   }
 
-  updateSFMPosition({ x, y, z }) {
+  updateSFMPosition({ x, y, z, rX, rY, rZ }) {
     if (this.sfmModel) {
       this.sfm.position.x = x;
       this.sfm.position.y = y;
       this.sfm.position.z = z;
+
+      this.sfm.rotation.x = rX;
+      this.sfm.rotation.y = rY;
+      this.sfm.rotation.z = rZ;
       this.sfm.updateMatrix();
       this.render();
     }
@@ -211,11 +220,14 @@ class PointCloud extends Base {
       this.sfm.scale.x = this.originalSFMScale.x;
       this.sfm.scale.y = this.originalSFMScale.y;
       this.sfm.scale.z = this.originalSFMScale.z;
-      this.sfm.updateMatrix();
 
       this.sfm.position.x = this.originalSFMPosition.x;
       this.sfm.position.y = this.originalSFMPosition.y;
       this.sfm.position.z = this.originalSFMPosition.z;
+
+      this.sfm.rotation.x = this.originalSFMRotation.x;
+      this.sfm.rotation.y = this.originalSFMRotation.y;
+      this.sfm.rotation.z = this.originalSFMRotation.z;
       this.sfm.updateMatrix();
 
       this.group.updateMatrixWorld();

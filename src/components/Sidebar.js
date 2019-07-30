@@ -42,6 +42,15 @@ class Sidebar extends React.Component {
     if (vertex !== 'z' && !allPositions[group.name].z) {
       allPositions[group.name].z = group.children[0].position.z;
     }
+    if (vertex !== 'rX' && !allPositions[group.name].rX) {
+      allPositions[group.name].rX = group.children[0].rotation._x;
+    }
+    if (vertex !== 'rY' && !allPositions[group.name].rY) {
+      allPositions[group.name].rY = group.children[0].rotation._y;
+    }
+    if (vertex !== 'rZ' && !allPositions[group.name].rZ) {
+      allPositions[group.name].rZ= group.children[0].rotation._z;
+    }
 
     this.setState({ positions: allPositions });
     updateSFMPosition(allPositions[group.name]);
@@ -64,9 +73,14 @@ class Sidebar extends React.Component {
               const shown = ~(this.props.showing || []).indexOf(group.name);
               const positionState = positions[group.name];
               const groupPosition = group.children.length > 0 ? group.children[0].position : {};
+              const groupRotation = group.children.length > 0 ? group.children[0].rotation : {};
               const xVal = positionState ? positionState.x : groupPosition.x;
               const yVal = positionState ? positionState.y : groupPosition.y;
               const zVal = positionState ? positionState.z : groupPosition.z;
+
+              const rXVal = positionState ? positionState.rX : groupRotation._x;
+              const rYVal = positionState ? positionState.rY : groupRotation._y;
+              const rZVal = positionState ? positionState.rZ : groupRotation._z;
 
               return (
                 <React.Fragment key={i}>
@@ -76,14 +90,19 @@ class Sidebar extends React.Component {
                   { !!shown && group.children.length > 0 && updateSFMPosition &&
                     <div style={{ position: 'absolute', left: 200 }}>
                       Position
-                      <div>X <input value={xVal} type="number" onChange={(e) => this.changePosition(e, group, 'x', updateSFMPosition)} /></div>
-                      <div>Y <input value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
-                      <div>Z <input value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
+                      <div>X <input step={0.5} value={xVal} type="number" onChange={(e) => this.changePosition(e, group, 'x', updateSFMPosition)} /></div>
+                      <div>Y <input step={0.5} value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
+                      <div>Z <input step={0.5} value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
+                      <br/>
+                      Rotation
+                      <div>X <input step={0.1} value={rXVal} type="number" onChange={(e) => this.changePosition(e, group, 'rX', updateSFMPosition)} /></div>
+                      <div>Y <input step={0.1} value={rYVal} type="number" onChange={(e) => this.changePosition(e, group, 'rY', updateSFMPosition)} /></div>
+                      <div>Z <input step={0.1} value={rZVal} type="number" onChange={(e) => this.changePosition(e, group, 'rZ', updateSFMPosition)} /></div>
                       <button onClick={() => {
                         resetSFMPosition();
                         const newPositions = { ...positions };
                         newPositions[group.name] = undefined;
-                        this.setState({ positions });
+                        this.setState({ positions: newPositions });
                       }}>reset</button>
                     </div>
                   }
