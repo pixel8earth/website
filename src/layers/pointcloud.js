@@ -207,14 +207,14 @@ class PointCloud extends Base {
       this.sfm.position.y = y;
       this.sfm.position.z = z;
 
-      this.sfm.rotation.x = rX;
-      this.sfm.rotation.y = rY;
-      this.sfm.rotation.z = rZ;
+      // this.sfm.rotateX(THREE.Math.degToRad(rX));
+      this.sfm.rotateY(THREE.Math.degToRad(rY));
+      // this.sfm.rotateZ(THREE.Math.degToRad(rZ));
 
       this.sfm.scale.x = s;
       this.sfm.scale.y = s;
       this.sfm.scale.z = s;
-      
+
       this.sfm.updateMatrix();
       this.group.updateMatrixWorld();
       this.render();

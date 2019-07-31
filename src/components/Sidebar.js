@@ -44,14 +44,18 @@ class Sidebar extends React.Component {
       x: state.x || sfmGroup.position.x,
       y: state.y || sfmGroup.position.y,
       z: state.z || sfmGroup.position.z,
-      rX: state.rX || sfmGroup.rotation.x,
+      // rX: state.rX || sfmGroup.rotation.x,
       rY: state.rY || sfmGroup.rotation.y,
-      rZ: state.rZ || sfmGroup.rotation.z,
+      // rZ: state.rZ || sfmGroup.rotation.z,
     };
     allPositions[group.name][axis] = parseFloat(event.target.value || value);
-
     this.setState({ positions: allPositions });
-    updateSFMPosition(allPositions[group.name]);
+    const degrees = parseFloat(value || 0);
+    const prevDegrees = state.rY || 0;
+    const updates = axis === 'rY' && value !== undefined
+      ?  { ...allPositions[group.name], rY: degrees - prevDegrees}
+      : allPositions[group.name];
+    updateSFMPosition(updates);
   }
 
   render() {
@@ -68,8 +72,8 @@ class Sidebar extends React.Component {
           </div>
           <div style={ styles.layersWrap }>
             { groups.map( ({ group, updateSFMPosition, resetSFMPosition }, i) => {
-              const shown = ~(this.props.showing || []).indexOf(group.name);
-              const showToggle = !!shown && group.children.length > 0 && updateSFMPosition;
+              const shown = group.visible;
+              const showToggle = !!shown && updateSFMPosition;
               const showControls = controlsShowing.indexOf(group.uuid) > -1;
               const positionState = positions[group.name];
               const groupPosition = group.children.length > 0 ? group.children[0].position : {};
@@ -80,20 +84,26 @@ class Sidebar extends React.Component {
               const yVal = positionState ? positionState.y : groupPosition.y;
               const zVal = positionState ? positionState.z : groupPosition.z;
 
-              const rXVal = positionState ? positionState.rX : groupRotation._x;
-              const rYVal = positionState ? positionState.rY : groupRotation._y;
-              const rZVal = positionState ? positionState.rZ : groupRotation._z;
+              const rXVal = positionState ? positionState.rX : 0;
+              const rYVal = positionState ? positionState.rY : 0;
+              const rZVal = positionState ? positionState.rZ : 0;
 
               const scaleVal = positionState ? positionState.s : groupScale.x;
 
               return (
                 <React.Fragment key={i}>
-                  <div onClick={() => this.props.toggle(group)} style={shown ? (!showToggle ? styles.groupShownBorder : styles.groupShown) : styles.group}>
-                    {group.name}
-                  </div>
-                  { showToggle && shown &&
-                    <div onClick={() => this.toggleControls(group.uuid)} style={showControls ? styles.groupShown : styles.groupShownBorder}>
-                      { showControls ? ' - ' : ' + ' }
+                  { showToggle ?
+                    (<div style={{ display: 'inline-flex' }}>
+                      <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
+                        {group.name}
+                      </div>
+                      <div onClick={() => this.toggleControls(group.uuid)} style={styles.expandGroup}>
+                        { showControls ? ' - ' : ' + ' }
+                      </div>
+                    </div>)
+                    :
+                    <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
+                      {group.name}
                     </div>
                   }
                   { showControls && !!shown &&
@@ -106,55 +116,28 @@ class Sidebar extends React.Component {
                       <div>Y <input step={0.5} value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
                       <div>Z <input step={0.5} value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
                       <br/>
-                      Rotation
                       <br/>
                       <br/>
-                      <br/>
-                      X <Slider
-                          valueLabelDisplay="on"
-                          valueLabelFormat={val => `${val}`}
-                          min={-365}
-                          max={360}
-                          value={rXVal}
-                          step={0.01}
-                          onChange={(e, value) => this.changePosition(e, group, 'rX', updateSFMPosition, value)}
-                        />
-                        <br/>
-                        <br/>
-                        <br/>
-                      Y <Slider
-                          valueLabelDisplay="on"
-                          valueLabelFormat={val => `${val}`}
-                          min={-10}
-                          max={10}
-                          value={rYVal}
-                          step={0.01}
-                          onChange={(e, value) => this.changePosition(e, group, 'rY', updateSFMPosition, value)}
-                        />
-                        <br/>
-                        <br/>
-                        <br/>
-                      Z <Slider
-                          valueLabelDisplay="on"
-                          valueLabelFormat={val => `${val}`}
-                          min={-365}
-                          max={360}
-                          value={rZVal}
-                          step={0.01}
-                          onChange={(e, value) => this.changePosition(e, group, 'rZ', updateSFMPosition, value)}
-                        />
-                      {/*
-                        <div>X <input step={0.1} value={rXVal} type="number" onChange={(e) => this.changePosition(e, group, 'rX', updateSFMPosition)} /></div>
-                        <div>Y <input step={0.1} value={rYVal} type="number" onChange={(e) => this.changePosition(e, group, 'rY', updateSFMPosition)} /></div>
-                        <div>Z <input step={0.1} value={rZVal} type="number" onChange={(e) => this.changePosition(e, group, 'rZ', updateSFMPosition)} /></div>
-                      */}
-                      <br/>
-                      <button onClick={() => {
-                        resetSFMPosition();
-                        const newPositions = { ...positions };
-                        newPositions[group.name] = undefined;
-                        this.setState({ positions: newPositions });
-                      }}>reset</button>
+                      <Slider
+                        valueLabelDisplay="on"
+                        valueLabelFormat={val => `${val}°`}
+                        min={0}
+                        max={360}
+                        value={rYVal}
+                        step={1}
+                        onChange={(e, value) => this.changePosition(e, group, 'rY', updateSFMPosition, value)}
+                        style={{ color: "#63ADF2" }}
+                      />
+                      Y Rotation
+                      <button
+                        onClick={() => {
+                          resetSFMPosition();
+                          const newPositions = { ...positions };
+                          newPositions[group.name] = undefined;
+                          this.setState({ positions: newPositions });
+                        }}
+                        style={styles.resetBtn}
+                      >reset</button>
                     </div>
                   }
                 </React.Fragment>
@@ -206,6 +189,13 @@ const styles = {
     color: '#fff',
     backgroundColor: '#263f59'
   },
+  expandGroup: {
+    padding: '10px',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#263f59'
+  },
   imgWrap: {
     textAlign: 'center',
     marginTop: '2px',
@@ -225,6 +215,15 @@ const styles = {
   },
   layersWrap: {
     // flex: 1
+  },
+  resetBtn: {
+    padding: 5,
+    margin: 5,
+    backgroundColor: '#63ADF2',
+    color: '#fff',
+    fontWeight: 'bold',
+    border: '1px transparent',
+    borderRadius: '10%'
   }
 };
 

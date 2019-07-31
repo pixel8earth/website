@@ -112,6 +112,7 @@ class ThreeMap extends Component {
         const groupInfo = layer.getGroup();
         this.groups.push(groupInfo);
         this.geo.add(groupInfo.group);
+        if (!layer.options.visible) groupInfo.group.visible = false;
       }
     })
     this.camera.position.y = this.props.camZoom || 25;
@@ -271,6 +272,7 @@ class ThreeMap extends Component {
 
   toggleLayerVisibility = group => {
     if (this.mounted) {
+      group.visible = !group.visible;
       let showing = [...this.state.layersShowing];
       const index = showing.indexOf(group.name);
       if (index < 0) {
