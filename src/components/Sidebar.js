@@ -1,3 +1,4 @@
+
 import React from 'react';
 import icon from '../images/icon.png';
 import { Slider } from '@material-ui/core';
@@ -44,17 +45,16 @@ class Sidebar extends React.Component {
       x: state.x || sfmGroup.position.x,
       y: state.y || sfmGroup.position.y,
       z: state.z || sfmGroup.position.z,
-      // rX: state.rX || sfmGroup.rotation.x,
       rY: state.rY || sfmGroup.rotation.y,
-      // rZ: state.rZ || sfmGroup.rotation.z,
     };
-    allPositions[group.name][axis] = parseFloat(event.target.value || value);
+    const val = parseFloat(event.target.value || value);
+    allPositions[group.name][axis] = val;
     this.setState({ positions: allPositions });
     const degrees = parseFloat(value || 0);
     const prevDegrees = state.rY || 0;
     const updates = axis === 'rY' && value !== undefined
-      ?  { ...allPositions[group.name], rY: degrees - prevDegrees}
-      : allPositions[group.name];
+      ? { rY: degrees - prevDegrees }
+      : { [axis]: val };
     updateSFMPosition(updates);
   }
 
@@ -77,18 +77,13 @@ class Sidebar extends React.Component {
               const showControls = controlsShowing.indexOf(group.uuid) > -1;
               const positionState = positions[group.name];
               const groupPosition = group.children.length > 0 ? group.children[0].position : {};
-              const groupRotation = group.children.length > 0 ? group.children[0].rotation : {};
               const groupScale = group.children.length > 0 ? group.children[0].scale : {};
 
-              const xVal = positionState ? positionState.x : groupPosition.x;
-              const yVal = positionState ? positionState.y : groupPosition.y;
-              const zVal = positionState ? positionState.z : groupPosition.z;
-
-              const rXVal = positionState ? positionState.rX : 0;
-              const rYVal = positionState ? positionState.rY : 0;
-              const rZVal = positionState ? positionState.rZ : 0;
-
-              const scaleVal = positionState ? positionState.s : groupScale.x;
+              const x = positionState ? positionState.x : groupPosition.x;
+              const y = positionState ? positionState.y : groupPosition.y;
+              const z = positionState ? positionState.z : groupPosition.z;
+              const rY = positionState ? positionState.rY : 0;
+              const scale = positionState ? positionState.s : groupScale.x;
 
               return (
                 <React.Fragment key={i}>
@@ -109,12 +104,12 @@ class Sidebar extends React.Component {
                   { showControls && !!shown &&
                     <div style={styles.groupShownBorder}>
                       Scale
-                      <div><input step={0.01} value={scaleVal} type="number" onChange={(e) => this.changePosition(e, group, 's', updateSFMPosition)} /></div>
+                      <div><input style={styles.scaleInput} step={0.01} value={scale} type="number" onChange={(e) => this.changePosition(e, group, 's', updateSFMPosition)} /></div>
                       <br/>
                       Position
-                      <div>X <input step={0.5} value={xVal} type="number" onChange={(e) => this.changePosition(e, group, 'x', updateSFMPosition)} /></div>
-                      <div>Y <input step={0.5} value={yVal} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
-                      <div>Z <input step={0.5} value={zVal} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
+                      <div>X <input style={styles.positionInput} step={0.5} value={x} type="number" onChange={(e) => this.changePosition(e, group, 'x', updateSFMPosition)} /></div>
+                      <div>Y <input style={styles.positionInput} step={0.5} value={y} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
+                      <div>Z <input style={styles.positionInput} step={0.5} value={z} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
                       <br/>
                       <br/>
                       <br/>
@@ -123,21 +118,24 @@ class Sidebar extends React.Component {
                         valueLabelFormat={val => `${val}°`}
                         min={0}
                         max={360}
-                        value={rYVal}
-                        step={1}
+                        value={rY}
+                        step={0.1}
                         onChange={(e, value) => this.changePosition(e, group, 'rY', updateSFMPosition, value)}
-                        style={{ color: "#63ADF2" }}
+                        style={styles.rotationSlider}
                       />
-                      Y Rotation
-                      <button
-                        onClick={() => {
-                          resetSFMPosition();
-                          const newPositions = { ...positions };
-                          newPositions[group.name] = undefined;
-                          this.setState({ positions: newPositions });
-                        }}
-                        style={styles.resetBtn}
-                      >reset</button>
+                      Rotation
+                      <br/>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={() => {
+                            resetSFMPosition();
+                            const newPositions = { ...positions };
+                            newPositions[group.name] = undefined;
+                            this.setState({ positions: newPositions });
+                          }}
+                          style={styles.resetBtn}
+                        >Reset</button>
+                        </div>
                     </div>
                   }
                 </React.Fragment>
@@ -223,7 +221,19 @@ const styles = {
     color: '#fff',
     fontWeight: 'bold',
     border: '1px transparent',
-    borderRadius: '10%'
+    borderRadius: '10%',
+    cursor: 'pointer'
+  },
+  positionInput: {
+    margin: '3px 6px'
+  },
+  scaleInput: {
+    margin: '3px 6px 3px 21px'
+  },
+  rotationSlider: {
+    color: '#63ADF2',
+    width: '150px',
+    margin: '0 8px'
   }
 };
 
