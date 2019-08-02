@@ -1,7 +1,7 @@
 
 import React from 'react';
 import icon from '../images/icon.png';
-import { Slider } from '@material-ui/core';
+import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
 
 class Sidebar extends React.Component {
   constructor() {
@@ -12,7 +12,9 @@ class Sidebar extends React.Component {
       groups: [],
       expanded: false,
       positions: {},
-      controlsShowing: []
+      controlsShowing: [],
+      dialog: null,
+      dialogPostProcessing: null
     };
   }
 
@@ -58,8 +60,36 @@ class Sidebar extends React.Component {
     updateSFMPosition(updates);
   }
 
+  openRefineDialog = (group) => {
+    this.setState({ dialog: group.uuid });
+  }
+
+  confirmRefine = (refine) => {
+    refine();
+    this.setState({ dialog: null });
+  }
+
+  cancelRefine = () => {
+    this.setState({ dialog: null });
+  }
+
+  openPostProcessingDialog = (group) => {
+    this.setState({ dialogPostProcessing: group.uuid });
+  }
+
+  confirmPostProcessing = (group) => {
+    fetch(`https://api.pixel8.earth/clouds/${group.name}/postProcess`, { method: 'POST' })
+      .then( r => r.json())
+      .then( r => console.log('response for post processing of ', group.name, ' is ', r) );
+    this.setState({ dialogPostProcessing: null });
+  }
+
+  cancelPostProcessing = () => {
+    this.setState({ dialogPostProcessing: null });
+  }
+
   render() {
-    const { groups, expanded, positions, controlsShowing } = this.state;
+    const { groups, expanded, positions, controlsShowing, dialog, dialogPostProcessing } = this.state;
     return (
       !expanded ?
         <div style={styles.collapsed} onClick={this.toggleExpansion}>
@@ -70,11 +100,13 @@ class Sidebar extends React.Component {
           <div style={styles.imgWrap} onClick={this.toggleExpansion}>
             <img src={icon} style={styles.pixel8Icon} alt="pixel8 logo" />
           </div>
-          <div style={ styles.layersWrap }>
-            { groups.map( ({ group, updateSFMPosition, resetSFMPosition }, i) => {
+          <div>
+            { groups.map( ({ group, updateSFMPosition, resetSFMPosition, refine }, i) => {
               const shown = group.visible;
               const showToggle = !!shown && updateSFMPosition;
               const showControls = controlsShowing.indexOf(group.uuid) > -1;
+              const showRefineDialog = dialog === group.uuid;
+              const showPostProcessingDialog = dialogPostProcessing === group.uuid;
               const positionState = positions[group.name];
               const groupPosition = group.children.length > 0 ? group.children[0].position : {};
               const groupScale = group.children.length > 0 ? group.children[0].scale : {};
@@ -88,7 +120,7 @@ class Sidebar extends React.Component {
               return (
                 <React.Fragment key={i}>
                   { showToggle ?
-                    (<div style={{ display: 'inline-flex' }}>
+                    (<div style={styles.groupWithControlsToggle}>
                       <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
                         {group.name}
                       </div>
@@ -111,10 +143,9 @@ class Sidebar extends React.Component {
                       <div>Y <input style={styles.positionInput} step={0.5} value={y} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
                       <div>Z <input style={styles.positionInput} step={0.5} value={z} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
                       <br/>
-                      <br/>
-                      <br/>
+                      Rotation
                       <Slider
-                        valueLabelDisplay="on"
+                        valueLabelDisplay="auto"
                         valueLabelFormat={val => `${val}°`}
                         min={0}
                         max={360}
@@ -123,20 +154,48 @@ class Sidebar extends React.Component {
                         onChange={(e, value) => this.changePosition(e, group, 'rY', updateSFMPosition, value)}
                         style={styles.rotationSlider}
                       />
-                      Rotation
-                      <br/>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <button
+                      <ButtonGroup size="small" style={{ marginTop: '6px', color:'#fff', backgroundColor: '#63ADF2' }}>
+                        <Button
+                          style={styles.buttonGroupBtn}
                           onClick={() => {
                             resetSFMPosition();
                             const newPositions = { ...positions };
                             newPositions[group.name] = undefined;
                             this.setState({ positions: newPositions });
                           }}
-                          style={styles.resetBtn}
-                        >Reset</button>
-                        </div>
+                        >Reset</Button>
+                        <Button
+                          onClick={() => this.openPostProcessingDialog(group)}
+                          style={styles.buttonGroupBtn}
+                        >Process</Button>
+                        <Button
+                          style={styles.buttonGroupBtn}
+                          onClick={() => this.openRefineDialog(group)}
+                        >Refine</Button>
+                      </ButtonGroup>
                     </div>
+                  }
+                  { showRefineDialog &&
+                    <Dialog onClose={this.cancelRefine} open={showRefineDialog}>
+                      <div style={{ padding: '20px' }}>
+                        {`Are you sure you'd like to refine collect ${group.name} with your adjustments to position, rotation, and scale?`}
+                        <div style={styles.flexEndContainer}>
+                          <button style={styles.cancelBtn} onClick={this.cancelRefine}>Cancel</button>
+                          <button style={styles.btn} onClick={() => this.confirmRefine(refine)}>Continue</button>
+                        </div>
+                      </div>
+                    </Dialog>
+                  }
+                  { showPostProcessingDialog &&
+                    <Dialog onClose={this.cancelPostProcessing} open={showPostProcessingDialog}>
+                      <div style={{ padding: '20px' }}>
+                        {`Are you sure you'd like to run post processing for collect ${group.name}?`}
+                        <div style={styles.flexEndContainer}>
+                          <button style={styles.cancelBtn} onClick={this.cancelPostProcessing}>Cancel</button>
+                          <button style={styles.btn} onClick={() => this.confirmPostProcessing(group)}>Continue</button>
+                        </div>
+                      </div>
+                    </Dialog>
                   }
                 </React.Fragment>
               );
@@ -191,8 +250,9 @@ const styles = {
     padding: '10px',
     cursor: 'pointer',
     fontWeight: 'bold',
-    color: '#fff',
-    backgroundColor: '#263f59'
+    color: '#63ADF2',
+    backgroundColor: '#263f59',
+    borderRight: 'none'
   },
   imgWrap: {
     textAlign: 'center',
@@ -211,18 +271,26 @@ const styles = {
     margin: 0,
     color: '#808080'
   },
-  layersWrap: {
-    // flex: 1
-  },
-  resetBtn: {
+  btn: {
     padding: 5,
     margin: 5,
     backgroundColor: '#63ADF2',
     color: '#fff',
     fontWeight: 'bold',
     border: '1px transparent',
-    borderRadius: '10%',
+    borderRadius: '3px',
     cursor: 'pointer'
+  },
+  cancelBtn: {
+    padding: 5,
+    margin: 5,
+    backgroundColor: '#AF4141',
+    color: '#fff',
+    fontWeight: 'bold',
+    border: '1px transparent',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    marginRight: '6px'
   },
   positionInput: {
     margin: '3px 6px'
@@ -232,8 +300,24 @@ const styles = {
   },
   rotationSlider: {
     color: '#63ADF2',
-    width: '150px',
+    width: '162px',
     margin: '0 8px'
+  },
+  groupWithControlsToggle: {
+    display: 'flex',
+    backgroundColor: '#263f59',
+  },
+  flexEndContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: '6px'
+  },
+  buttonGroupBtn: {
+    color: '#fff',
+    textTransform: 'none',
+    letterSpacing: 0,
+    lineHeight: 1,
+    fontWeight: 'bold'
   }
 };
 

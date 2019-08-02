@@ -55,7 +55,7 @@ const collects = [
 
 // sfm rendered via sfm.sfm info
 const layers3 = collects.map((s,i) => {
-  return new Layers.PointCloud(`${s}`, `https://api.pixel8.earth/clouds/${s}/sfm.json`, { proj: opts.proj, visible: false })
+  return new Layers.PointCloud(`${s}`, `https://api.pixel8.earth/clouds/${s}/sfm.json`, { proj: opts.proj, visible: false, stream: s })
 })
 
 const mesh = new Layers.Mesh('ground', 'https://pixel8austin.storage.googleapis.com/austin_ground.ply', { visible: false })

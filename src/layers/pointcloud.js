@@ -28,6 +28,7 @@ class PointCloud extends Base {
     this.com.name = 'com';
     this.proj = options.proj || "EPSG:4326"
     this.sfmModel = false;
+    this.stream = options.stream;
   }
 
   update = ({tiles, offsets, render}) => {
@@ -41,6 +42,7 @@ class PointCloud extends Base {
         .then(({ data, poses }) => {
           if (poses) {
             const { com_i, com_f, rmat, scale } = poses.transforms;
+            this.com_i = com_i;
             const r = [rmat[0], rmat[1], rmat[2], 0,
                       rmat[3], rmat[4], rmat[5], 0,
                       rmat[6], rmat[7], rmat[8], 0,
@@ -240,12 +242,37 @@ class PointCloud extends Base {
     }
   }
 
+  refine() {
+    const stream = this.stream || this.name;
+    const m = this.sfm.matrix;
+    const rotM = [
+      m[0], m[1], m[2],
+      m[4], m[5], m[6],
+      m[8], m[9], m[10]
+    ];
+    const { x, y, z } = this.sfm.position;
+    const transforms = {
+      com_i: this.com_i,
+      rmat:  rotM,
+      scale: this.sfm.scale.x,
+      com_f: [x, y, z]
+    }
+    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, { method: 'POST', body: transforms })
+      .then(r => r.json)
+      .then(r => {
+        console.log(`Refine finished for ${stream}.\nResults are: ${r}`);
+        return r;
+      })
+      .catch(err => console.log(`Refine error for ${stream}.\nERROR: ${err}`))
+  }
+
   getGroup() {
     this.group.name = this.name;
     return {
       group: this.group,
       updateSFMPosition: this.updateSFMPosition.bind(this),
-      resetSFMPosition: this.resetSFMPosition.bind(this)
+      resetSFMPosition: this.resetSFMPosition.bind(this),
+      refine: this.refine.bind(this)
     };
   }
 
