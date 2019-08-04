@@ -23,11 +23,6 @@ export const actions = {
     const url = 'https://api.pixel8.earth/auth/signin';
     const options = {
       method: 'POST',
-      mode: 'cors',
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
       body: JSON.stringify(user)
     };
     const result = await fetch(url, options)
