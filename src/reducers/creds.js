@@ -22,8 +22,12 @@ export const actions = {
     // send user/pw to server, send back user info...
     const url = 'https://api.pixel8.earth/auth/signin';
     const options = {
-      method: 'POST',
-      body: JSON.stringify(user)
+      method: 'post',
+      body: JSON.stringify(user),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
     };
     const result = await fetch(url, options)
       .then(r => r.json())
