@@ -13,9 +13,15 @@ const mapStateToProps = state => ({
   user: state.creds.user,
 });
 
-const mappedActions = {};
+const mappedActions = {
+  fetchCreds: credsActions.fetch,
+};
 
 class Routes extends React.Component {
+  componentDidMount = async () => {
+    await this.props.fetchCreds();
+  }
+
   render() {
     const { user } = this.props;
 
