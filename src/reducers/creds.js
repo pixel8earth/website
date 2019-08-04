@@ -24,6 +24,7 @@ export const actions = {
     const options = {
       method: 'POST',
       mode: 'cors',
+      credentials: 'include',
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
