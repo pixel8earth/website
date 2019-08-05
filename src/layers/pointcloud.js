@@ -270,6 +270,7 @@ class PointCloud extends Base {
     this.group.name = this.name;
     return {
       group: this.group,
+      stream: this.stream, 
       updateSFMPosition: this.updateSFMPosition.bind(this),
       resetSFMPosition: this.resetSFMPosition.bind(this),
       refine: this.refine.bind(this)
