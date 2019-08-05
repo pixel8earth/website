@@ -23,8 +23,6 @@ class Routes extends React.Component {
   }
 
   render() {
-    const { user } = this.props;
-
     return (
       <Router>
         <div>

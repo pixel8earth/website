@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { actions as credsActions } from '../reducers/creds';
 import icon from '../images/icon.png';
 import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
 

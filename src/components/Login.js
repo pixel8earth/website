@@ -2,16 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { actions as credsActions } from '../reducers/creds';
 import { TextField, Button } from '@material-ui/core';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-
-const theme = createMuiTheme({
-  palette: {
-    primary: { 500: '#63ADF2' },
-  },
-  status: {
-    error: { 500: '#AF4141' }
-  },
-});
 
 const mapStateToProps = state => ({
   error: state.creds.error
