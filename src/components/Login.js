@@ -2,9 +2,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { actions as credsActions } from '../reducers/creds';
 import { TextField, Button } from '@material-ui/core';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: { 500: '#63ADF2' },
+  },
+  status: {
+    error: { 500: '#AF4141' }
+  },
+});
 
 const mapStateToProps = state => ({
-  user: state.creds.user,
   error: state.creds.error
 });
 const mappedActions = {
@@ -17,8 +26,34 @@ class Login extends React.Component {
     this.state = {
       showLoginForm: false,
       username: '',
-      password: ''
+      password: '',
+      usernameError: null,
+      passwordError: null,
+      success: false
     };
+  }
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
+  updateField = (event) => {
+    const { target: { name, value } } = event;
+    const { usernameError, passwordError } = this.state;
+    let state = {};
+    if (name === 'username') {
+      if (usernameError && value.length > 0) state.usernameError = null;
+      state.username = value;
+    }
+    if (name === 'password') {
+      if (passwordError && value.length > 0) state.passwordError = null;
+      state.password = value;
+    }
+    this.setState( state );
   }
 
   beginLogin = () => {
@@ -31,13 +66,24 @@ class Login extends React.Component {
   }
 
   submitLogin = (event) => {
+    if (this.state.username === '') {
+      this.setState({ usernameError: 'A username is required to log in!' });
+    }
+    if (this.state.password === '') {
+      this.setState({ passwordError: 'A password is required to log in!' });
+    }
     if (event) event.preventDefault();
-    this.props.login({ username: this.state.username, password: this.state.password });
-    this.setState({ showLoginForm: false, username: '', password: '' });
+    this.props.login({ username: this.state.username, password: this.state.password })
+      .then(() => {
+        if (!this.props.error) {
+          if (this.mounted) this.setState({ success: true });
+          if (this.mounted) setTimeout(() => this.setState({ showLoginForm: false, username: '', password: '' }), 1500);
+        }
+      });
   }
 
   render() {
-    const { showLoginForm, username, password } = this.state;
+    const { showLoginForm, username, password, usernameError, passwordError, success } = this.state;
 
     return (
       <React.Fragment>
@@ -54,13 +100,19 @@ class Login extends React.Component {
                   value={username}
                   type="text"
                   label="username"
-                  onChange={({ target: { value } }) => this.setState({ username: value })}
+                  name="username"
+                  onChange={this.updateField}
+                  error={!!usernameError}
+                  helperText={usernameError}
                 ></TextField>
                 <TextField
                   value={password}
                   label="password"
                   type="password"
-                  onChange={({ target: { value } }) => this.setState({ password: value })}
+                  name="password"
+                  onChange={this.updateField}
+                  error={!!passwordError}
+                  helperText={passwordError}
                 ></TextField>
               </div>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: '12px' }}>
@@ -75,6 +127,12 @@ class Login extends React.Component {
                   type="submit"
                 >Submit</Button>
               </div>
+              { this.props.error &&
+                <div style={styles.serverError}>{this.props.error}</div>
+              }
+              { success &&
+                <div style={styles.success}>Success!</div>
+              }
             </form>
           }
         </div>
@@ -107,8 +165,20 @@ const styles = {
     letterSpacing: 0,
     lineHeight: 1,
     fontWeight: 'bold',
-    backgroundColor: '#AF4141',
+    backgroundColor: '#f44336', // '#AF4141'
     marginRight: '12px'
+  },
+  serverError: {
+    margin: '12px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#f44336'
+  },
+  success: {
+    margin: '12px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#76B041'
   }
 };
 

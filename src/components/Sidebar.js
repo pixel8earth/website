@@ -1,7 +1,14 @@
 
 import React from 'react';
+import { connect } from 'react-redux';
+import { actions as credsActions } from '../reducers/creds';
 import icon from '../images/icon.png';
 import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
+
+const mapStateToProps = state => ({
+  user: state.creds.user
+});
+const mappedActions = {};
 
 class Sidebar extends React.Component {
   constructor() {
@@ -104,7 +111,7 @@ class Sidebar extends React.Component {
             { groups.map( ({ group, updateSFMPosition, resetSFMPosition, refine, stream }, i) => {
               const shown = group.visible;
               const showToggle = !!shown && updateSFMPosition;
-              const showControls = controlsShowing.indexOf(group.uuid) > -1;
+              const showControls = controlsShowing.indexOf(group.uuid) > -1 && this.props.user;
               const showRefineDialog = dialog === group.uuid;
               const showPostProcessingDialog = dialogPostProcessing === group.uuid;
               const positionState = positions[group.name];
@@ -124,9 +131,11 @@ class Sidebar extends React.Component {
                       <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
                         {group.name}
                       </div>
-                      <div onClick={() => this.toggleControls(group.uuid)} style={styles.expandGroup}>
-                        { showControls ? ' - ' : ' + ' }
-                      </div>
+                      { this.props.user &&
+                        <div onClick={() => this.toggleControls(group.uuid)} style={styles.expandGroup}>
+                          { showControls ? ' - ' : ' + ' }
+                        </div>
+                      }
                     </div>)
                     :
                     <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
@@ -322,4 +331,4 @@ const styles = {
 };
 
 
-export default Sidebar;
+export default connect(mapStateToProps, mappedActions)(Sidebar);
