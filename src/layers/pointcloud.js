@@ -69,16 +69,12 @@ class PointCloud extends Base {
             this.sfm.position.y = com_f[1] + this.sfm.position.y;
             this.sfm.position.z = com_f[2] + this.sfm.position.z;
             this.sfm.updateMatrix();
+            this.originalSFMScale = this.sfm.scale.clone();
+            this.originalSFMPosition = this.sfm.position.clone();
+            this.originalSFMRotation = this.sfm.rotation.clone();
 
             this.sfm.add(this.com);
             this.group.add(this.sfm);
-            this.originalSFMScale = this.sfm.scale.clone();
-            this.originalSFMPosition = this.sfm.position.clone();
-            this.originalSFMRotation = {
-              x: this.sfm.rotation.x,
-              y: this.sfm.rotation.y,
-              z: this.sfm.rotation.z
-            };
             this.group.updateMatrixWorld();
           }
 
@@ -203,13 +199,27 @@ class PointCloud extends Base {
     return { points, poses: { ...poses, transforms } };
   }
 
+  rotateAroundWorldAxis(object, axis, radians) {
+    // taken from https://stackoverflow.com/questions/11119753/how-to-rotate-a-object-on-axis-world-three-js
+    // Rotate an object around an arbitrary axis in world space
+    const rotWorldMatrix = new THREE.Matrix4();
+    rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
+    rotWorldMatrix.multiply(object.matrix);        // pre-multiply
+    object.matrix = rotWorldMatrix;
+    object.rotation.setFromRotationMatrix(object.matrix);
+  }
+
   updateSFMPosition({ x, y, z, rY, s }) {
     if (this.sfmModel) {
       if (x) this.sfm.position.x = x;
       if (y) this.sfm.position.y = y;
       if (z) this.sfm.position.z = z;
 
-      if (rY) this.sfm.rotateY(THREE.Math.degToRad(rY));
+      if (rY) {
+        this.rotateAroundWorldAxis(this.sfm, new THREE.Vector3(0,1,0), THREE.Math.degToRad(rY));
+        // TODO: figure out how we would get and store this new value for refine purposes.
+      }
+
       if (s) {
         this.sfm.scale.x = s;
         this.sfm.scale.y = s;
@@ -270,7 +280,7 @@ class PointCloud extends Base {
     this.group.name = this.name;
     return {
       group: this.group,
-      stream: this.stream, 
+      stream: this.stream,
       updateSFMPosition: this.updateSFMPosition.bind(this),
       resetSFMPosition: this.resetSFMPosition.bind(this),
       refine: this.refine.bind(this)

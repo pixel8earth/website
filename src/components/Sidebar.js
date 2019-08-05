@@ -53,7 +53,7 @@ class Sidebar extends React.Component {
       x: state.x || sfmGroup.position.x,
       y: state.y || sfmGroup.position.y,
       z: state.z || sfmGroup.position.z,
-      rY: state.rY || sfmGroup.rotation.y,
+      rY: state.rY || 0,
     };
     const val = parseFloat(event.target.value || value);
     allPositions[group.name][axis] = val;
