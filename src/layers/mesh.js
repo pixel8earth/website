@@ -18,12 +18,13 @@ proj4.defs([
 
 class Mesh extends Base {
   loaded = false
-  loader = new PLYLoader();
 
   constructor(name, url, options) {
     super(name, url, options)
     this.url = url;
     this.group = new THREE.Group();
+    this.loader = new PLYLoader();
+    this.loader.propertyNameMapping = options.mapping || {};
   }
 
   update = async ({render}) => {
@@ -31,6 +32,7 @@ class Mesh extends Base {
       const geometry = await this.loader.load(this.url)
       geometry.computeVertexNormals();
       geometry.computeBoundingSphere();
+      console.log(geometry)
       var material = new THREE.MeshPhongMaterial({color: 0x00ffff, wireframe: false, side: THREE.DoubleSide});
       var mesh = new THREE.Mesh(geometry, material);
       this.group.add(mesh);
