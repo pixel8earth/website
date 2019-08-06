@@ -45,24 +45,32 @@ class Sidebar extends React.Component {
 
   changePosition = (event, group, axis, updateSFMPosition, value) => {
     event.preventDefault();
-    const allPositions = this.state.positions;
-    const sfmGroup = group.children[0];
-    const state = (allPositions[group.name] || {});
-    allPositions[group.name] = {
-      s: state.s || sfmGroup.scale.x,
-      x: state.x || sfmGroup.position.x,
-      y: state.y || sfmGroup.position.y,
-      z: state.z || sfmGroup.position.z,
-      rY: state.rY || 0,
-    };
-    const val = parseFloat(event.target.value || value);
-    allPositions[group.name][axis] = val;
-    this.setState({ positions: allPositions });
-    const degrees = parseFloat(value || 0);
-    const prevDegrees = state.rY || 0;
-    const updates = axis === 'rY' && value !== undefined
-      ? { rY: degrees - prevDegrees }
-      : { [axis]: val };
+    let positions = this.state.positions;
+    if (!positions[group.name]) {
+      const sfmGroup = group.children && group.children[0];
+      // initial state for a given group
+      const data = {
+        s: sfmGroup.scale.x,
+        x: sfmGroup.position.x,
+        y: sfmGroup.position.y,
+        z: sfmGroup.position.z,
+        rY: 0 // start at 0 degrees
+      };
+      positions[group.name] = data;
+    }
+
+    const val = axis === 'rY'
+      ? parseFloat(value)
+      : parseFloat(event.target.value);
+
+    const prevDegrees = positions[group.name]['rY'];
+    let updates;
+    if (axis === 'rY') {
+      updates = { rY: val - prevDegrees };
+    } else updates = { [axis]: val };
+
+    positions[group.name][axis] = val;
+    this.setState({ positions: positions });
     updateSFMPosition(updates);
   }
 
@@ -92,6 +100,13 @@ class Sidebar extends React.Component {
 
   cancelPostProcessing = () => {
     this.setState({ dialogPostProcessing: null });
+  }
+
+  reset = (group, resetSFMPosition) => {
+    resetSFMPosition();
+    const newPositions = { ...this.state.positions };
+    newPositions[group.name] = undefined;
+    this.setState({ positions: newPositions });
   }
 
   render() {
@@ -165,12 +180,7 @@ class Sidebar extends React.Component {
                       <ButtonGroup size="small" style={{ marginTop: '6px', color:'#fff', backgroundColor: '#63ADF2' }}>
                         <Button
                           style={styles.buttonGroupBtn}
-                          onClick={() => {
-                            resetSFMPosition();
-                            const newPositions = { ...positions };
-                            newPositions[group.name] = undefined;
-                            this.setState({ positions: newPositions });
-                          }}
+                          onClick={() => this.reset(group, resetSFMPosition)}
                         >Reset</Button>
                         <Button
                           onClick={() => this.openPostProcessingDialog(group)}
