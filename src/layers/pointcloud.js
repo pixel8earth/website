@@ -243,7 +243,7 @@ class PointCloud extends Base {
 
   refine() {
     const stream = this.stream || this.name;
-    const m = this.sfm.matrix;
+    const m = this.sfm.matrix.clone().elements;
     const rotM = [
       m[0], m[1], m[2],
       m[4], m[5], m[6],
@@ -256,7 +256,14 @@ class PointCloud extends Base {
       scale: this.sfm.scale.x,
       com_f: [x, y, z]
     }
-    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, { method: 'POST', body: transforms })
+    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, {
+        method: 'post',
+        body: JSON.stringify(transforms),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
       .then(r => r.json)
       .then(r => {
         console.log(`Refine finished for ${stream}.\nResults are: ${r}`);
