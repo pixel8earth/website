@@ -23,10 +23,8 @@ class Routes extends React.Component {
   }
 
   render() {
-    const { user } = this.props;
-
-    return ( user ?
-      (<Router>
+    return (
+      <Router>
         <div>
           <Route exact path="/" component={Home} />
           <Route path="/austin" component={Austin} />
@@ -34,13 +32,7 @@ class Routes extends React.Component {
           <Route path="/boulderclouds" component={BoulderClouds} />
           <Route path="/boulder" component={Boulder} />
         </div>
-      </Router>)
-      :
-      (<Router>
-        <div>
-          <Route exact path="/" component={Home} />
-        </div>
-      </Router>)
+      </Router>
     );
   }
 }

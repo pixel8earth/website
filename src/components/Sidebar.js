@@ -1,7 +1,13 @@
 
 import React from 'react';
+import { connect } from 'react-redux';
 import icon from '../images/icon.png';
 import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
+
+const mapStateToProps = state => ({
+  user: state.creds.user
+});
+const mappedActions = {};
 
 class Sidebar extends React.Component {
   constructor() {
@@ -47,7 +53,7 @@ class Sidebar extends React.Component {
       x: state.x || sfmGroup.position.x,
       y: state.y || sfmGroup.position.y,
       z: state.z || sfmGroup.position.z,
-      rY: state.rY || sfmGroup.rotation.y,
+      rY: state.rY || 0,
     };
     const val = parseFloat(event.target.value || value);
     allPositions[group.name][axis] = val;
@@ -77,10 +83,10 @@ class Sidebar extends React.Component {
     this.setState({ dialogPostProcessing: group.uuid });
   }
 
-  confirmPostProcessing = (group) => {
-    fetch(`https://api.pixel8.earth/clouds/${group.name}/postProcess`, { method: 'POST' })
+  confirmPostProcessing = (stream) => {
+    fetch(`https://api.pixel8.earth/clouds/${stream}/postProcess`, { method: 'POST' })
       .then( r => r.json())
-      .then( r => console.log('response for post processing of ', group.name, ' is ', r) );
+      .then( r => console.log('response for post processing of ', stream, ' is ', r) );
     this.setState({ dialogPostProcessing: null });
   }
 
@@ -101,10 +107,10 @@ class Sidebar extends React.Component {
             <img src={icon} style={styles.pixel8Icon} alt="pixel8 logo" />
           </div>
           <div>
-            { groups.map( ({ group, updateSFMPosition, resetSFMPosition, refine }, i) => {
+            { groups.map( ({ group, updateSFMPosition, resetSFMPosition, refine, stream }, i) => {
               const shown = group.visible;
               const showToggle = !!shown && updateSFMPosition;
-              const showControls = controlsShowing.indexOf(group.uuid) > -1;
+              const showControls = controlsShowing.indexOf(group.uuid) > -1 && this.props.user;
               const showRefineDialog = dialog === group.uuid;
               const showPostProcessingDialog = dialogPostProcessing === group.uuid;
               const positionState = positions[group.name];
@@ -124,9 +130,11 @@ class Sidebar extends React.Component {
                       <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
                         {group.name}
                       </div>
-                      <div onClick={() => this.toggleControls(group.uuid)} style={styles.expandGroup}>
-                        { showControls ? ' - ' : ' + ' }
-                      </div>
+                      { this.props.user &&
+                        <div onClick={() => this.toggleControls(group.uuid)} style={styles.expandGroup}>
+                          { showControls ? ' - ' : ' + ' }
+                        </div>
+                      }
                     </div>)
                     :
                     <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
@@ -192,7 +200,7 @@ class Sidebar extends React.Component {
                         {`Are you sure you'd like to run post processing for collect ${group.name}?`}
                         <div style={styles.flexEndContainer}>
                           <button style={styles.cancelBtn} onClick={this.cancelPostProcessing}>Cancel</button>
-                          <button style={styles.btn} onClick={() => this.confirmPostProcessing(group)}>Continue</button>
+                          <button style={styles.btn} onClick={() => this.confirmPostProcessing(stream)}>Continue</button>
                         </div>
                       </div>
                     </Dialog>
@@ -322,4 +330,4 @@ const styles = {
 };
 
 
-export default Sidebar;
+export default connect(mapStateToProps, mappedActions)(Sidebar);
