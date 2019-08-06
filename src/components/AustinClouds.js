@@ -11,6 +11,11 @@ const basemap = new Layers.ImageTiles('basemap',
   }
 )
 
+const imagery = new Layers.ImageTiles('imagery',
+  'https://pixel8austin.storage.googleapis.com/imagery/{z}/{x}/{y}.jpg',
+  { visible: false }
+)
+
 const points = new Layers.PointTiles('lidar',
   'https://pixel8austin.storage.googleapis.com/lidar/tiles_utm/{z}/{x}/{y}.csv.gz',
   {
@@ -58,11 +63,13 @@ const layers3 = collects.map((s,i) => {
   return new Layers.PointCloud(`${s}`, `https://api.pixel8.earth/clouds/${s}/sfm.json`, { proj: opts.proj, visible: false, stream: s })
 })
 
-const mesh = new Layers.Mesh('ground', 'https://pixel8austin.storage.googleapis.com/austin_ground.ply', { visible: false })
+const buildings = new Layers.Mesh('buildings', 'https://pixel8austin.storage.googleapis.com/buildings.ply', { visible: false, mapping: {x: 'y', y: 'x'}})
+const ground = new Layers.Mesh('ground', 'https://pixel8austin.storage.googleapis.com/ground.ply', { visible: false, mapping: {x: 'y', y: 'x'}})
+//const mesh = new Layers.Mesh('ground', 'https://pixel8austin.storage.googleapis.com/austin_ground.ply', { visible: false })
 
 const props = {
   center: [-97.739124,30.257862],
-  layers: [...layers3, points, basemap, mesh],
+  layers: [...layers3, points, basemap, imagery, buildings, ground],
   zOffset: 136,
   camZoom: 75,
   proj: 'EPSG:32614',
