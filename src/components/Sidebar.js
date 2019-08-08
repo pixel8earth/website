@@ -48,7 +48,6 @@ class Sidebar extends React.Component {
   }
 
   changePosition = (group, axis, updateSFMPosition, value) => {
-    debugger;
     let positions = this.state.positions;
     if (!positions[group.name]) {
       const sfmGroup = group.children && group.children[0];
