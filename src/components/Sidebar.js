@@ -90,9 +90,9 @@ class Sidebar extends React.Component {
   beginPositionChange = (group, axis, direction, updateSFMPosition) => {
     let func;
     if (direction === 'up') {
-      func = (value) => this.changePosition(group, axis, updateSFMPosition, value + 0.5);
+      func = (value) => this.changePosition(group, axis, updateSFMPosition, value + 0.1);
     } else if (direction === 'down') {
-      func = (value) => this.changePosition(group, axis, updateSFMPosition, value - 0.5);
+      func = (value) => this.changePosition(group, axis, updateSFMPosition, value - 0.1);
     }
     this.repeatChange(func, group, axis);
   }
