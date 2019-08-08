@@ -3,6 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import icon from '../images/icon.png';
 import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
+import ArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import ArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
+import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
 
 const mapStateToProps = state => ({
   user: state.creds.user
@@ -13,6 +17,8 @@ class Sidebar extends React.Component {
   constructor() {
     super();
     this.mounted = false;
+    this.timeout = undefined;
+    this.timeoutVal = 100;
 
     this.state = {
       groups: [],
@@ -44,44 +50,94 @@ class Sidebar extends React.Component {
   }
 
   changePosition = (event, group, axis, updateSFMPosition, value) => {
-    event.preventDefault();
-    const allPositions = this.state.positions;
-    const sfmGroup = group.children[0];
-    const state = (allPositions[group.name] || {});
-    allPositions[group.name] = {
-      s: state.s || sfmGroup.scale.x,
-      x: state.x || sfmGroup.position.x,
-      y: state.y || sfmGroup.position.y,
-      z: state.z || sfmGroup.position.z,
-      rY: state.rY || 0,
-    };
-    const val = parseFloat(event.target.value || value);
-    allPositions[group.name][axis] = val;
-    this.setState({ positions: allPositions });
-    const degrees = parseFloat(value || 0);
-    const prevDegrees = state.rY || 0;
-    const updates = axis === 'rY' && value !== undefined
-      ? { rY: degrees - prevDegrees }
-      : { [axis]: val };
+    if (event && event.preventDefault) event.preventDefault();
+    let positions = this.state.positions;
+    if (!positions[group.name]) {
+      const sfmGroup = group.children && group.children[0];
+      // initial state for a given group
+      const data = {
+        s: sfmGroup.scale.x,
+        x: sfmGroup.position.x,
+        y: sfmGroup.position.y,
+        z: sfmGroup.position.z,
+        rY: 0 // start at 0 degrees
+      };
+      positions[group.name] = data;
+    }
+
+    const val = axis === 'rY'
+      ? parseFloat(value)
+      : parseFloat(event.target.value);
+
+    const prevDegrees = positions[group.name]['rY'];
+    let updates;
+    if (axis === 'rY') {
+      updates = { rY: val - prevDegrees };
+    } else updates = { [axis]: val };
+
+    positions[group.name][axis] = val;
+    this.setState({ positions: positions });
     updateSFMPosition(updates);
   }
 
-  openRefineDialog = (group) => {
-    this.setState({ dialog: group.uuid });
+  beginScaleChange = (group, direction, updateSFMPosition) => {
+    let func;
+    if (direction === 'up') {
+      func = (s) => this.changePosition({ target: { value: s + 0.01 }, preventDefault: () => {}}, group, 's', updateSFMPosition);
+    } else if (direction === 'down') {
+      func = (s) => this.changePosition({ target: { value: s - 0.01 }, preventDefault: () => {}}, group, 's', updateSFMPosition);
+    }
+    this.repeatChange(func, group, 's');
   }
+
+  beginPositionChange = (group, axis, direction, updateSFMPosition) => {
+    let func;
+    if (direction === 'up') {
+      func = (value) => this.changePosition({ target: { value: value + 0.5 }, preventDefault: () => {}}, group, axis, updateSFMPosition);
+    } else if (direction === 'down') {
+      func = (value) => this.changePosition({ target: { value: value - 0.5 }, preventDefault: () => {}}, group, axis, updateSFMPosition);
+    }
+    this.repeatChange(func, group, axis);
+  }
+
+  repeatChange = (func, group, axis) => {
+    let currentValue;
+    if (axis === 's') {
+      currentValue = this.state.positions[group.name]
+        ? this.state.positions[group.name].s
+        : (group.children && group.children.length > 0 ? group.children[0].scale : {}).x;
+    }
+    if (axis === 'x' || axis == 'y' || axis === 'z') {
+      currentValue = this.state.positions[group.name]
+        ? this.state.positions[group.name][axis]
+        : (group.children && group.children.length > 0 ? group.children[0].position : {})[axis];
+    }
+    if (axis === 'rY') {
+      currentValue = this.state.positions[group.name]
+        ? this.state.positions[group.name].rY
+        : 0;
+    }
+
+    func(currentValue);
+    this.timeout = setTimeout(() => this.repeatChange(func, group, axis), this.timeoutVal);
+    this.timeoutVal = this.timeoutVal / 2;
+  }
+
+  endChange = () => {
+    clearTimeout(this.timeout)
+    this.timeoutVal = 100;
+  }
+
+  openRefineDialog = (group) => this.setState({ dialog: group.uuid })
 
   confirmRefine = (refine) => {
     refine();
     this.setState({ dialog: null });
   }
 
-  cancelRefine = () => {
-    this.setState({ dialog: null });
-  }
+  cancelRefine = () => this.setState({ dialog: null })
 
-  openPostProcessingDialog = (group) => {
-    this.setState({ dialogPostProcessing: group.uuid });
-  }
+  openPostProcessingDialog = (group) => this.setState({ dialogPostProcessing: group.uuid });
 
   confirmPostProcessing = (stream) => {
     fetch(`https://api.pixel8.earth/clouds/${stream}/postProcess`, { method: 'POST' })
@@ -90,8 +146,13 @@ class Sidebar extends React.Component {
     this.setState({ dialogPostProcessing: null });
   }
 
-  cancelPostProcessing = () => {
-    this.setState({ dialogPostProcessing: null });
+  cancelPostProcessing = () => this.setState({ dialogPostProcessing: null })
+
+  reset = (group, resetSFMPosition) => {
+    resetSFMPosition();
+    const newPositions = { ...this.state.positions };
+    newPositions[group.name] = undefined;
+    this.setState({ positions: newPositions });
   }
 
   render() {
@@ -143,13 +204,61 @@ class Sidebar extends React.Component {
                   }
                   { showControls && !!shown &&
                     <div style={styles.groupShownBorder}>
-                      Scale
-                      <div><input style={styles.scaleInput} step={0.01} value={scale} type="number" onChange={(e) => this.changePosition(e, group, 's', updateSFMPosition)} /></div>
+                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Scale
+                          <ArrowLeft
+                            style={styles.arrowIcons}
+                            onMouseDown={() => this.beginScaleChange(group, 'up', updateSFMPosition)}
+                            onMouseUp={this.endChange}
+                          />
+                          <ArrowRight
+                            style={styles.arrowIcons}
+                            onMouseDown={() => this.beginScaleChange(group, 'down', updateSFMPosition)}
+                            onMouseUp={this.endChange}
+                          />
+                      </div>
                       <br/>
                       Position
-                      <div>X <input style={styles.positionInput} step={0.5} value={x} type="number" onChange={(e) => this.changePosition(e, group, 'x', updateSFMPosition)} /></div>
-                      <div>Y <input style={styles.positionInput} step={0.5} value={y} type="number" onChange={(e) => this.changePosition(e, group, 'y', updateSFMPosition)} /></div>
-                      <div>Z <input style={styles.positionInput} step={0.5} value={z} type="number" onChange={(e) => this.changePosition(e, group, 'z', updateSFMPosition)} /></div>
+                      <br/>
+                      <div style={styles.positionWrapper}>
+                        &nbsp;&nbsp;&nbsp;X
+                        <ArrowLeft
+                          style={styles.arrowIcons}
+                          onMouseDown={() => this.beginPositionChange(group, 'x', 'up', updateSFMPosition)}
+                          onMouseUp={this.endChange}
+                        />
+                        <ArrowRight
+                          style={styles.arrowIcons}
+                          onMouseDown={() => this.beginPositionChange(group, 'x', 'down', updateSFMPosition)}
+                          onMouseUp={this.endChange}
+                        />
+                      </div>
+                      <div style={styles.positionWrapper}>
+                        &nbsp;&nbsp;&nbsp;Y
+                        <ArrowLeft
+                          style={styles.arrowIcons}
+                          onMouseDown={() => this.beginPositionChange(group, 'y', 'up', updateSFMPosition)}
+                          onMouseUp={this.endChange}
+                        />
+                        <ArrowRight
+                          style={styles.arrowIcons}
+                          onMouseDown={() => this.beginPositionChange(group, 'y', 'down', updateSFMPosition)}
+                          onMouseUp={this.endChange}
+                        />
+                      </div>
+                      <div style={styles.positionWrapper}>
+                        &nbsp;&nbsp;&nbsp;Z
+                        <ArrowLeft
+                          style={styles.arrowIcons}
+                          onMouseDown={() => this.beginPositionChange(group, 'z', 'up', updateSFMPosition)}
+                          onMouseUp={this.endChange}
+                        />
+                        <ArrowRight
+                          style={styles.arrowIcons}
+                          onMouseDown={() => this.beginPositionChange(group, 'z', 'down', updateSFMPosition)}
+                          onMouseUp={this.endChange}
+                        />
+                      </div>
                       <br/>
                       Rotation
                       <Slider
@@ -165,12 +274,7 @@ class Sidebar extends React.Component {
                       <ButtonGroup size="small" style={{ marginTop: '6px', color:'#fff', backgroundColor: '#63ADF2' }}>
                         <Button
                           style={styles.buttonGroupBtn}
-                          onClick={() => {
-                            resetSFMPosition();
-                            const newPositions = { ...positions };
-                            newPositions[group.name] = undefined;
-                            this.setState({ positions: newPositions });
-                          }}
+                          onClick={() => this.reset(group, resetSFMPosition)}
                         >Reset</Button>
                         <Button
                           onClick={() => this.openPostProcessingDialog(group)}
@@ -241,7 +345,6 @@ const styles = {
   },
   groupShownBorder: {
     padding: '10px',
-    cursor: 'pointer',
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: '#263f59',
@@ -326,6 +429,15 @@ const styles = {
     letterSpacing: 0,
     lineHeight: 1,
     fontWeight: 'bold'
+  },
+  arrowIcons: {
+    color: "#63ADF2",
+    cursor: 'pointer'
+  },
+  positionWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 };
 

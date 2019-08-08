@@ -199,16 +199,6 @@ class PointCloud extends Base {
     return { points, poses: { ...poses, transforms } };
   }
 
-  rotateAroundWorldAxis(object, axis, radians) {
-    // taken from https://stackoverflow.com/questions/11119753/how-to-rotate-a-object-on-axis-world-three-js
-    // Rotate an object around an arbitrary axis in world space
-    const rotWorldMatrix = new THREE.Matrix4();
-    rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
-    rotWorldMatrix.multiply(object.matrix);        // pre-multiply
-    object.matrix = rotWorldMatrix;
-    object.rotation.setFromRotationMatrix(object.matrix);
-  }
-
   updateSFMPosition({ x, y, z, rY, s }) {
     if (this.sfmModel) {
       if (x) this.sfm.position.x = x;
@@ -216,8 +206,7 @@ class PointCloud extends Base {
       if (z) this.sfm.position.z = z;
 
       if (rY) {
-        this.rotateAroundWorldAxis(this.sfm, new THREE.Vector3(0,1,0), THREE.Math.degToRad(rY));
-        // TODO: figure out how we would get and store this new value for refine purposes.
+        this.sfm.rotateOnWorldAxis(new THREE.Vector3(0,1,0), THREE.Math.degToRad(rY));
       }
 
       if (s) {
@@ -254,7 +243,7 @@ class PointCloud extends Base {
 
   refine() {
     const stream = this.stream || this.name;
-    const m = this.sfm.matrix;
+    const m = this.sfm.matrix.clone().elements;
     const rotM = [
       m[0], m[1], m[2],
       m[4], m[5], m[6],
@@ -267,7 +256,14 @@ class PointCloud extends Base {
       scale: this.sfm.scale.x,
       com_f: [x, y, z]
     }
-    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, { method: 'POST', body: transforms })
+    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, { 
+        method: 'POST', 
+        body: JSON.stringify(transforms),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        } 
+      })
       .then(r => r.json)
       .then(r => {
         console.log(`Refine finished for ${stream}.\nResults are: ${r}`);
