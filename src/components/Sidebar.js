@@ -196,12 +196,12 @@ class Sidebar extends React.Component {
                         Scale
                           <ArrowLeft
                             style={styles.arrowIcons}
-                            onMouseDown={() => this.beginScaleChange(group, 'up', updateSFMPosition)}
+                            onMouseDown={() => this.beginScaleChange(group, 'down', updateSFMPosition)}
                             onMouseUp={this.endChange}
                           />
                           <ArrowRight
                             style={styles.arrowIcons}
-                            onMouseDown={() => this.beginScaleChange(group, 'down', updateSFMPosition)}
+                            onMouseDown={() => this.beginScaleChange(group, 'up', updateSFMPosition)}
                             onMouseUp={this.endChange}
                           />
                       </div>
@@ -212,12 +212,12 @@ class Sidebar extends React.Component {
                         &nbsp;&nbsp;&nbsp;X
                         <ArrowLeft
                           style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'x', 'up', updateSFMPosition)}
+                          onMouseDown={() => this.beginPositionChange(group, 'x', 'down', updateSFMPosition)}
                           onMouseUp={this.endChange}
                         />
                         <ArrowRight
                           style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'x', 'down', updateSFMPosition)}
+                          onMouseDown={() => this.beginPositionChange(group, 'x', 'up', updateSFMPosition)}
                           onMouseUp={this.endChange}
                         />
                       </div>
@@ -225,12 +225,12 @@ class Sidebar extends React.Component {
                         &nbsp;&nbsp;&nbsp;Y
                         <ArrowLeft
                           style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'y', 'up', updateSFMPosition)}
+                          onMouseDown={() => this.beginPositionChange(group, 'y', 'down', updateSFMPosition)}
                           onMouseUp={this.endChange}
                         />
                         <ArrowRight
                           style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'y', 'down', updateSFMPosition)}
+                          onMouseDown={() => this.beginPositionChange(group, 'y', 'up', updateSFMPosition)}
                           onMouseUp={this.endChange}
                         />
                       </div>
@@ -238,12 +238,12 @@ class Sidebar extends React.Component {
                         &nbsp;&nbsp;&nbsp;Z
                         <ArrowLeft
                           style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'z', 'up', updateSFMPosition)}
+                          onMouseDown={() => this.beginPositionChange(group, 'z', 'down', updateSFMPosition)}
                           onMouseUp={this.endChange}
                         />
                         <ArrowRight
                           style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'z', 'down', updateSFMPosition)}
+                          onMouseDown={() => this.beginPositionChange(group, 'z', 'up', updateSFMPosition)}
                           onMouseUp={this.endChange}
                         />
                       </div>
