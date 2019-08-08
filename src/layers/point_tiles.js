@@ -10,7 +10,7 @@ class PointTiles extends Base {
       const { vert, frag } = options.style.shaders
       this.material = new THREE.ShaderMaterial( {
         uniforms: {
-          size: { type: 'f', value: options.style.size || 1.0 }
+          size: { type: 'f', value: options.style.size || 2.0 }
         },
         depthTest: false,
         depthWrite: false,

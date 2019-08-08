@@ -8,7 +8,7 @@ const vert = `
       vColor = ca;
       vUv = position;
       vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-      gl_PointSize = min(max(size * vUv.z, 0.25), 1.25);
+      gl_PointSize = min(max(size * vUv.z, 0.25), 1.75);
       gl_Position = projectionMatrix * viewMatrix * worldPosition;
   }
 `

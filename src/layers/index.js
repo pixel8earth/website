@@ -3,11 +3,13 @@ import PlyTiles from './ply_tiles'
 import ImageTiles from './image_tiles'
 import GeoJSON from './geojson'
 import PointCloud from './pointcloud'
+import Pixel8PointCloud from './pixel8cloud'
 import Mesh from './mesh'
 
 export default {
   PointTiles,
   PointCloud,
+  Pixel8PointCloud,
   PlyTiles,
   ImageTiles,
   GeoJSON,

@@ -25,14 +25,14 @@
       if (idx > 0) {
         const rData = row.split(",").map(v => parseFloat(v))
         if (rData.length > 1) {
-          data.push(rData[1])
-          data.push(rData[2])
-          data.push(rData[0])
           if (options.style && options.style.colorMap && options.style.colorMap[rData[3]]) {
             colors.push(...options.style.colorMap[rData[3]])
-          } else {
-            colors.push(0.0, 0.0, 0.0)
-          }
+            data.push(rData[1])
+            data.push(rData[2])
+            data.push(rData[0])
+          } else if (!options.style) {
+            colors.push(1.0, 1.0, 1.0)
+          } 
         }
       }
     });
