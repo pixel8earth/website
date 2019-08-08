@@ -199,15 +199,15 @@ class PointCloud extends Base {
     return { points, poses: { ...poses, transforms } };
   }
 
-  updateSFMPosition({ x, y, z, rY, s }) {
+  updateSFMPosition({ x, y, z, rY, rX, rZ, s }) {
     if (this.sfmModel) {
       if (x) this.sfm.position.x = x;
       if (y) this.sfm.position.y = y;
       if (z) this.sfm.position.z = z;
 
-      if (rY) {
-        this.sfm.rotateOnWorldAxis(new THREE.Vector3(0,1,0), THREE.Math.degToRad(rY));
-      }
+      if (rY) this.sfm.rotateOnWorldAxis(new THREE.Vector3(0,1,0), THREE.Math.degToRad(rY));
+      if (rX) this.sfm.rotateX(THREE.Math.degToRad(rX));
+      if (rZ) this.sfm.rotateZ(THREE.Math.degToRad(rZ));
 
       if (s) {
         this.sfm.scale.x = s;
@@ -256,13 +256,13 @@ class PointCloud extends Base {
       scale: this.sfm.scale.x,
       com_f: [x, y, z]
     }
-    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, { 
-        method: 'POST', 
+    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, {
+        method: 'POST',
         body: JSON.stringify(transforms),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
-        } 
+        }
       })
       .then(r => r.json)
       .then(r => {

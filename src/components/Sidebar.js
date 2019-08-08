@@ -5,8 +5,6 @@ import icon from '../images/icon.png';
 import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
 import ArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import ArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import ArrowUp from '@material-ui/icons/KeyboardArrowUp';
-import ArrowDown from '@material-ui/icons/KeyboardArrowDown';
 
 const mapStateToProps = state => ({
   user: state.creds.user
@@ -49,8 +47,8 @@ class Sidebar extends React.Component {
     this.setState({ controlsShowing: updated });
   }
 
-  changePosition = (event, group, axis, updateSFMPosition, value) => {
-    if (event && event.preventDefault) event.preventDefault();
+  changePosition = (group, axis, updateSFMPosition, value) => {
+    debugger;
     let positions = this.state.positions;
     if (!positions[group.name]) {
       const sfmGroup = group.children && group.children[0];
@@ -60,19 +58,18 @@ class Sidebar extends React.Component {
         x: sfmGroup.position.x,
         y: sfmGroup.position.y,
         z: sfmGroup.position.z,
-        rY: 0 // start at 0 degrees
+        rX: sfmGroup.rotation.x,
+        rY: 0, // start at 0 degrees
+        rZ: sfmGroup.rotation.z
       };
       positions[group.name] = data;
     }
 
-    const val = axis === 'rY'
-      ? parseFloat(value)
-      : parseFloat(event.target.value);
-
-    const prevDegrees = positions[group.name]['rY'];
+    const val = parseFloat(value);
+    const prevDegrees = positions[group.name][axis];
     let updates;
-    if (axis === 'rY') {
-      updates = { rY: val - prevDegrees };
+    if (axis === 'rY' || axis === 'rX' || axis === 'rZ') {
+      updates = { [axis]: val - prevDegrees };
     } else updates = { [axis]: val };
 
     positions[group.name][axis] = val;
@@ -83,9 +80,9 @@ class Sidebar extends React.Component {
   beginScaleChange = (group, direction, updateSFMPosition) => {
     let func;
     if (direction === 'up') {
-      func = (s) => this.changePosition({ target: { value: s + 0.01 }, preventDefault: () => {}}, group, 's', updateSFMPosition);
+      func = (s) => this.changePosition(group, 's', updateSFMPosition, s + 0.01);
     } else if (direction === 'down') {
-      func = (s) => this.changePosition({ target: { value: s - 0.01 }, preventDefault: () => {}}, group, 's', updateSFMPosition);
+      func = (s) => this.changePosition(group, 's', updateSFMPosition, s - 0.01);
     }
     this.repeatChange(func, group, 's');
   }
@@ -93,9 +90,9 @@ class Sidebar extends React.Component {
   beginPositionChange = (group, axis, direction, updateSFMPosition) => {
     let func;
     if (direction === 'up') {
-      func = (value) => this.changePosition({ target: { value: value + 0.5 }, preventDefault: () => {}}, group, axis, updateSFMPosition);
+      func = (value) => this.changePosition(group, axis, updateSFMPosition, value + 0.5);
     } else if (direction === 'down') {
-      func = (value) => this.changePosition({ target: { value: value - 0.5 }, preventDefault: () => {}}, group, axis, updateSFMPosition);
+      func = (value) => this.changePosition(group, axis, updateSFMPosition, value - 0.5);
     }
     this.repeatChange(func, group, axis);
   }
@@ -107,12 +104,12 @@ class Sidebar extends React.Component {
         ? this.state.positions[group.name].s
         : (group.children && group.children.length > 0 ? group.children[0].scale : {}).x;
     }
-    if (axis === 'x' || axis == 'y' || axis === 'z') {
+    if (axis === 'x' || axis === 'y' || axis === 'z') {
       currentValue = this.state.positions[group.name]
         ? this.state.positions[group.name][axis]
         : (group.children && group.children.length > 0 ? group.children[0].position : {})[axis];
     }
-    if (axis === 'rY') {
+    if (axis === 'rY' || axis === 'rX' || axis === 'rZ') {
       currentValue = this.state.positions[group.name]
         ? this.state.positions[group.name].rY
         : 0;
@@ -174,15 +171,6 @@ class Sidebar extends React.Component {
               const showControls = controlsShowing.indexOf(group.uuid) > -1 && this.props.user;
               const showRefineDialog = dialog === group.uuid;
               const showPostProcessingDialog = dialogPostProcessing === group.uuid;
-              const positionState = positions[group.name];
-              const groupPosition = group.children.length > 0 ? group.children[0].position : {};
-              const groupScale = group.children.length > 0 ? group.children[0].scale : {};
-
-              const x = positionState ? positionState.x : groupPosition.x;
-              const y = positionState ? positionState.y : groupPosition.y;
-              const z = positionState ? positionState.z : groupPosition.z;
-              const rY = positionState ? positionState.rY : 0;
-              const scale = positionState ? positionState.s : groupScale.x;
 
               return (
                 <React.Fragment key={i}>
@@ -220,7 +208,7 @@ class Sidebar extends React.Component {
                       <br/>
                       Position
                       <br/>
-                      <div style={styles.positionWrapper}>
+                      <div style={styles.centeredRow}>
                         &nbsp;&nbsp;&nbsp;X
                         <ArrowLeft
                           style={styles.arrowIcons}
@@ -233,7 +221,7 @@ class Sidebar extends React.Component {
                           onMouseUp={this.endChange}
                         />
                       </div>
-                      <div style={styles.positionWrapper}>
+                      <div style={styles.centeredRow}>
                         &nbsp;&nbsp;&nbsp;Y
                         <ArrowLeft
                           style={styles.arrowIcons}
@@ -246,7 +234,7 @@ class Sidebar extends React.Component {
                           onMouseUp={this.endChange}
                         />
                       </div>
-                      <div style={styles.positionWrapper}>
+                      <div style={styles.centeredRow}>
                         &nbsp;&nbsp;&nbsp;Z
                         <ArrowLeft
                           style={styles.arrowIcons}
@@ -266,11 +254,40 @@ class Sidebar extends React.Component {
                         valueLabelFormat={val => `${val}°`}
                         min={0}
                         max={360}
-                        value={rY}
+                        value={(positions[group.name] || {}).rY || 0}
                         step={0.1}
-                        onChange={(e, value) => this.changePosition(e, group, 'rY', updateSFMPosition, value)}
+                        onChange={(e, value) => this.changePosition(group, 'rY', updateSFMPosition, value)}
                         style={styles.rotationSlider}
                       />
+                      <br/><br/>
+                      Tilt
+                      <div style={styles.centeredRow}>
+                        X
+                        <Slider
+                          valueLabelDisplay="auto"
+                          valueLabelFormat={val => `${val}°`}
+                          min={0}
+                          max={360}
+                          value={(positions[group.name] || {}).rX || 0}
+                          step={0.1}
+                          onChange={(e, value) => this.changePosition(group, 'rX', updateSFMPosition, value)}
+                          style={styles.tiltSlider}
+                        />
+                      </div>
+                      <br/>
+                      <div style={styles.centeredRow}>
+                        Z
+                        <Slider
+                          valueLabelDisplay="auto"
+                          valueLabelFormat={val => `${val}°`}
+                          min={0}
+                          max={360}
+                          value={(positions[group.name] || {}).rZ || 0}
+                          step={0.1}
+                          onChange={(e, value) => this.changePosition(group, 'rZ', updateSFMPosition, value)}
+                          style={styles.tiltSlider}
+                        />
+                      </div>
                       <ButtonGroup size="small" style={{ marginTop: '6px', color:'#fff', backgroundColor: '#63ADF2' }}>
                         <Button
                           style={styles.buttonGroupBtn}
@@ -406,12 +423,14 @@ const styles = {
   positionInput: {
     margin: '3px 6px'
   },
-  scaleInput: {
-    margin: '3px 6px 3px 21px'
-  },
   rotationSlider: {
     color: '#63ADF2',
     width: '162px',
+    margin: '0 8px'
+  },
+  tiltSlider: {
+    color: '#63ADF2',
+    width: '150px',
     margin: '0 8px'
   },
   groupWithControlsToggle: {
@@ -434,7 +453,7 @@ const styles = {
     color: "#63ADF2",
     cursor: 'pointer'
   },
-  positionWrapper: {
+  centeredRow: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
