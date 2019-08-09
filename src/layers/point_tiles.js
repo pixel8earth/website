@@ -56,6 +56,17 @@ class PointTiles extends Base {
       this.renderScene();
   }
 
+  updatePoints() {
+    // do something here to update point size & classification colors
+  }
+
+  getGroup() {
+    this.group.name = this.name;
+    return {
+      group: this.group,
+      updateLidarPoints: this.updatePoints
+    };
+  }
 }
 
 export default PointTiles
