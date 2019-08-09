@@ -1,11 +1,11 @@
 import React from 'react';
 import Map from './Map';
 import Layers from '../layers'
-//import shaders from '../layers/shaders'
+import shaders from '../layers/shaders'
 
 
 const basemap = new Layers.ImageTiles('basemap', 
-  'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', 
+  'https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}@2x.png', 
   {
     domains: ['a', 'b', 'c', 'd']
   }
@@ -45,16 +45,34 @@ const layers = collects.map((s,i) => {
   return new Layers.Pixel8PointCloud(`${s}`, `https://api.pixel8.earth/clouds/${s}/sfm.json`, { proj: opts.proj, visible: false, stream: s })
 })
 
-const pc = new Layers.PointCloud('lidar', 'http://localhost/~chelm/hdiz/boulder/lidar/boulder_noground.ply', {visible: false})
+//const mesh = new Layers.Mesh('ground', 'https://pixel8boulder.storage.googleapis.com/boulder_ground.ply', {visible: false})
 
-const mesh = new Layers.Mesh('ground', 'https://pixel8boulder.storage.googleapis.com/boulder_ground.ply', {visible: false})
+const points = new Layers.PointTiles('lidar',
+  //'http://localhost/~chelm/hdiz/boulder/lidar/tiles_utm/{z}/{x}/{y}.csv.gz',
+  'https://pixel8boulder.storage.googleapis.com/lidar/tiles_utm/{z}/{x}/{y}.csv.gz',
+  {
+    style: {
+      shaders,
+      size: 3.25,
+      colorMap: { // RGB
+        2: [0.0, 1.0, 1.0],
+        3: [0.0, 1.0, 0.0],
+        4: [0.0, 1.0, 0.0],
+        5: [0.0, 1.0, 0.0],
+        6: [0.5, 0.5, 1.0]
+      }
+    },
+    visible: false,
+  }
+)
 
 const props = {
   center: [-105.266097, 40.009416],
-  layers: [basemap, ...layers, mesh, pc],
+  layers: [...layers, points, basemap],
   zOffset: 1635,
   camZoom: 125,
-  proj: "EPSG:32613"
+  proj: "EPSG:32613",
+  showSidebar: true
 }
 
 function Boulder() {
