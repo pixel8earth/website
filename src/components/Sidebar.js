@@ -2,9 +2,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import icon from '../images/icon.png';
-import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
-import ArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import ArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import Pixel8PointCloudControls from './Pixel8PointCloudControls';
+import LidarPointControls from './LidarPointControls';
 
 const mapStateToProps = state => ({
   user: state.creds.user
@@ -21,10 +20,7 @@ class Sidebar extends React.Component {
     this.state = {
       groups: [],
       expanded: false,
-      positions: {},
       controlsShowing: [],
-      dialog: null,
-      dialogPostProcessing: null
     };
   }
 
@@ -38,7 +34,7 @@ class Sidebar extends React.Component {
     setTimeout(this.props.toggleSidebarCallback, 0);
   }
 
-  toggleControls(id) {
+  toggleControls = (id) => {
     let updated  = [ ...this.state.controlsShowing ];
     const index = updated.indexOf(id);
     if (index > -1) {
@@ -151,8 +147,15 @@ class Sidebar extends React.Component {
     this.setState({ positions: newPositions });
   }
 
+  hideLayer = (group) => {
+    if (this.state.controlsShowing.indexOf(group.uuid) > -1) {
+      this.toggleControls(group.uuid);
+    }
+    this.props.toggle(group);
+  }
+
   render() {
-    const { groups, expanded, positions, controlsShowing, dialog, dialogPostProcessing } = this.state;
+    const { groups, expanded, controlsShowing } = this.state;
     return (
       !expanded ?
         <div style={styles.collapsed} onClick={this.toggleExpansion}>
@@ -164,18 +167,18 @@ class Sidebar extends React.Component {
             <img src={icon} style={styles.pixel8Icon} alt="pixel8 logo" />
           </div>
           <div>
-            { groups.map( ({ group, updateSFMPosition, resetSFMPosition, refine, stream }, i) => {
+            { groups.map( (groupInfo, i) => {
+              const { group, updateSFMPosition, lidar } = groupInfo;
               const shown = group.visible;
-              const showToggle = !!shown && updateSFMPosition;
+              const pixel8PointCloud = !!updateSFMPosition;
+              const showToggle = !!shown && pixel8PointCloud; // (pixel8PointCloud || lidar);
               const showControls = controlsShowing.indexOf(group.uuid) > -1 && this.props.user;
-              const showRefineDialog = dialog === group.uuid;
-              const showPostProcessingDialog = dialogPostProcessing === group.uuid;
 
               return (
                 <React.Fragment key={i}>
                   { showToggle ?
                     (<div style={styles.groupWithControlsToggle}>
-                      <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
+                      <div onClick={() => this.hideLayer(group)} style={shown ? styles.groupShown : styles.group}>
                         {group.name}
                       </div>
                       { this.props.user &&
@@ -189,141 +192,15 @@ class Sidebar extends React.Component {
                       {group.name}
                     </div>
                   }
-                  { showControls && !!shown &&
-                    <div style={styles.groupShownBorder}>
-                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        Scale
-                          <ArrowLeft
-                            style={styles.arrowIcons}
-                            onMouseDown={() => this.beginScaleChange(group, 'down', updateSFMPosition)}
-                            onMouseUp={this.endChange}
-                          />
-                          <ArrowRight
-                            style={styles.arrowIcons}
-                            onMouseDown={() => this.beginScaleChange(group, 'up', updateSFMPosition)}
-                            onMouseUp={this.endChange}
-                          />
-                      </div>
-                      <br/>
-                      Position
-                      <br/>
-                      <div style={styles.centeredRow}>
-                        &nbsp;&nbsp;&nbsp;X
-                        <ArrowLeft
-                          style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'x', 'down', updateSFMPosition)}
-                          onMouseUp={this.endChange}
-                        />
-                        <ArrowRight
-                          style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'x', 'up', updateSFMPosition)}
-                          onMouseUp={this.endChange}
-                        />
-                      </div>
-                      <div style={styles.centeredRow}>
-                        &nbsp;&nbsp;&nbsp;Y
-                        <ArrowLeft
-                          style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'y', 'down', updateSFMPosition)}
-                          onMouseUp={this.endChange}
-                        />
-                        <ArrowRight
-                          style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'y', 'up', updateSFMPosition)}
-                          onMouseUp={this.endChange}
-                        />
-                      </div>
-                      <div style={styles.centeredRow}>
-                        &nbsp;&nbsp;&nbsp;Z
-                        <ArrowLeft
-                          style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'z', 'down', updateSFMPosition)}
-                          onMouseUp={this.endChange}
-                        />
-                        <ArrowRight
-                          style={styles.arrowIcons}
-                          onMouseDown={() => this.beginPositionChange(group, 'z', 'up', updateSFMPosition)}
-                          onMouseUp={this.endChange}
-                        />
-                      </div>
-                      <br/>
-                      Rotation
-                      <Slider
-                        valueLabelDisplay="auto"
-                        valueLabelFormat={val => `${val}°`}
-                        min={0}
-                        max={360}
-                        value={(positions[group.name] || {}).rY || 0}
-                        step={0.1}
-                        onChange={(e, value) => this.changePosition(group, 'rY', updateSFMPosition, value)}
-                        style={styles.rotationSlider}
-                      />
-                      <br/><br/>
-                      Tilt
-                      <div style={styles.centeredRow}>
-                        X
-                        <Slider
-                          valueLabelDisplay="auto"
-                          valueLabelFormat={val => `${val}°`}
-                          min={0}
-                          max={360}
-                          value={(positions[group.name] || {}).rX || 0}
-                          step={0.1}
-                          onChange={(e, value) => this.changePosition(group, 'rX', updateSFMPosition, value)}
-                          style={styles.tiltSlider}
-                        />
-                      </div>
-                      <br/>
-                      <div style={styles.centeredRow}>
-                        Z
-                        <Slider
-                          valueLabelDisplay="auto"
-                          valueLabelFormat={val => `${val}°`}
-                          min={0}
-                          max={360}
-                          value={(positions[group.name] || {}).rZ || 0}
-                          step={0.1}
-                          onChange={(e, value) => this.changePosition(group, 'rZ', updateSFMPosition, value)}
-                          style={styles.tiltSlider}
-                        />
-                      </div>
-                      <ButtonGroup size="small" style={{ marginTop: '6px', color:'#fff', backgroundColor: '#63ADF2' }}>
-                        <Button
-                          style={styles.buttonGroupBtn}
-                          onClick={() => this.reset(group, resetSFMPosition)}
-                        >Reset</Button>
-                        <Button
-                          onClick={() => this.openPostProcessingDialog(group)}
-                          style={styles.buttonGroupBtn}
-                        >Process</Button>
-                        <Button
-                          style={styles.buttonGroupBtn}
-                          onClick={() => this.openRefineDialog(group)}
-                        >Refine</Button>
-                      </ButtonGroup>
-                    </div>
-                  }
-                  { showRefineDialog &&
-                    <Dialog onClose={this.cancelRefine} open={showRefineDialog}>
-                      <div style={{ padding: '20px' }}>
-                        {`Are you sure you'd like to refine collect ${group.name} with your adjustments to position, rotation, and scale?`}
-                        <div style={styles.flexEndContainer}>
-                          <button style={styles.cancelBtn} onClick={this.cancelRefine}>Cancel</button>
-                          <button style={styles.btn} onClick={() => this.confirmRefine(refine)}>Continue</button>
-                        </div>
-                      </div>
-                    </Dialog>
-                  }
-                  { showPostProcessingDialog &&
-                    <Dialog onClose={this.cancelPostProcessing} open={showPostProcessingDialog}>
-                      <div style={{ padding: '20px' }}>
-                        {`Are you sure you'd like to run post processing for collect ${group.name}?`}
-                        <div style={styles.flexEndContainer}>
-                          <button style={styles.cancelBtn} onClick={this.cancelPostProcessing}>Cancel</button>
-                          <button style={styles.btn} onClick={() => this.confirmPostProcessing(stream)}>Continue</button>
-                        </div>
-                      </div>
-                    </Dialog>
+                  { showControls &&
+                    <React.Fragment>
+                      { pixel8PointCloud &&
+                        <Pixel8PointCloudControls groupInfo={groupInfo} />
+                      }
+                      { false && lidar &&
+                        <LidarPointControls groupInfo={groupInfo} />
+                      }
+                    </React.Fragment>
                   }
                 </React.Fragment>
               );

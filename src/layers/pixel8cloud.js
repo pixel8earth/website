@@ -241,8 +241,7 @@ class PointCloud extends Base {
     }
   }
 
-  refine() {
-    const stream = this.stream || this.name;
+  getCurrentRefinements() {
     const m = this.sfm.matrix.clone().elements;
     const rotM = [
       m[0], m[1], m[2],
@@ -256,7 +255,15 @@ class PointCloud extends Base {
       scale: this.sfm.scale.x,
       com_f: [x, y, z]
     }
-    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, {
+
+    return transforms;
+  }
+
+  refine() {
+    // TODO move action to redux
+    const stream = this.stream || this.name;
+    const transforms = this.getCurrentRefinements();
+    fetch(`https://api2.pixel8.earth/clouds/${stream}/refine`, {
         method: 'POST',
         body: JSON.stringify(transforms),
         headers: {
@@ -272,6 +279,26 @@ class PointCloud extends Base {
       .catch(err => console.log(`Refine error for ${stream}.\nERROR: ${err}`))
   }
 
+  pinPosition() {
+    // TODO move action to redux
+    const stream = this.stream || this.name;
+    const transforms = this.getCurrentRefinements();
+    fetch(`https://api2.pixel8.earth/clouds/${stream}/pin`, {
+        method: 'POST',
+        body: JSON.stringify(transforms),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(r => r.json)
+      .then(r => {
+        console.log(`Position pinned for ${stream}.`);
+        return r;
+      })
+      .catch(err => console.log(`Pin error for ${stream}.\nERROR: ${err}`))
+  }
+
   getGroup() {
     this.group.name = this.name;
     return {
@@ -279,7 +306,8 @@ class PointCloud extends Base {
       stream: this.stream,
       updateSFMPosition: this.updateSFMPosition.bind(this),
       resetSFMPosition: this.resetSFMPosition.bind(this),
-      refine: this.refine.bind(this)
+      refine: this.refine.bind(this),
+      pin: this.pinPosition.bind(this)
     };
   }
 

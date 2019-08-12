@@ -1,5 +1,5 @@
 import React from 'react';
-import Map from './Map';
+import Map from '../components/Map';
 import Layers from '../layers'
 import shaders from '../layers/shaders'
 
@@ -23,11 +23,11 @@ const points = new Layers.PointTiles('lidar',
       shaders,
       size: 3.25,
       colorMap: { // RGB
-        2: [0.0, 1.0, 1.0],
+        2: [0.0, 1.0, 1.0], // ground
         3: [0.0, 1.0, 0.0],
         4: [0.0, 1.0, 0.0],
         5: [0.0, 1.0, 0.0],
-        6: [0.5, 0.5, 1.0]
+        6: [0.5, 0.5, 1.0] // building
       }
     },
     visible: false,
