@@ -134,10 +134,7 @@ class Pixel8PointCloudControls extends React.Component {
   confirmRebuild = (stream) => {
     // TODO move action to redux
     fetch(`https://api2.pixel8.earth/clouds/${stream}/build`, { method: 'POST' })
-      .then( r => {
-        debugger;
-        return r.json()
-      })
+      .then( r => r.json())
       .then( r => console.log('response for build of ', stream, ' is ', r, '\npost processing kicked off if no error in build') )
       .catch( err => console.log('BUILD ERROR: ', err));
     this.setState({ dialogRebuild: null });
