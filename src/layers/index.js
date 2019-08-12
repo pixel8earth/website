@@ -5,6 +5,7 @@ import GeoJSON from './geojson'
 import PointCloud from './pointcloud'
 import Pixel8PointCloud from './pixel8cloud'
 import Mesh from './mesh'
+import GLTF from './gltf'
 
 export default {
   PointTiles,
@@ -13,5 +14,6 @@ export default {
   PlyTiles,
   ImageTiles,
   GeoJSON,
-  Mesh
+  Mesh,
+  GLTF
 }

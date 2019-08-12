@@ -224,7 +224,7 @@ class ThreeMap extends Component {
 
   updateTiles(e) {
     if (this.mounted) {
-      const buf = 1
+      const buf = 2
       const minx = this.tile.x - (buf) // extra tile in x dir
       const maxx = this.tile.x + (buf) // extra tile in x dir
       const miny = this.tile.y - buf
