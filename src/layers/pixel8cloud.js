@@ -263,7 +263,7 @@ class PointCloud extends Base {
     // TODO move action to redux
     const stream = this.stream || this.name;
     const transforms = this.getCurrentRefinements();
-    fetch(`https://api.pixel8.earth/clouds/${stream}/refine`, {
+    fetch(`https://api2.pixel8.earth/clouds/${stream}/refine`, {
         method: 'POST',
         body: JSON.stringify(transforms),
         headers: {
@@ -283,7 +283,7 @@ class PointCloud extends Base {
     // TODO move action to redux
     const stream = this.stream || this.name;
     const transforms = this.getCurrentRefinements();
-    fetch(`https://api.pixel8.earth/clouds/${stream}/pin`, {
+    fetch(`https://api2.pixel8.earth/clouds/${stream}/pin`, {
         method: 'POST',
         body: JSON.stringify(transforms),
         headers: {
@@ -306,7 +306,8 @@ class PointCloud extends Base {
       stream: this.stream,
       updateSFMPosition: this.updateSFMPosition.bind(this),
       resetSFMPosition: this.resetSFMPosition.bind(this),
-      refine: this.refine.bind(this)
+      refine: this.refine.bind(this),
+      pin: this.pinPosition.bind(this)
     };
   }
 

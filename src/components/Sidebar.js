@@ -34,7 +34,7 @@ class Sidebar extends React.Component {
     setTimeout(this.props.toggleSidebarCallback, 0);
   }
 
-  toggleControls(id) {
+  toggleControls = (id) => {
     let updated  = [ ...this.state.controlsShowing ];
     const index = updated.indexOf(id);
     if (index > -1) {
@@ -147,6 +147,13 @@ class Sidebar extends React.Component {
     this.setState({ positions: newPositions });
   }
 
+  hideLayer = (group) => {
+    if (this.state.controlsShowing.indexOf(group.uuid) > -1) {
+      this.toggleControls(group.uuid);
+    }
+    this.props.toggle(group);
+  }
+
   render() {
     const { groups, expanded, controlsShowing } = this.state;
     return (
@@ -171,7 +178,7 @@ class Sidebar extends React.Component {
                 <React.Fragment key={i}>
                   { showToggle ?
                     (<div style={styles.groupWithControlsToggle}>
-                      <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
+                      <div onClick={() => this.hideLayer(group)} style={shown ? styles.groupShown : styles.group}>
                         {group.name}
                       </div>
                       { this.props.user &&
