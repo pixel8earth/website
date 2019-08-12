@@ -1,6 +1,9 @@
 
 import React from 'react';
-import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
+import Slider from '@material-ui/core/Slider';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import ArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 

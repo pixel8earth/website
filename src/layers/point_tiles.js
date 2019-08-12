@@ -7,6 +7,7 @@ class PointTiles extends Base {
   constructor(name, url, options={}) {
     super(name, url, options)
     if (options.style && options.style.shaders ) {
+      this.colors = options.style.colorMap;
       const { vert, frag } = options.style.shaders
       this.material = new THREE.ShaderMaterial( {
         uniforms: {
@@ -56,15 +57,13 @@ class PointTiles extends Base {
       this.renderScene();
   }
 
-  updatePoints() {
-    // do something here to update point size & classification colors
-  }
-
   getGroup() {
     this.group.name = this.name;
     return {
       group: this.group,
-      updateLidarPoints: this.updatePoints
+      lidar: true,
+      colors: this.colors,
+      renderScene: () => this.renderScene()
     };
   }
 }

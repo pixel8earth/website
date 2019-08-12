@@ -161,11 +161,10 @@ class Sidebar extends React.Component {
           </div>
           <div>
             { groups.map( (groupInfo, i) => {
-              const { group, updateSFMPosition, updateLidarPoints } = groupInfo;
+              const { group, updateSFMPosition, lidar } = groupInfo;
               const shown = group.visible;
               const pixel8PointCloud = !!updateSFMPosition;
-              const lidarLayer = !!updateLidarPoints;
-              const showToggle = !!shown && (pixel8PointCloud || lidarLayer);
+              const showToggle = !!shown && pixel8PointCloud; // (pixel8PointCloud || lidar);
               const showControls = controlsShowing.indexOf(group.uuid) > -1 && this.props.user;
 
               return (
@@ -191,7 +190,7 @@ class Sidebar extends React.Component {
                       { pixel8PointCloud &&
                         <Pixel8PointCloudControls groupInfo={groupInfo} />
                       }
-                      { lidarLayer &&
+                      { false && lidar &&
                         <LidarPointControls groupInfo={groupInfo} />
                       }
                     </React.Fragment>
