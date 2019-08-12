@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Map from './Map';
+import Map from '../components/Map';
 import Layers from '../layers'
 
 const images = new Layers.ImageTiles('basemap', 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png', {domains: ['a', 'b', 'c', 'd']})

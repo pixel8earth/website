@@ -3,11 +3,11 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import { connect } from 'react-redux';
 import { actions as credsActions } from './reducers/creds';
 
-import Austin from './components/Austin';
-import AustinClouds from './components/AustinClouds';
-import Boulder from './components/Boulder';
-import BoulderClouds from './components/BoulderClouds';
-import Home from './components/Home';
+import Austin from './pages/Austin';
+import AustinClouds from './pages/AustinClouds';
+import Boulder from './pages/Boulder';
+import BoulderClouds from './pages/BoulderClouds';
+import Home from './pages/Home';
 
 const mapStateToProps = state => ({
   user: state.creds.user,

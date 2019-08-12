@@ -1,11 +1,11 @@
 import React from 'react';
-import Map from './Map';
+import Map from '../components/Map';
 import Layers from '../layers'
 import shaders from '../layers/shaders'
 
 
-const basemap = new Layers.ImageTiles('basemap', 
-  'https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}@2x.png', 
+const basemap = new Layers.ImageTiles('basemap',
+  'https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}@2x.png',
   {
     domains: ['a', 'b', 'c', 'd']
   }
