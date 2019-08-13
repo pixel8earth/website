@@ -177,7 +177,7 @@ class Pixel8PointCloudControls extends React.Component {
           <br/>
           Position
           <br/>
-          <div style={styles.centeredRow}>
+          <div style={styles.positionRow}>
             &nbsp;&nbsp;&nbsp;X
             <ArrowLeft
               style={styles.arrowIcons}
@@ -190,7 +190,7 @@ class Pixel8PointCloudControls extends React.Component {
               onMouseUp={this.endChange}
             />
           </div>
-          <div style={styles.centeredRow}>
+          <div style={styles.positionRow}>
             &nbsp;&nbsp;&nbsp;Y
             <ArrowLeft
               style={styles.arrowIcons}
@@ -203,7 +203,7 @@ class Pixel8PointCloudControls extends React.Component {
               onMouseUp={this.endChange}
             />
           </div>
-          <div style={styles.centeredRow}>
+          <div style={styles.positionRow}>
             &nbsp;&nbsp;&nbsp;Z
             <ArrowLeft
               style={styles.arrowIcons}
@@ -456,6 +456,11 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  positionRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   padTwenty: {
     padding: '20px'
