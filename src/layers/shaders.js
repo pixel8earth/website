@@ -1,8 +1,8 @@
 const vert = `
-  attribute vec3 ca;
+  attribute vec4 ca;
   uniform float size;
   varying vec3 vUv;
-  varying vec3 vColor;
+  varying vec4 vColor;
   void main()
   {
       vColor = ca;
@@ -14,12 +14,12 @@ const vert = `
 `
 
 const frag = `
-  varying vec3 vColor;
+  varying vec4 vColor;
   precision mediump float;
   void main()
   {
-      gl_FragColor = vec4(vColor, 1.0);
-      gl_FragColor.a = 1.0;
+      gl_FragColor = vec4(vColor);
+      gl_FragColor.a = vColor[3];
   }
 `
 

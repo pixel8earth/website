@@ -308,6 +308,7 @@ class ThreeMap extends Component {
           showing={this.state.layersShowing}
           toggle={this.toggleLayerVisibility}
           toggleSidebarCallback={this.onWindowResize}
+          renderScene={this.renderScene}
         />
         <ZoomControl changeZoom={this.changeZoom} />
         <PositionDisplay center={this.state.center} />

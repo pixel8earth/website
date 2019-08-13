@@ -22,12 +22,12 @@ const points = new Layers.PointTiles('lidar',
     style: {
       shaders,
       size: 3.25,
-      colorMap: { // RGB
-        2: [0.0, 1.0, 1.0], // ground
-        3: [0.0, 1.0, 0.0],
-        4: [0.0, 1.0, 0.0],
-        5: [0.0, 1.0, 0.0],
-        6: [0.5, 0.5, 1.0] // building
+      colorMap: { // RGBA
+        2: [0.0, 1.0, 1.0, 1.0], // ground
+        3: [0.828125, 0.98046875, 0.47265625, 1.0], // low vegetation
+        4: [0.0, 1.0, 0.0, 1.0], // medium vegetation
+        5: [0, 0.55859375, 0, 1.0], // tall vegetation
+        6: [0.5, 0.5, 1.0, 1.0] // building
       }
     },
     visible: false,

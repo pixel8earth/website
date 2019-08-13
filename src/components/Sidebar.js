@@ -171,8 +171,8 @@ class Sidebar extends React.Component {
               const { group, updateSFMPosition, lidar } = groupInfo;
               const shown = group.visible;
               const pixel8PointCloud = !!updateSFMPosition;
-              const showToggle = !!shown && pixel8PointCloud; // (pixel8PointCloud || lidar);
-              const showControls = controlsShowing.indexOf(group.uuid) > -1 && this.props.user;
+              const showToggle = !!shown && (pixel8PointCloud ? !!this.props.user : lidar);
+              const showControls = controlsShowing.indexOf(group.uuid) > -1;
 
               return (
                 <React.Fragment key={i}>
@@ -181,11 +181,9 @@ class Sidebar extends React.Component {
                       <div onClick={() => this.hideLayer(group)} style={shown ? styles.groupShown : styles.group}>
                         {group.name}
                       </div>
-                      { this.props.user &&
-                        <div onClick={() => this.toggleControls(group.uuid)} style={styles.expandGroup}>
-                          { showControls ? ' - ' : ' + ' }
-                        </div>
-                      }
+                      <div onClick={() => this.toggleControls(group.uuid)} style={styles.expandGroup}>
+                        { showControls ? ' - ' : ' + ' }
+                      </div>
                     </div>)
                     :
                     <div onClick={() => this.props.toggle(group)} style={shown ? styles.groupShown : styles.group}>
@@ -194,11 +192,11 @@ class Sidebar extends React.Component {
                   }
                   { showControls &&
                     <React.Fragment>
-                      { pixel8PointCloud &&
+                      { pixel8PointCloud && this.props.user &&
                         <Pixel8PointCloudControls groupInfo={groupInfo} />
                       }
-                      { false && lidar &&
-                        <LidarPointControls groupInfo={groupInfo} />
+                      { lidar &&
+                        <LidarPointControls groupInfo={groupInfo} renderScene={this.props.renderScene} />
                       }
                     </React.Fragment>
                   }

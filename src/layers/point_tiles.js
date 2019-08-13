@@ -37,7 +37,7 @@ class PointTiles extends Base {
       const fetchIndex = this.fetchingUrls.indexOf(url);
       if (fetchIndex > -1) this.fetchingUrls.splice(fetchIndex, 1);
       const vertices = new THREE.Float32BufferAttribute( result[0], 3 );
-      const colors = new THREE.Float32BufferAttribute( result[1], 3 );
+      const colors = new THREE.Float32BufferAttribute( result[1], 4 );
       const geom = new THREE.BufferGeometry()
       geom.addAttribute('position', vertices)
       geom.addAttribute('ca', colors)
@@ -57,13 +57,17 @@ class PointTiles extends Base {
       this.renderScene();
   }
 
+  updateColorMap(key, values) {
+    this.colors[key] = values;
+  }
+
   getGroup() {
     this.group.name = this.name;
     return {
       group: this.group,
       lidar: true,
       colors: this.colors,
-      renderScene: () => this.renderScene()
+      updateColorMap: this.updateColorMap.bind(this)
     };
   }
 }
