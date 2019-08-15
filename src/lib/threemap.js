@@ -110,8 +110,11 @@ class ThreeMap extends Component {
     this.layers.forEach( layer => {
       if (!!layer.getGroup) {
         const groupInfo = layer.getGroup();
-        this.groups.push(groupInfo);
+        if (layer.type && layer.type === 'Pixel8PointCloud') {
+          this.groups.push({ ...groupInfo, refresh: this.refetchCollection.bind(this) });
+        } else this.groups.push(groupInfo);
         this.geo.add(groupInfo.group);
+
         if (!layer.options.visible) groupInfo.group.visible = false;
       }
     })
@@ -254,6 +257,29 @@ class ThreeMap extends Component {
           });
         }
       });
+    }
+  }
+
+  refetchCollection(group, done) {
+    this.toggleLayerVisibility(group);
+    this.geo.remove(group);
+    if (this.mounted) {
+      const layer = this.layers.find(l => l.name === group.name);
+      const updateScene = () => {
+        const groupInfo = layer.getGroup();
+        const index = this.groups.findIndex(g => g.group.uuid === group.uuid);
+        this.groups.splice(index, 1, { ...groupInfo, refresh: this.refetchCollection.bind(this) });
+        this.geo.add(group);
+        this.toggleLayerVisibility(group);
+      }
+
+      layer.update({
+        offsets: this.offsets,
+        render: () => this.renderScene(),
+        refreshing: true,
+        done: updateScene.bind(this)
+      });
+      if (done) done();
     }
   }
 

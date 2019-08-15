@@ -3,11 +3,14 @@ import React from 'react';
 import { Slider, Dialog, Button, ButtonGroup } from '@material-ui/core';
 import ArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import ArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import Refresh from '@material-ui/icons/Refresh';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const PIN = 'dialogPin';
 const REFINE = 'dialogRefine';
 const POST_PROCESS = 'dialogPostProcessing';
 const REBUILD = 'dialogRebuild';
+const ICP = 'dialogICP';
 
 const UP = 'up';
 const DOWN = 'down';
@@ -33,7 +36,9 @@ class Pixel8PointCloudControls extends React.Component {
       dialogRefine: null,
       dialogPostProcessing: null,
       dialogRebuild: null,
-      dialogPin: null
+      dialogPin: null,
+      dialogICP: null,
+      refreshing: false
     };
   }
 
@@ -149,14 +154,25 @@ class Pixel8PointCloudControls extends React.Component {
     this.setState({ dialogPostProcessing: null });
   }
 
+  confirmICP = (icp) => {
+    icp();
+    this.setState({ dialogICP: null });
+  }
+
   reset = (group, resetSFMPosition) => {
     resetSFMPosition();
     this.setState({ positions: null });
   }
 
+  refresh = (group) => {
+    this.setState({ refreshing: true, positions: null },
+      () => this.props.groupInfo.refresh(group, () => this.setState({ refreshing: false }))
+    );
+  }
+
   render() {
-    const { group, updateSFMPosition, resetSFMPosition, refine, stream, pin } = this.props.groupInfo;
-    const { positions, dialogRefine, dialogRebuild, dialogPin, dialogPostProcessing } = this.state;
+    const { group, updateSFMPosition, resetSFMPosition, refine, stream, pin, icp } = this.props.groupInfo;
+    const { positions, dialogRefine, dialogRebuild, dialogPin, dialogPostProcessing, dialogICP, refreshing } = this.state;
 
     return (
       <React.Fragment>
@@ -173,6 +189,14 @@ class Pixel8PointCloudControls extends React.Component {
                 onMouseDown={() => this.beginScaleChange(group, UP, updateSFMPosition)}
                 onMouseUp={this.endChange}
               />
+              { !refreshing ?
+                <Refresh
+                  onClick={() => this.refresh(group)}
+                  style={{ ...styles.arrowIcons, marginLeft: '60px' }}
+                />
+                :
+                <CircularProgress size={16} style={styles.spinner} variant="indeterminate" disableShrink={true} />
+              }
           </div>
           <br/>
           Position
@@ -283,6 +307,10 @@ class Pixel8PointCloudControls extends React.Component {
                 onClick={() => this.openDialog(group, POST_PROCESS)}
                 style={styles.buttonGroupBtn}
               >Process</Button>
+              <Button
+                onClick={() => this.openDialog(group, ICP)}
+                style={styles.buttonGroupBtn}
+              >ICP</Button>
             </ButtonGroup>
           </div>
         </div>
@@ -319,6 +347,15 @@ class Pixel8PointCloudControls extends React.Component {
             <div style={styles.flexEndContainer}>
               <button style={styles.cancelBtn} onClick={() => this.cancelDialog(PIN)}>Cancel</button>
               <button style={styles.btn} onClick={() => this.confirmPin(pin)}>Continue</button>
+            </div>
+          </div>
+        </Dialog>
+        <Dialog onClose={() => this.cancelDialog(ICP)} open={dialogICP === group.uuid}>
+          <div style={styles.padTwenty}>
+            {`Are you sure you'd like run ICP for collect ${group.name}?`}
+            <div style={styles.flexEndContainer}>
+              <button style={styles.cancelBtn} onClick={() => this.cancelDialog(ICP)}>Cancel</button>
+              <button style={styles.btn} onClick={() => this.confirmICP(icp)}>Continue</button>
             </div>
           </div>
         </Dialog>
@@ -469,6 +506,10 @@ const styles = {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  spinner: {
+    color: "#fff",
+    marginLeft: '60px'
   }
 };
 

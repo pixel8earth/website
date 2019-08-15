@@ -15,7 +15,9 @@ proj4.defs([
   ]
 ]);
 
-class PointCloud extends Base {
+const P8 = 'Pixel8PointCloud';
+
+class P8PointCloud extends Base {
   loaded = false
 
   constructor(name, url, options) {
@@ -29,10 +31,19 @@ class PointCloud extends Base {
     this.proj = options.proj || "EPSG:4326"
     this.sfmModel = false;
     this.stream = options.stream;
+    this.type = P8;
   }
 
-  update = ({tiles, offsets, render}) => {
-    if (!this.loaded) {
+  resetGroups() {
+    this.sfm.remove(this.model);
+    this.model = undefined;
+    this.sfm = new THREE.Group();
+    this.com = new THREE.Group();
+  }
+
+  update = ({ offsets, render, refreshing, done }) => {
+    if (!this.loaded || refreshing) {
+      if (refreshing) this.resetGroups();
       const mat = new THREE.PointsMaterial({
         vertexColors: THREE.VertexColors,
         size: 0.25
@@ -80,11 +91,13 @@ class PointCloud extends Base {
 
           const points = this.createPoints(data);
           const model = new THREE.Points(points, mat);
+          this.model = model;
           if (this.sfmModel) {
             this.sfm.add(model);
           } else this.group.add(model);
           this.loaded = true;
           render();
+          if (done) done();
         })
     }
   }
@@ -242,12 +255,16 @@ class PointCloud extends Base {
   }
 
   getCurrentRefinements() {
-    const m = this.sfm.matrix.clone().elements;
-    const rotM = [
-      m[0], m[1], m[2],
-      m[4], m[5], m[6],
-      m[8], m[9], m[10]
-    ];
+    const mat4 = new THREE.Matrix4();
+    const mat3 = new THREE.Matrix3();
+    let rotM = mat4.extractRotation(this.sfm.matrix.clone());
+    rotM = mat3.setFromMatrix4(rotM);
+    // const m = this.sfm.matrix.clone().elements;
+    // const rotM = [
+    //   m[0], m[1], m[2],
+    //   m[4], m[5], m[6],
+    //   m[8], m[9], m[10]
+    // ];
     const { x, y, z } = this.sfm.position;
     const transforms = {
       com_i: this.com_i,
@@ -299,6 +316,26 @@ class PointCloud extends Base {
       .catch(err => console.log(`Pin error for ${stream}.\nERROR: ${err}`))
   }
 
+  icp() {
+    // TODO move action to redux
+    const stream = this.stream || this.name;
+    const transforms = this.getCurrentRefinements();
+    fetch(`https://api2.pixel8.earth/clouds/${stream}/refine?icp=true&fgm=false`, {
+        method: 'POST',
+        body: JSON.stringify(transforms),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(r => r.json)
+      .then(r => {
+        console.log(`Position pinned for ${stream}.`);
+        return r;
+      })
+      .catch(err => console.log(`Pin error for ${stream}.\nERROR: ${err}`))
+  }
+
   getGroup() {
     this.group.name = this.name;
     return {
@@ -307,10 +344,11 @@ class PointCloud extends Base {
       updateSFMPosition: this.updateSFMPosition.bind(this),
       resetSFMPosition: this.resetSFMPosition.bind(this),
       refine: this.refine.bind(this),
-      pin: this.pinPosition.bind(this)
+      pin: this.pinPosition.bind(this),
+      icp: this.icp.bind(this)
     };
   }
 
 }
 
-export default PointCloud
+export default P8PointCloud
