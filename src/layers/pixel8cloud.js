@@ -283,7 +283,7 @@ class PointCloud extends Base {
     // TODO move action to redux
     const stream = this.stream || this.name;
     const transforms = this.getCurrentRefinements();
-    fetch(`https://api2.pixel8.earth/clouds/${stream}/pin`, {
+    fetch(`https://api2.pixel8.earth/clouds/${stream}/refine?icp=false`, {
         method: 'POST',
         body: JSON.stringify(transforms),
         headers: {
