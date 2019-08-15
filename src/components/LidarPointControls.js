@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import MaterialColorPicker from 'react-material-color-picker';
 import Visible from '@material-ui/icons/Visibility';
 import NotVisible from '@material-ui/icons/VisibilityOff';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class LidarPointControls extends React.Component {
   constructor() {
@@ -11,7 +12,8 @@ class LidarPointControls extends React.Component {
     this.mounted = false;
     this.state = {
       colors: null,
-      changingColor: null
+      changingColor: null,
+      classesToggling: {}
     };
   }
 
@@ -49,12 +51,17 @@ class LidarPointControls extends React.Component {
   }
 
   toggleClass(group, oldColor, key, updateColorMap) {
-    const alpha = oldColor[3] === 1.0 ? 0.0 : 1.0;
-    const newColor = [ oldColor[0], oldColor[1], oldColor[2], alpha ];
-    updateColorMap(key, newColor);
-    this.updateGeometry(group, oldColor, newColor);
-    this.props.renderScene();
-    this.forceUpdate();
+
+    this.setState({ classesToggling: { ...this.state.classesToggling, [key]: true } });
+    setTimeout(() => {
+      const alpha = oldColor[3] === 1.0 ? 0.0 : 1.0;
+      const newColor = [ oldColor[0], oldColor[1], oldColor[2], alpha ];
+      updateColorMap(key, newColor);
+      this.updateGeometry(group, oldColor, newColor);
+      this.props.renderScene();
+      this.forceUpdate();
+      this.setState({ classesToggling: { ...this.state.classesToggling, [key]: false  } });
+    }, 0);
   }
 
   RGBToHex(red, green, blue) {
@@ -126,6 +133,7 @@ class LidarPointControls extends React.Component {
             if (key === '6') classification = 'building';
 
             const showColorPicker = this.state.changingColor === group.uuid + key;
+            const midToggle = this.state.classesToggling[key];
 
             return (
               <div style={styles.row} key={key}>
@@ -148,7 +156,10 @@ class LidarPointControls extends React.Component {
                 }
                 <div style={styles.classification}>{classification}</div>
                 <div style={styles.iconWrap} onClick={() => this.toggleClass(group, rgba, key, updateColorMap)}>
-                  { rgba[3] === 1.0 ? <NotVisible style={styles.icon} /> : <Visible style={styles.icon} /> }
+                  { !midToggle && (rgba[3] === 1.0 ? <Visible style={styles.icon} /> : <NotVisible style={styles.icon} />) }
+                  { midToggle &&
+                    <CircularProgress size={16} style={styles.spinner} variant="indeterminate" disableShrink={true} />
+                  }
                 </div>
               </div>
             );
@@ -201,6 +212,11 @@ const styles = {
     padding: '2px',
     borderRadius: '6px',
     backgroundColor: '#fff'
+  },
+  spinner: {
+    color: "#fff",
+    position: 'relative',
+    right: '3px'
   }
 };
 
