@@ -68,7 +68,9 @@ class P8PointCloud extends Base {
             this.com.updateMatrix();
 
             const q = new THREE.Quaternion();
-            q.setFromRotationMatrix(rot)
+            q.setFromRotationMatrix(rot);
+            // debugger;
+            // this.sfm.matrix.setRotationFromQuaternion(q)
             this.sfm.applyQuaternion(q);
 
             this.sfm.scale.x = scale;
@@ -256,19 +258,12 @@ class P8PointCloud extends Base {
 
   getCurrentRefinements() {
     const mat4 = new THREE.Matrix4();
-    const mat3 = new THREE.Matrix3();
-    let rotM = mat4.extractRotation(this.sfm.matrix.clone());
-    rotM = mat3.setFromMatrix4(rotM);
-    // const m = this.sfm.matrix.clone().elements;
-    // const rotM = [
-    //   m[0], m[1], m[2],
-    //   m[4], m[5], m[6],
-    //   m[8], m[9], m[10]
-    // ];
+    const rotM = new THREE.Matrix3();
+    rotM.setFromMatrix4(mat4.extractRotation(this.sfm.matrix.clone()));
     const { x, y, z } = this.sfm.position;
     const transforms = {
       com_i: this.com_i,
-      rmat:  rotM,
+      rmat:  rotM.elements,
       scale: this.sfm.scale.x,
       com_f: [x, y, z]
     }
