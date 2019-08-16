@@ -55,13 +55,24 @@ const collects = [
 
 // sfm.ply rendered
 const layers2 = collects.map((s,i) => {
-  return new Layers.Pixel8PointCloud(`${s}-ply`, `https://api2.pixel8.earth/clouds/${s}/sfm.ply`, {proj: opts.proj, visible: false, stream: s})
+  return new Layers.Pixel8PointCloud(
+    `${s}`, `https://api2.pixel8.earth/clouds/${s}/sfm.ply`,
+    { proj: opts.proj, visible: false, stream: s }
+  )
 })
 
 // sfm rendered via sfm.sfm info
 // const layers3 = collects.map((s,i) => {
 //   return new Layers.Pixel8PointCloud(`${s}`, `https://api2.pixel8.earth/clouds/${s}/sfm.json`, { proj: opts.proj, visible: false, stream: s })
 // })
+
+const meshes = collects.map(s => (
+  new Layers.OBJ(
+    `MESH-${s}`,
+    `https://api2.pixel8.earth/streams/${s}/texturedMesh.obj`,
+    { visible: false, stream: s }
+  )
+));
 
 //const buildings = new Layers.Mesh('buildings', 'https://pixel8austin.storage.googleapis.com/buildings.ply', { visible: false, mapping: {x: 'y', y: 'x'}})
 const ground = new Layers.Mesh('ground', 'https://pixel8austin.storage.googleapis.com/ground.ply', { visible: false, mapping: {x: 'y', y: 'x'}})
@@ -70,7 +81,7 @@ const buildings = new Layers.GLTF('buildings', 'https://pixel8austin.storage.goo
 
 const props = {
   center: [-97.739124,30.257862],
-  layers: [...layers2, points, basemap, imagery, buildings, ground],
+  layers: [...layers2, points, basemap, imagery, buildings, ground, ...meshes],
   zOffset: 136,
   camZoom: 75,
   proj: 'EPSG:32614',
