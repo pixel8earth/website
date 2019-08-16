@@ -3,7 +3,6 @@ import * as THREE from 'three'
 import MapControls from './MapControls'
 import { getBaseLog, pointToTile } from './utils';
 import Sidebar from '../components/Sidebar';
-import DemoSidebar from '../components/DemoSidebar';
 import ZoomControl from '../components/ZoomControl';
 import PositionDisplay from '../components/PositionDisplay';
 import proj4 from 'proj4';
