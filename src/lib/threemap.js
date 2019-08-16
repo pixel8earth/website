@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import MapControls from './MapControls'
 import { getBaseLog, pointToTile } from './utils';
 import Sidebar from '../components/Sidebar';
+import DemoSidebar from '../components/DemoSidebar';
 import ZoomControl from '../components/ZoomControl';
 import PositionDisplay from '../components/PositionDisplay';
 import proj4 from 'proj4';
@@ -106,23 +107,11 @@ class ThreeMap extends Component {
     this.tile = this.centerTile()
     this.offsets = new THREE.Vector3(xyOffset[0], xyOffset[1], this.zOffset)
 
-    this.layers = this.props.layers;
-    this.layers.forEach( layer => {
-      if (!!layer.getGroup) {
-        const groupInfo = layer.getGroup();
-        if (layer.type && layer.type === 'Pixel8PointCloud') {
-          this.groups.push({ ...groupInfo, refresh: this.refetchCollection.bind(this) });
-        } else this.groups.push(groupInfo);
-        this.geo.add(groupInfo.group);
-
-        if (!layer.options.visible) groupInfo.group.visible = false;
-      }
-    })
+    this.setUpLayers();
     this.camera.position.y = this.props.camZoom || 25;
     this.camera.position.x = -25;
     this.camera.updateMatrix();
     this.root.updateMatrixWorld();
-    this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
 
     window.addEventListener('resize', this.onWindowResize, false)
     window.addEventListener('mouseup', this.onUp, false)
@@ -148,6 +137,33 @@ class ThreeMap extends Component {
     window.removeEventListener('mousedown', this.onDown)
     window.removeEventListener('mousemove', this.onMove)
     if (this.mount && this.renderer) this.mount.removeChild(this.renderer.domElement)
+  }
+
+  setUpLayers = () => {
+    this.layers = this.props.layers;
+    const demoPointClouds = new THREE.Group();
+    this.layers.forEach( layer => {
+      if (!!layer.getGroup) {
+        const groupInfo = layer.getGroup();
+        const p8Cloud = layer.type && layer.type === 'Pixel8PointCloud';
+        if (p8Cloud) {
+          this.props.demo
+            ? demoPointClouds.add(groupInfo.group)
+            : this.groups.push({ ...groupInfo, refresh: this.refetchCollection.bind(this) });
+        } else this.groups.push(groupInfo);
+
+        if (!(p8Cloud && this.props.demo)) this.geo.add(groupInfo.group);
+        if (!layer.options.visible) groupInfo.group.visible = false;
+      }
+    });
+
+    if (this.props.demo) {
+      demoPointClouds.name = 'point clouds';
+      this.groups.push({ group: demoPointClouds });
+      this.geo.add(demoPointClouds);
+      const nonP8Layers = this.layers.filter(l => l.type !== 'Pixel8PointCloud' && l.options.visible).map(l => l.name);
+    }
+    this.setState({ layersShowing: this.layers.filter(l => l.options.visible).map(l => l.name) });
   }
 
   getLayerByName = name => {
@@ -300,14 +316,24 @@ class ThreeMap extends Component {
     if (this.mounted) {
       group.visible = !group.visible;
       let showing = [...this.state.layersShowing];
-      const index = showing.indexOf(group.name);
-      if (index < 0) {
-        showing.push(group.name);
-        this.geo.add(group);
+      if (this.props.demo && group.name === 'point clouds') {
+        group.children.forEach(g => {
+          const i = showing.indexOf(g.name);
+          if (i > -1) {
+            showing.splice(i, 1);
+          } else showing.push(g.name);
+        });
       } else {
-        showing.splice(index, 1);
-        this.geo.remove(group);
+        const index = showing.indexOf(group.name);
+        if (index < 0) {
+          showing.push(group.name);
+          this.geo.add(group);
+        } else {
+          showing.splice(index, 1);
+          this.geo.remove(group);
+        }
       }
+
       this.setState({ layersShowing: showing });
       this.renderScene();
     }
@@ -328,14 +354,16 @@ class ThreeMap extends Component {
 
     return(
       <div style={{ display: 'inline-flex' }}>
-        <Sidebar
-          expanded={showSidebar}
-          groups={this.groups}
-          showing={this.state.layersShowing}
-          toggle={this.toggleLayerVisibility}
-          toggleSidebarCallback={this.onWindowResize}
-          renderScene={this.renderScene}
-        />
+        { this.groups && this.groups.length > 0 &&
+          <Sidebar
+            expanded={showSidebar}
+            groups={this.groups}
+            showing={this.state.layersShowing}
+            toggle={this.toggleLayerVisibility}
+            toggleSidebarCallback={this.onWindowResize}
+            renderScene={this.renderScene}
+          />
+        }
         <ZoomControl changeZoom={this.changeZoom} />
         <PositionDisplay center={this.state.center} />
         <div

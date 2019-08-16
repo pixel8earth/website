@@ -8,6 +8,7 @@ import AustinClouds from './pages/AustinClouds';
 import Boulder from './pages/Boulder';
 import BoulderClouds from './pages/BoulderClouds';
 import Home from './pages/Home';
+import Demo from './pages/Demo';
 
 const mapStateToProps = state => ({
   user: state.creds.user,
@@ -25,13 +26,12 @@ class Routes extends React.Component {
   render() {
     return (
       <Router>
-        <div>
-          <Route exact path="/" component={Home} />
-          <Route path="/austin" component={Austin} />
-          <Route path="/austinclouds" component={AustinClouds} />
-          <Route path="/boulderclouds" component={BoulderClouds} />
-          <Route path="/boulder" component={Boulder} />
-        </div>
+        <Route exact path="/" component={Home} />
+        <Route path="/austin" component={Austin} />
+        <Route path="/austinclouds" component={AustinClouds} />
+        <Route path="/boulderclouds" component={BoulderClouds} />
+        <Route path="/boulder" component={Boulder} />
+        <Route path="/demo" component={Demo} />
       </Router>
     );
   }
