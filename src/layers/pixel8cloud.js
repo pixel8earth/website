@@ -70,8 +70,8 @@ class P8PointCloud extends Base {
             const q = new THREE.Quaternion();
             q.setFromRotationMatrix(rot);
             // debugger;
-            // this.sfm.matrix.setRotationFromQuaternion(q)
-            this.sfm.applyQuaternion(q);
+            this.sfm.matrix.setRotationFromQuaternion(q);
+            // this.sfm.applyQuaternion(q);
 
             this.sfm.scale.x = scale;
             this.sfm.scale.y = scale;
