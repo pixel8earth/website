@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js';
 import Base from './base';
 
 const P8Mesh = 'Pixel8Mesh';
@@ -78,9 +80,13 @@ class OBJ extends Base {
 
   fetchMesh = ({name, url, options}) => {
     try {
-      const loader = new OBJLoader2();
-      loader.load(url, obj => {
-        this.onLoad({ job: 'fetchTileComplete', result: obj.children[0], url: url, name });
+      const objLoader2 = new OBJLoader2();
+      const mtlLoader = new MTLLoader();
+      mtlLoader.load(url.replace('.obj', '.mtl'), mtlParseResult => {
+				objLoader2.addMaterials( MtlObjBridge.addMaterialsFromMtlLoader( mtlParseResult ) );
+				objLoader2.load( url, obj => {
+          this.onLoad({ job: 'fetchTileComplete', result: obj.children[0], url: url, name });
+        });
       })
     } catch (err) {
       postMessage({ error: err.message })
