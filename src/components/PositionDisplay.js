@@ -6,7 +6,7 @@ function PositionDisplay(props) {
   if (center) {
     const latDir = center[1] > 0 ? 'N' : 'S';
     const longDir = center[0] > 0 ? 'E' : 'W';
-    coords = `${Math.abs(props.center[1])}˚ ${latDir}, ${Math.abs(props.center[0])}˚ ${longDir}`;
+    coords = `${Math.abs(props.center[1]).toFixed(5)} ${latDir}, ${Math.abs(props.center[0]).toFixed(5)} ${longDir}`;
   }
   return (
     <div style={styles.main}>{coords}</div>

@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import pako from 'pako'
-import { llPixel } from '../lib/utils'
 import Base from './base'
 
 class GeoJSON extends Base {
@@ -10,17 +9,17 @@ class GeoJSON extends Base {
     super(name, url, options)
     this.name = name
     this.url = url
-    this.feature_size = options.feature_size || 0.005
+    this.feature_size = options.feature_size || 1
   }
 
-  update = ({ tiles, offsets, render }) => {
+  update = ({ tiles, offsets, render, project}) => {
     if (!this.loaded) {
       const mat = new THREE.PointsMaterial({
         color: this.color,
         size: this.feature_size
       })
 
-      this.fetchData(this.url, offsets)
+      this.fetchData(this.url, offsets, project)
         .then(vertices => {
           this.loaded = true
           const geom = new THREE.BufferGeometry()
@@ -32,7 +31,7 @@ class GeoJSON extends Base {
     }
   }
 
-  fetchData(url, offsets) {
+  fetchData(url, offsets, project) {
     return new Promise( (resolve, reject) => {
       fetch(url)
         .then( async res => {
@@ -50,11 +49,10 @@ class GeoJSON extends Base {
           // create an array of vertices
           const data = []
           geojson.features.forEach((f,i) => {
-            let px = llPixel(f.geometry.coordinates, 0, this.size)
-            px = {x: px[0] - this.size / 2, y: px[1] - this.size / 2, z: offsets.z}
-            data.push(px.x - offsets.x)
-            data.push(-1 * px.y + offsets.y)
-            data.push(px.z)
+            const utm = project(f.geometry.coordinates)
+            data.push(utm[1])
+            data.push(offsets.z)
+            data.push(utm[0])
           })
           resolve(new THREE.Float32BufferAttribute( data, 3 ))
         })

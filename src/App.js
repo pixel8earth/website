@@ -1,32 +1,20 @@
 import React from 'react';
-import { HashRouter as Router, Route } from "react-router-dom";
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import * as reducers from './reducers/index';
+import Routes from './Routes';
 
-import Austin from './components/Austin';
-import AustinClouds from './components/AustinClouds';
-import Boulder from './components/Boulder';
-import BoulderClouds from './components/BoulderClouds';
-import Home from './components/Home';
-import './App.css';
-
-/**
-  TODO List
-
-  1. source all data providers
-  2. animate ground level things... move along a path etc
-
-*/
+const store = createStore(
+  combineReducers(reducers),
+  applyMiddleware(thunk)
+);
 
 function App() {
   return (
-    <Router>
-      <div>
-        <Route exact path="/" component={Home} />
-        <Route path="/austin" component={Austin} />
-        <Route path="/austinclouds" component={AustinClouds} />
-        <Route path="/boulderclouds" component={BoulderClouds} />
-        <Route path="/boulder" component={Boulder} />
-      </div>
-    </Router>
+    <Provider store={store}>
+      <Routes />
+    </Provider>
   );
 }
 
