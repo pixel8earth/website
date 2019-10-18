@@ -8,10 +8,8 @@
 
     <!-- Your styles -->
     <style>
-      a {
-        color: #63ADF2;
-        padding: 15px;
-        margin: 15px;
+      html {
+        background-color: #f2f4f5;
       }
       body {
         margin: 0;
@@ -19,14 +17,14 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale
       }
-      footer {
-        background-color: #0b2427;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #f2f4f5;
-        font-size: 12px;
+      a {
+        color: #63ADF2;
+        padding: 15px;
+        margin: 15px;
+        text-decoration: none;
+        font-size: 1.2em;
       }
+
       header {
         background-color: #0b2427;
         display: flex;
@@ -38,13 +36,6 @@
         margin: 15px;
         height: 95vh;
       }
-      html {
-        background-color: #f2f4f5;
-      }
-      iframe {
-        border: none;
-        height: 90vh;
-      }
       #appHeader {
         background-color: #0b2427;
         color: #f2f4f5;
@@ -52,6 +43,43 @@
         align-content: center;
         justify-content: center;
         clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
+      }
+      #pixel8Logo {
+        width: 500px;
+      }
+      .tagline {
+        padding-top: 0px;
+      }
+
+      .phoneContainer {
+        flex: 1;
+        align-self: center;
+        justify-content: center;
+        padding: 30px;
+        padding-top: 50px;
+        margin-right: 50px;
+      }
+      .phoneShell {
+        max-width: 300px;
+      }
+      .pixel8Gif {
+        width: 207px;
+        position: relative;
+        bottom: 120px;
+        right: 408px;
+      }
+
+      iframe {
+        border: none;
+        height: 90vh;
+      }
+      .map {
+        padding-top: 6vh;
+        padding-bottom: 6vh;
+        background-color: #090909; /* gray that goes with potree viewer -> #0f171a; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       #interact {
         display: flex;
@@ -63,6 +91,13 @@
         position: absolute;
         z-index: 5;
       }
+      #exitMap {
+        background-color: transparent;
+        position: relative;
+        bottom: -43px;
+        display: none;
+        z-index: 5;
+      }
       #犬夜叉 {
         display: none;
         position: -webkit-sticky; /* Safari */
@@ -71,13 +106,20 @@
         right: 0;
         z-index: 1001;
       }
+      .close {
+        font-size: 2em;
+        font-weight: bold;
+        background-color: transparent;
+        color: #f2f4f5;
+        border: none;
+      }
+
       .sideBySide {
         display: inline-flex;
         flex-direction: row;
         flex-wrap: wrap;
         align-content: space-evenly;
       }
-
       .info {
         color: #263f59;
         background-color: #f2f4f5;
@@ -87,14 +129,6 @@
         line-height: 1.5;
         flex: 2;
       }
-      .map {
-        padding-top: 6vh;
-        padding-bottom: 6vh;
-        background-color: #0f171a;/* gray that goes with our base map -> #1a1816; */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
       .infoContainer {
         padding: 30px;
         background-color: #d3dddc;
@@ -102,21 +136,11 @@
         align-items: stretch;
         height: auto;
       }
-      .phoneContainer {
-        flex: 1;
-        align-self: center;
-        justify-content: center;
-        padding: 30px;
-        padding-top: 50px;
+      .dark {
+        background-color: #0b2427;
       }
-      .phoneShell {
-        max-width: 300px;
-      }
-      .pixel8Gif {
-        width: 207px;
-        position: relative;
-        bottom: 120px;
-        right: 408px;
+      .noBtmPad {
+        padding-bottom: 0;
       }
       .button {
         padding: 5px;
@@ -127,38 +151,75 @@
         color: #f2f4f5;                /*#304D6D;*/
         font-weight: bold;
       }
+
       .image {
         width: 100%;
-        border: 1px solid tranparent;
         border-radius: 15px;
         margin-top: 30px;
       }
-      .tagline {
-        padding-top: 0px;
+
+      .appImageContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-content: space-evenly;
+        flex-wrap: wrap;
+      }
+      .appImage {
+        max-height: 25vh;
+        margin: 20px;
+        border-radius: 15px;
+      }
+
+      footer {
+        background-color: #0b2427;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #f2f4f5;
+        font-size: 12px;
       }
       .footerIcon {
         padding: 20px;
         height: 50px;
         display: flex;
       }
+      .footerLinks {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        text-decoration: none;
+      }
+      .footerSocialMedia {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+      }
     </style>
     <script>
-      window.addEventListener('load', (event) => {
-        setTimeout( () => window.scrollTo(0, 0), 500);
+      function sizeTheThings(event) {
+        // Header
+        const logo = document.getElementById('pixel8Logo');
 
-        if (window.innerWidth <= 1000) {
-          const firstSection = document.getElementsByClassName('sideBySide')[0];
-          const phoneContainer = document.getElementsByClassName('phoneContainer')[0];
-          const firstInfo = document.getElementsByClassName('info')[0];
-          firstSection.style.flexDirection = 'column';
-          phoneContainer.style.padding = 'none';
-          phoneContainer.style.paddingTop = 'none';
-          phoneContainer.style.paddingBottom = '80px';
-          firstInfo.style.paddingBottom = '0';
+        if (window.innerWidth > 1300 && logo.style !== '600px') {
+          logo.style.width = '600px';
+        } else if (window.innerWidth < 1300 && window.innerWidth > 1175 && logo.style !== '550px') {
+          logo.style.width = '550px';
+        } else if (window.innerWidth < 1175 && window.innerWidth > 1000 && logo.style !== '500px') {
+          logo.style.width = '500px';
+        } else if (window.innerWidth < 1000 && window.innerWidth > 950 && logo.style !== '450px') {
+          logo.style.width = '450px';
+        } else if (window.innerWidth < 950 && window.innerWidth > 825 && logo.style !== '400px') {
+          logo.style.width = '400px';
+        } else if (window.innerWidth < 825 && window.innerWidth > 625 && logo.style !== '350px') {
+          logo.style.width = '350px';
+        } else if (window.innerWidth < 625 && window.innerWidth > 550 && logo.style !== '300px') {
+          logo.style.width = '300px';
+        } else if (window.innerWidth <= 550 && window.innerWidth > 415 && logo.style !== '250px') {
+          logo.style.width = '250px';
         }
-      });
 
-      window.addEventListener('resize', (event) => {
+        // Section 1
         const firstSection = document.getElementsByClassName('sideBySide')[0];
         const phoneContainer = document.getElementsByClassName('phoneContainer')[0];
         const firstInfo = document.getElementsByClassName('info')[0];
@@ -168,15 +229,26 @@
           phoneContainer.style.padding = 'none';
           phoneContainer.style.paddingTop = 'none';
           phoneContainer.style.paddingBottom = '80px';
+          phoneContainer.style.marginRight = '0';
           firstInfo.style.paddingBottom = '0';
         } else if (window.innerWidth > 1000 && firstSection.style.flexDirection !== 'row') {
           firstSection.style.flexDirection = 'row';
           phoneContainer.style.paddingBottom = 'none';
           phoneContainer.style.padding = '30px';
           phoneContainer.style.paddingTop = '50px';
+          phoneContainer.style.marginRight = '50px';
           firstInfo.style.paddingBottom = 'none';
           firstInfo.style.padding = '90px';
         }
+      }
+
+      window.addEventListener('load', (event) => {
+        sizeTheThings(event);
+        setTimeout( () => window.scrollTo(0, 0), 500);
+      });
+
+      window.addEventListener('resize', (event) => {
+        sizeTheThings(event);
       });
 
       window.addEventListener('scroll', function(e) {
@@ -199,12 +271,15 @@
           ((1 - top / window.innerHeight) > 0 && (1 - top / window.innerHeight) < 0.8)
         ) {
           const mapVail = document.getElementById("interact");
+          const exitMap = document.getElementById("exitMap");
 
           if (mapVail && mapVail.style.display == 'none') {
             mapVail.style.display = 'flex';
+            exitMap.style.display = 'none';
           }
         }
       })
+
       window.addEventListener('click', function(e) {
         if (!window.clickCount) window.clickCount = 0;
 
@@ -216,9 +291,14 @@
         }
 
         if (e.target.name === 'map button') {
-          const el = document.getElementById("interact");
-          if (el) el.style.display = 'none';
-          // document.getElementsByClassName('map')[0].scrollIntoView();
+          document.getElementById("interact").style.display = 'none';
+          document.getElementById("exitMap").style.display = 'flex';
+          document.getElementsByClassName('map')[0].scrollIntoView();
+        }
+
+        if (e.target.name === 'exitMap') {
+          document.getElementById("interact").style.display = 'flex';
+          document.getElementById("exitMap").style.display = 'none';
         }
       });
     </script>
@@ -227,24 +307,27 @@
   <body>
     <div id="appHeader">
       <header>
-        <img src="./assets/pixel8-transparent.png" alt="Pixel8.earth logo" width="500" />
+        <img id="pixel8Logo" src="./assets/pixel8-transparent.png" alt="Pixel8.earth logo" />
         <h4>The Collective High Definition 3D Map</h4>
       </header>
     </div>
     <div class="sideBySide">
       <div class="info">
         <div class="infoContainer">
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To enable a future with powered by augmented reality, autonomous vehicles, and digital mapping we need a global high definition 3D map. This can only be achieved by utilizing the broad array of data sources imaging our world - camera phones, 360 video, drones, aerial, satellite, radar, LiDAR. To make all these imagery sources cooperate and align we need a common ground truth - what we call a ground control surface. Leveraging geomatics, computer vision and machine learning we generate a self improving ground truth and align multiple data sources.</p>
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To demonstrate the utility of this approach we built a mobile app to allow a small group of volunteers to map downtown Boulder with photos. From this we use photogrammetry to build 3D models and align those models to our ground control surface. Check out the results in the interactive map below from 25 volunteers mapping downtown Boulder in an afternoon (with a few solo forays by the Pixel8 team to fill in some gaps).</p>
+          <p>To enable a future with powered by augmented reality, autonomous vehicles, and digital mapping we need a global high definition 3D map. This can only be achieved by utilizing the broad array of data sources imaging our world - camera phones, 360 video, drones, aerial, satellite, radar, LiDAR. To make all these imagery sources cooperate and align we need a common ground truth - what we call a ground control surface. Leveraging geomatics, computer vision and machine learning we generate a self improving ground truth and align multiple data sources.</p>
+          <p>To demonstrate the utility of this approach we built a mobile app to allow a small group of volunteers to map downtown Boulder with photos. From this we use photogrammetry to build 3D models and align those models to our ground control surface. Check out the results in the interactive map below from 25 volunteers mapping downtown Boulder in an afternoon (with a few solo forays by the Pixel8 team to fill in some gaps).</p>
         </div>
       </div>
       <div class="phoneContainer">
         <img class="phoneShell" src="./assets/pixel-no-shadow.gif" alt="pixel8 app gif" />
       </div>
     </div>
+    <div id="exitMap">
+      <button class="close" name="exitMap">×</button>
+    </div>
     <div class="map">
       <iframe
-        src="http://potree.entwine.io/data/view.html?r=%22https://storage.googleapis.com/pixel8/entwined/ept.json%22"
+        src="https://mable-0.pixel8earth.com/entwine/boulder?ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
         align="middle"
         width="100%"
         scrolling="no"
@@ -256,17 +339,36 @@
     <div class="info">
       <div class="infoContainer">
         <h3>Coming Next</h3>
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;While camera phone photos are incredibly common satellites, aerial, and drones can cover large swaths of geography quickly. Being able to combine 3D models made from camera phone photos with other imagery sources is critical to reach the scope and scale needed for a truly global map. In the animation below we can see the terrestrial 3D models created during the Boulder mapping event combined with 3D point clouds generated by Nearmap aerial imagery. This gives us not only terrific perspective from the ground and air of a building, but also allows us to scale 3D build outs that much faster. Each imagery source has benefits and shortcomings. By conflating multiple sources we can create a best of breed hybrid map, which is better and faster than any one source could alone.</p>
+        <p>While camera phone photos are incredibly common satellites, aerial, and drones can cover large swaths of geography quickly. Being able to combine 3D models made from camera phone photos with other imagery sources is critical to reach the scope and scale needed for a truly global map. In the animation below we can see the terrestrial 3D models created during the Boulder mapping event combined with 3D point clouds generated by Nearmap aerial imagery. This gives us not only terrific perspective from the ground and air of a building, but also allows us to scale 3D build outs that much faster. Each imagery source has benefits and shortcomings. By conflating multiple sources we can create a best of breed hybrid map, which is better and faster than any one source could alone.</p>
       </div>
       <img class="image" src="./assets/pixel8&nearmap.gif" alt="pixel8 + nearmap gif" />
     </div>
     <div id="犬夜叉">
       <img src="https://media.giphy.com/media/QNp9V9qZd6pzy/giphy.gif" alt="犬夜叉 🥚" width="111" height="160"></img>
     </div>
+    <div class="info dark noBtmPad">
+      <div class="appImageContainer">
+        <img class="appImage" src="./assets/app_shot_1.png" alt="pixel8 3D point cloud image" />
+        <img class="appImage" src="./assets/app_shot_2.png" alt="pixel8 3D point cloud image" />
+        <img class="appImage" src="./assets/app_shot_3.png" alt="pixel8 3D point cloud image" />
+        <img class="appImage ten" src="./assets/app_shot_4.png" alt="pixel8 3D point cloud image" />
+      </div>
+    </div>
   </body>
   <footer>
-    <a href="./terms-of-use.html">terms of use</a>
     <img class="footerIcon" src="./favicon.ico" alt="P8 icon" />
-    <a href="./privacy-policy.html">privacy policy</a>
+    <div clas="footerLinks">
+      <a href="mailto: sean.gorman@pixel8.earth">contact us</a>
+      <a href="./terms-of-use.html">terms of use</a>
+      <a href="./privacy-policy.html">privacy policy</a>
+    </div>
+    <div class="footerSocialMedia">
+      <a href="https://twitter.com/pixel8earth">
+       <img src="./assets/twitter_icon.png" alt="Twitterr icon" height="25" />
+      </a>
+      <a href="https://medium.com/@pixel8earth">
+       <img src="./assets/medium_icon.png" alt="Medium icon" height="25" />
+      </a>
+    </div>
   </footer>
 </html>
