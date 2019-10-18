@@ -43,9 +43,10 @@
         align-content: center;
         justify-content: center;
         clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
+        -webkit-clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
       }
       #pixel8Logo {
-        width: 500px;
+        width: 600px;
       }
       .tagline {
         padding-top: 0px;
@@ -81,17 +82,17 @@
         align-items: center;
         justify-content: center;
       }
-      #interact {
+      .interact {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(84, 93, 115, 0.15);
+        background-color: transparent; /* rgba(84, 93, 115, 0.15); */
         height: 102vh; /* html vh + padding of 6vh on top and bottom */
         width: 100%;
         position: absolute;
         z-index: 5;
       }
-      #exitMap {
+      .exitMap {
         background-color: transparent;
         position: relative;
         bottom: -43px;
@@ -143,12 +144,23 @@
         padding-bottom: 0;
       }
       .button {
-        padding: 5px;
+        padding: 6px;
         font-size: 15px;
         border: 1px solid transparent;
         border-radius: 5px;
-        background-color: #35a1cb;  /*#63ADF2;*/
-        color: #f2f4f5;                /*#304D6D;*/
+        background-color: #f2f4f5;
+        color: #263f59;
+        font-weight: bold;
+      }
+      .downloadBtn {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px;
+        font-size: 15px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        color: #f2f4f5;
+        background-color: #263f59;
         font-weight: bold;
       }
 
@@ -257,18 +269,21 @@
         // Control shape of header div
         if (window.scrollY > (window.innerHeight * 0.5)) {
           header.style.clipPath = 'none';
+          header.style.webkitClipPath = 'none';
         } else if (window.scrollY < (window.innerHeight * 0.5)) {
           header.style.clipPath = 'polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%)';
+          header.style.webkitClipPath = 'polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%)';
         }
 
         // If user interacted with the map and now they've scrolled mostly
         // out of view, add back the need to click to use the map to improve
         // the ability to scroll.
-        const map = document.getElementsByClassName('map')[0]
-        const { top, bottom } = map.getBoundingClientRect();
+        const map1 = document.getElementById('Boulder_Entwine');
+        const { top: top1, bottom: bottom1 } = map1.getBoundingClientRect();
+
         if ( // 20% of view is not the map on the top OR the bottom
-          ((bottom / window.innerHeight) > 0 && (bottom / window.innerHeight) <= 0.8) ||
-          ((1 - top / window.innerHeight) > 0 && (1 - top / window.innerHeight) < 0.8)
+          ((bottom1 / window.innerHeight) > 0 && (bottom1 / window.innerHeight) <= 0.8) ||
+          ((1 - top1 / window.innerHeight) > 0 && (1 - top1 / window.innerHeight) < 0.8)
         ) {
           const mapVail = document.getElementById("interact");
           const exitMap = document.getElementById("exitMap");
@@ -276,6 +291,22 @@
           if (mapVail && mapVail.style.display == 'none') {
             mapVail.style.display = 'flex';
             exitMap.style.display = 'none';
+          }
+        }
+
+        const map2 = document.getElementById('Ground_Reference');
+        const { top: top2, bottom: bottom2 } = map2.getBoundingClientRect();
+
+        if ( // 20% of view is not the map on the top OR the bottom
+          ((bottom2 / window.innerHeight) > 0 && (bottom2 / window.innerHeight) <= 0.8) ||
+          ((1 - top2 / window.innerHeight) > 0 && (1 - top2 / window.innerHeight) < 0.8)
+        ) {
+          const mapVail2 = document.getElementById("interact2");
+          const exitMap2 = document.getElementById("exitMap2");
+
+          if (mapVail && mapVail2.style.display == 'none') {
+            mapVail2.style.display = 'flex';
+            exitMap2.style.display = 'none';
           }
         }
       })
@@ -290,15 +321,24 @@
           setTimeout(() => el.style.display = 'none', 2000); /* 無し */
         }
 
-        if (e.target.name === 'map button') {
-          document.getElementById("interact").style.display = 'none';
-          document.getElementById("exitMap").style.display = 'flex';
-          document.getElementsByClassName('map')[0].scrollIntoView();
+        if (e.target.name === 'mapBtn1') {
+          document.getElementById("interact1").style.display = 'none';
+          document.getElementById("exitMap1").style.display = 'flex';
+          document.getElementById('Boulder_Entwine').scrollIntoView();
+        }
+        if (e.target.name === 'exitMap1') {
+          document.getElementById("interact1").style.display = 'flex';
+          document.getElementById("exitMap1").style.display = 'none';
         }
 
-        if (e.target.name === 'exitMap') {
-          document.getElementById("interact").style.display = 'flex';
-          document.getElementById("exitMap").style.display = 'none';
+        if (e.target.name === 'mapBtn2') {
+          document.getElementById("interact2").style.display = 'none';
+          document.getElementById("exitMap2").style.display = 'flex';
+          document.getElementById('Ground_Reference').scrollIntoView();
+        }
+        if (e.target.name === 'exitMap2') {
+          document.getElementById("interact2").style.display = 'flex';
+          document.getElementById("exitMap2").style.display = 'none';
         }
       });
     </script>
@@ -322,18 +362,37 @@
         <img class="phoneShell" src="./assets/pixel-no-shadow.gif" alt="pixel8 app gif" />
       </div>
     </div>
-    <div id="exitMap">
-      <button class="close" name="exitMap">×</button>
+    <div id="exitMap1" class="exitMap">
+      <button class="close" name="exitMap1">×</button>
     </div>
-    <div class="map">
+    <div id="Boulder_Entwine" class="map">
       <iframe
         src="https://mable-0.pixel8earth.com/entwine/boulder?ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
         align="middle"
         width="100%"
         scrolling="no"
       ></iframe>
-      <div id="interact">
-        <button class="button" name="map button">Interact with map</button>
+      <div id="interact1" class="interact">
+        <button class="button" name="mapBtn1">Interact with map</button>
+      </div>
+    </div>
+    <div class="info eptDownload">
+      <a class="downloadBtn" download="Pixel8.earth_Boulder_EPT" href="data:text/plain;charset=utf-8,https://storage.googleapis.com/pixel8/entwined/ept.json">
+        Download Boulder Entwine Dataset
+      </a>
+    </div>
+    <div id="exitMap2" class="exitMap">
+      <button class="close" name="exitMap2">×</button>
+    </div>
+    <div id="Ground_Reference" class="map">
+      <iframe
+        src="https://mable-0.pixel8earth.com/entwine/boulder?ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
+        align="middle"
+        width="100%"
+        scrolling="no"
+      ></iframe>
+      <div id="interact2" class="interact">
+        <button class="button" name="mapBtn2">Interact with map</button>
       </div>
     </div>
     <div class="info">
