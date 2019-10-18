@@ -46,7 +46,7 @@
         -webkit-clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
       }
       #pixel8Logo {
-        width: 600px;
+        width: 80%;
       }
       .tagline {
         padding-top: 0px;
@@ -152,6 +152,16 @@
         color: #263f59;
         font-weight: bold;
       }
+      .download {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #090909;
+        padding-bottom: 5vh;
+      }
+      .dataLicense {
+        font-size: 15px;
+      }
       .downloadBtn {
         display: inline-flex;
         align-items: center;
@@ -159,9 +169,10 @@
         font-size: 15px;
         border: 1px solid transparent;
         border-radius: 5px;
-        color: #f2f4f5;
-        background-color: #263f59;
+        background-color: #f2f4f5;
+        color: #263f59;
         font-weight: bold;
+        height: 1.2em;
       }
 
       .image {
@@ -210,27 +221,6 @@
     </style>
     <script>
       function sizeTheThings(event) {
-        // Header
-        const logo = document.getElementById('pixel8Logo');
-
-        if (window.innerWidth > 1300 && logo.style !== '600px') {
-          logo.style.width = '600px';
-        } else if (window.innerWidth < 1300 && window.innerWidth > 1175 && logo.style !== '550px') {
-          logo.style.width = '550px';
-        } else if (window.innerWidth < 1175 && window.innerWidth > 1000 && logo.style !== '500px') {
-          logo.style.width = '500px';
-        } else if (window.innerWidth < 1000 && window.innerWidth > 950 && logo.style !== '450px') {
-          logo.style.width = '450px';
-        } else if (window.innerWidth < 950 && window.innerWidth > 825 && logo.style !== '400px') {
-          logo.style.width = '400px';
-        } else if (window.innerWidth < 825 && window.innerWidth > 625 && logo.style !== '350px') {
-          logo.style.width = '350px';
-        } else if (window.innerWidth < 625 && window.innerWidth > 550 && logo.style !== '300px') {
-          logo.style.width = '300px';
-        } else if (window.innerWidth <= 550 && window.innerWidth > 415 && logo.style !== '250px') {
-          logo.style.width = '250px';
-        }
-
         // Section 1
         const firstSection = document.getElementsByClassName('sideBySide')[0];
         const phoneContainer = document.getElementsByClassName('phoneContainer')[0];
@@ -354,8 +344,8 @@
     <div class="sideBySide">
       <div class="info">
         <div class="infoContainer">
-          <p>To enable a future with powered by augmented reality, autonomous vehicles, and digital mapping we need a global high definition 3D map. This can only be achieved by utilizing the broad array of data sources imaging our world - camera phones, 360 video, drones, aerial, satellite, radar, LiDAR. To make all these imagery sources cooperate and align we need a common ground truth - what we call a ground control surface. Leveraging geomatics, computer vision and machine learning we generate a self improving ground truth and align multiple data sources.</p>
-          <p>To demonstrate the utility of this approach we built a mobile app to allow a small group of volunteers to map downtown Boulder with photos. From this we use photogrammetry to build 3D models and align those models to our ground control surface. Check out the results in the interactive map below from 25 volunteers mapping downtown Boulder in an afternoon (with a few solo forays by the Pixel8 team to fill in some gaps).</p>
+          <p>To enable a future powered by augmented reality, autonomous vehicles and digital mapping we need a global high definition 3D map. This can only be achieved by utilizing the broad array of data sources imaging our world - camera phones, 360 video, drones, aerial, satellite, radar, LiDAR. To make all these imagery sources cooperate and align we need a common ground truth - what we call a ground control surface. Leveraging geomatics, computer vision and machine learning we generate a self improving ground truth and align multiple data sources.</p>
+          <p>To demonstrate the utility of this approach we built a mobile app to allow a small group of volunteers to map downtown Boulder with photos. From this we use photogrammetry to build 3D models and align those models to our ground control surface. Check out the results from 25 volunteers mapping downtown Boulder in an afternoon (with a few solo forays by the Pixel8 team to fill gaps) in the interactive map below.</p>
         </div>
       </div>
       <div class="phoneContainer">
@@ -367,7 +357,7 @@
     </div>
     <div id="Boulder_Entwine" class="map">
       <iframe
-        src="https://mable-0.pixel8earth.com/entwine/boulder?ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
+        src="https://mable-0.pixel8earth.com/entwine/boulder"
         align="middle"
         width="100%"
         scrolling="no"
@@ -376,17 +366,27 @@
         <button class="button" name="mapBtn1">Interact with map</button>
       </div>
     </div>
-    <div class="info eptDownload">
+    <div class="download">
       <a class="downloadBtn" download="Pixel8.earth_Boulder_EPT" href="data:text/plain;charset=utf-8,https://storage.googleapis.com/pixel8/entwined/ept.json">
         Download Boulder Entwine Dataset
       </a>
+      <a class="dataLicense" href="https://creativecommons.org/licenses/by/2.0/legalcode">Data is licensed as CC by 2.0</a>
+      <a class="downloadBtn" download="Pixel8.earth_Boulder_EPT" href="data:text/plain;charset=utf-8,https://storage.googleapis.com/pixel8/entwined/ept.json">
+        Download Boulder 3D Tiles
+      </a>
+    </div>
+    <div class="info">
+      <div class="infoContainer">
+        <h3>Ground Truth</h3>
+        <p>While camera phone photos are incredibly common satellite, aerial and drones can cover large swaths of geography quickly. Being able to combine 3D models made from camera phone photos with other imagery sources is critical to reach the scope and scale needed for a truly global map. In the map below we’ve fused 3DEP LiDAR and Pixel8 terrestrial data to create an augmented ground control surface. We could also extend or augment this with SAR or aerial derived point clouds. Whatever works best for the geography we want to map in 3D and what data sources are available. The key is to have a perpetually improving ground truth that we can globally build on to create the best possible 3D map.</p>
+      </div>
     </div>
     <div id="exitMap2" class="exitMap">
       <button class="close" name="exitMap2">×</button>
     </div>
     <div id="Ground_Reference" class="map">
       <iframe
-        src="https://mable-0.pixel8earth.com/entwine/boulder?ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
+        src="https://mable-0.pixel8earth.com/entwine?ept=https://storage.googleapis.com/pixel8boulder/lidar/boulder_dense/ept.json&colorType=CLASSIFICATION&x=-105.282856&y=40.015793"
         align="middle"
         width="100%"
         scrolling="no"
@@ -398,7 +398,7 @@
     <div class="info">
       <div class="infoContainer">
         <h3>Coming Next</h3>
-        <p>While camera phone photos are incredibly common satellites, aerial, and drones can cover large swaths of geography quickly. Being able to combine 3D models made from camera phone photos with other imagery sources is critical to reach the scope and scale needed for a truly global map. In the animation below we can see the terrestrial 3D models created during the Boulder mapping event combined with 3D point clouds generated by Nearmap aerial imagery. This gives us not only terrific perspective from the ground and air of a building, but also allows us to scale 3D build outs that much faster. Each imagery source has benefits and shortcomings. By conflating multiple sources we can create a best of breed hybrid map, which is better and faster than any one source could alone.</p>
+        <p> Let’s take a quick look at this in practice; augmenting the Boulder map with aerial data. In the animation below we can see the terrestrial 3D models created during the Boulder mapping event combined with 3D point clouds generated by Nearmap aerial imagery. This gives us not only terrific perspective from the ground and air of a building, but also allows us to scale 3D build outs that much faster. Each imagery source has benefits and shortcomings. By conflating multiple sources we can create a best of breed hybrid map, which is better and faster than any one source could be alone.</p>
       </div>
       <img class="image" src="./assets/pixel8&nearmap.gif" alt="pixel8 + nearmap gif" />
     </div>
