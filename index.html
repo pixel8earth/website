@@ -18,11 +18,11 @@
         -moz-osx-font-smoothing: grayscale
       }
       a {
-        color: #63ADF2;
+        color: #5b9fde;
         padding: 15px;
         margin: 15px;
         text-decoration: none;
-        font-size: 1.2em;
+        font-size: 1.25em;
       }
 
       header {
@@ -44,6 +44,7 @@
         justify-content: center;
         clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
         -webkit-clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
+        -moz-clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
       }
       #pixel8Logo {
         width: 80%;
@@ -55,10 +56,7 @@
       .phoneContainer {
         flex: 1;
         align-self: center;
-        justify-content: center;
-        padding: 30px;
-        padding-top: 50px;
-        margin-right: 50px;
+        margin: 5vh;
       }
       .phoneShell {
         max-width: 300px;
@@ -82,12 +80,16 @@
         align-items: center;
         justify-content: center;
       }
+      .downloadsMap {
+        padding-top: 2vh;
+        padding-bottom: 0;
+      }
       .interact {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: transparent; /* rgba(84, 93, 115, 0.15); */
-        height: 102vh; /* html vh + padding of 6vh on top and bottom */
+        background-color: transparent;
+        height: 90vh;
         width: 100%;
         position: absolute;
         z-index: 5;
@@ -95,12 +97,14 @@
       .exitMap {
         background-color: transparent;
         position: relative;
-        bottom: -43px;
+        cursor: pointer;
+        bottom: -35px;
         display: none;
         z-index: 5;
       }
       #犬夜叉 {
         display: none;
+        position: -moz-sticky; /* firefox */
         position: -webkit-sticky; /* Safari */
         position: sticky;
         bottom: 0;
@@ -124,11 +128,12 @@
       .info {
         color: #263f59;
         background-color: #f2f4f5;
-        padding: 90px;
+        padding: 5vh;
         overflow: hidden;
         font-size: 1.25em;
         line-height: 1.5;
         flex: 2;
+        align-self: center;
       }
       .infoContainer {
         padding: 30px;
@@ -145,7 +150,7 @@
       }
       .button {
         padding: 6px;
-        font-size: 15px;
+        /* font-size: 15px; */
         border: 1px solid transparent;
         border-radius: 5px;
         background-color: #f2f4f5;
@@ -154,25 +159,28 @@
       }
       .download {
         display: flex;
-        justify-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
         align-items: center;
         background-color: #090909;
+        min-height: 10vh;
         padding-bottom: 5vh;
       }
-      .dataLicense {
+      .dataLink {
         font-size: 15px;
-      }
-      .downloadBtn {
-        display: inline-flex;
-        align-items: center;
-        padding: 6px;
-        font-size: 15px;
-        border: 1px solid transparent;
-        border-radius: 5px;
-        background-color: #f2f4f5;
-        color: #263f59;
         font-weight: bold;
-        height: 1.2em;
+        cursor: pointer;
+        padding: 6px;
+        border: 1px solid;
+        border-radius: 5px;
+      }
+      .licenseLink {
+        border: none;
+        padding: none;
+        font-weight: normal;
+        margin: none;
+        font-size: small;
       }
 
       .image {
@@ -225,28 +233,32 @@
         const firstSection = document.getElementsByClassName('sideBySide')[0];
         const phoneContainer = document.getElementsByClassName('phoneContainer')[0];
         const firstInfo = document.getElementsByClassName('info')[0];
+        const download = document.getElementsByClassName('download')[0];
 
         if (window.innerWidth <= 1000 && firstSection.style.flexDirection !== 'column') {
           firstSection.style.flexDirection = 'column';
-          phoneContainer.style.padding = 'none';
-          phoneContainer.style.paddingTop = 'none';
-          phoneContainer.style.paddingBottom = '80px';
-          phoneContainer.style.marginRight = '0';
           firstInfo.style.paddingBottom = '0';
         } else if (window.innerWidth > 1000 && firstSection.style.flexDirection !== 'row') {
           firstSection.style.flexDirection = 'row';
-          phoneContainer.style.paddingBottom = 'none';
-          phoneContainer.style.padding = '30px';
-          phoneContainer.style.paddingTop = '50px';
-          phoneContainer.style.marginRight = '50px';
           firstInfo.style.paddingBottom = 'none';
-          firstInfo.style.padding = '90px';
+          firstInfo.style.padding = '5vh';
+        }
+
+        if (window.innerWidth <= 780 && download.style.flexDirection !== 'column') {
+          download.style.flexDirection = 'column';
+        } else if (window.innerWidth > 780 && download.style.flexDirection !== 'row') {
+          download.style.flexDirection = 'row';
         }
       }
 
+
+
       window.addEventListener('load', (event) => {
         sizeTheThings(event);
-        setTimeout( () => window.scrollTo(0, 0), 500);
+        setTimeout( () => {
+          // NOTE: firefox doesn't have scrollTo
+          !!window.scrollTo ? window.scrollTo(0, 0), 500) : window.scroll(0, 0);
+        });
       });
 
       window.addEventListener('resize', (event) => {
@@ -294,7 +306,7 @@
           const mapVail2 = document.getElementById("interact2");
           const exitMap2 = document.getElementById("exitMap2");
 
-          if (mapVail && mapVail2.style.display == 'none') {
+          if (mapVail2 && mapVail2.style.display == 'none') {
             mapVail2.style.display = 'flex';
             exitMap2.style.display = 'none';
           }
@@ -330,6 +342,10 @@
           document.getElementById("interact2").style.display = 'flex';
           document.getElementById("exitMap2").style.display = 'none';
         }
+        if (e.target.name === 'footerP8') {
+          // NOTE: firefox doesn't have scrollTo
+          !!window.scrollTo ? window.scrollTo(0, 0), 500) : window.scroll(0, 0);
+        }
       });
     </script>
     <link rel="stylesheet" type="text/css" href="main.css">
@@ -355,7 +371,7 @@
     <div id="exitMap1" class="exitMap">
       <button class="close" name="exitMap1">×</button>
     </div>
-    <div id="Boulder_Entwine" class="map">
+    <div id="Boulder_Entwine" class="map downloadsMap">
       <iframe
         src="https://mable-0.pixel8earth.com/entwine/boulder"
         align="middle"
@@ -367,11 +383,11 @@
       </div>
     </div>
     <div class="download">
-      <a class="downloadBtn" download="Pixel8.earth_Boulder_EPT" href="data:text/plain;charset=utf-8,https://storage.googleapis.com/pixel8/entwined/ept.json">
+      <a class="dataLink" download="Pixel8.earth_Boulder_EPT" href="data:text/plain;charset=utf-8,https://storage.googleapis.com/pixel8/entwined/ept.json">
         Download Boulder Entwine Dataset
       </a>
-      <a class="dataLicense" href="https://creativecommons.org/licenses/by/2.0/legalcode">Data is licensed as CC by 2.0</a>
-      <a class="downloadBtn" download="Pixel8.earth_Boulder_EPT" href="data:text/plain;charset=utf-8,https://storage.googleapis.com/pixel8/entwined/ept.json">
+      <a class="licenseLink" href="https://creativecommons.org/licenses/by/2.0/legalcode" target="_blank">Data is licensed as CC by 2.0</a>
+      <a class="dataLink" download="Pixel8.earth_Boulder_3D_tiles" href="data:text/plain;charset=utf-8,https://storage.googleapis.com/pixel8/entwined/ept.json">
         Download Boulder 3D Tiles
       </a>
     </div>
@@ -415,8 +431,8 @@
     </div>
   </body>
   <footer>
-    <img class="footerIcon" src="./favicon.ico" alt="P8 icon" />
-    <div clas="footerLinks">
+    <img class="footerIcon" src="./favicon.ico" alt="P8 icon" name="footerP8"/>
+    <div class="footerLinks">
       <a href="mailto: sean.gorman@pixel8.earth">contact us</a>
       <a href="./terms-of-use.html">terms of use</a>
       <a href="./privacy-policy.html">privacy policy</a>
