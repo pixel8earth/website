@@ -257,8 +257,8 @@
         sizeTheThings(event);
         setTimeout( () => {
           // NOTE: firefox doesn't have scrollTo
-          !!window.scrollTo ? window.scrollTo(0, 0), 500) : window.scroll(0, 0);
-        });
+          !!window.scrollTo ? window.scrollTo(0, 0) : window.scroll(0, 0);
+        }, 500);
       });
 
       window.addEventListener('resize', (event) => {
@@ -344,7 +344,7 @@
         }
         if (e.target.name === 'footerP8') {
           // NOTE: firefox doesn't have scrollTo
-          !!window.scrollTo ? window.scrollTo(0, 0), 500) : window.scroll(0, 0);
+          !!window.scrollTo ? window.scrollTo(0, 0) : window.scroll(0, 0);
         }
       });
     </script>
