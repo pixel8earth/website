@@ -8,38 +8,448 @@
 
     <!-- Your styles -->
     <style>
-      body {
-        margin:0;
-        font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
-        -webkit-font-smoothing:antialiased;
-        -moz-osx-font-smoothing:grayscale
+      html {
+        background-color: #f2f4f5;
       }
-      div {
-        background-color: #000;
-        height: 100vh;
-        color: #fff;
+      body {
+        margin: 0;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale
+      }
+      a {
+        color: #5b9fde;
+        padding: 15px;
+        margin: 15px;
+        text-decoration: none;
+        font-size: 1.25em;
+      }
+
+      header {
+        background-color: #0b2427;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: calc(4px + 2vmin);
+        color: #f2f4f5;
+        margin: 15px;
+        height: 95vh;
+      }
+      #appHeader {
+        background-color: #0b2427;
+        color: #f2f4f5;
         display: flex;
         align-content: center;
         justify-content: center;
+        clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
+        -webkit-clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
+        -moz-clip-path: polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%);
       }
-      header {
-        background-color:#000;
-        min-height:100vh;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        font-size:calc(4px + 2vmin);color:#fff
+      #pixel8Logo {
+        width: 80%;
+      }
+      .tagline {
+        padding-top: 0px;
+      }
+
+      .phoneContainer {
+        flex: 1;
+        align-self: center;
+        margin: 5vh;
+      }
+      .phoneShell {
+        max-width: 300px;
+      }
+      .pixel8Gif {
+        width: 207px;
+        position: relative;
+        bottom: 120px;
+        right: 408px;
+      }
+
+      iframe {
+        border: none;
+        height: 90vh;
+      }
+      .map {
+        padding-top: 5vh;
+        padding-bottom: 5vh;
+        background-color: #090909; /* gray that goes with potree viewer -> #0f171a; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .downloadsMap {
+        padding-top: 3vh;
+        padding-bottom: 0;
+      }
+      .interact {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        height: 90vh;
+        width: 100%;
+        position: absolute;
+        z-index: 5;
+      }
+      .exitMap {
+        background-color: transparent;
+        position: relative;
+        cursor: pointer;
+        bottom: -35px;
+        display: none;
+        z-index: 5;
+      }
+      #犬夜叉 {
+        display: none;
+        position: -moz-sticky; /* firefox */
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        bottom: 0;
+        right: 0;
+        z-index: 1001;
+      }
+      .close {
+        font-size: 2em;
+        font-weight: bold;
+        background-color: transparent;
+        color: #f2f4f5;
+        border: none;
+        cursor: pointer;
+      }
+
+      .sideBySide {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: space-evenly;
+      }
+      .info {
+        color: #263f59;
+        background-color: #f2f4f5;
+        padding: 5vh;
+        overflow: hidden;
+        font-size: 1.25em;
+        line-height: 1.5;
+        flex: 2;
+        align-self: center;
+      }
+      .infoContainer {
+        padding: 30px;
+        background-color: #d3dddc;
+        border-radius: 15px;
+        align-items: stretch;
+        height: auto;
+      }
+      .dark {
+        background-color: #0b2427;
+      }
+      .noBtmPad {
+        padding-bottom: 0;
+      }
+      .button {
+        padding: 6px;
+        /* font-size: 15px; */
+        border: 1px solid transparent;
+        border-radius: 5px;
+        background-color: #f2f4f5;
+        color: #263f59;
+        font-weight: bold;
+      }
+      .download {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+        background-color: #090909;
+        padding-bottom: 3vh;
+      }
+      .dataLink {
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 6px;
+        border: 1px solid;
+        border-radius: 5px;
+      }
+      .licenseLink {
+        border: none;
+        padding: none;
+        font-weight: normal;
+        margin: none;
+        font-size: small;
+      }
+
+      .image {
+        width: 100%;
+        border-radius: 15px;
+        margin-top: 5vh;
+      }
+
+      .appImageContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-content: space-evenly;
+        flex-wrap: wrap;
+      }
+      .appImage {
+        max-height: 25vh;
+        margin: 20px;
+        border-radius: 15px;
+      }
+
+      footer {
+        background-color: #0b2427;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #f2f4f5;
+        font-size: 12px;
+      }
+      .footerIcon {
+        padding: 20px;
+        height: 50px;
+        display: flex;
+      }
+      .footerLinks {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        text-decoration: none;
+      }
+      .footerSocialMedia {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
       }
     </style>
+    <script>
+      function sizeTheThings(event) {
+        // Section 1
+        const firstSection = document.getElementsByClassName('sideBySide')[0];
+        const phoneContainer = document.getElementsByClassName('phoneContainer')[0];
+        const firstInfo = document.getElementsByClassName('info')[0];
+        const download = document.getElementsByClassName('download')[0];
+
+        if (window.innerWidth <= 1000 && firstSection.style.flexDirection !== 'column') {
+          firstSection.style.flexDirection = 'column';
+          firstInfo.style.paddingBottom = '0';
+        } else if (window.innerWidth > 1000 && firstSection.style.flexDirection !== 'row') {
+          firstSection.style.flexDirection = 'row';
+          firstInfo.style.paddingBottom = 'none';
+          firstInfo.style.padding = '5vh';
+        }
+
+        if (window.innerWidth <= 780 && download.style.flexDirection !== 'column') {
+          download.style.flexDirection = 'column';
+        } else if (window.innerWidth > 780 && download.style.flexDirection !== 'row') {
+          download.style.flexDirection = 'row';
+        }
+      }
+
+
+
+      window.addEventListener('load', (event) => {
+        sizeTheThings(event);
+        setTimeout( () => {
+          // NOTE: firefox doesn't have scrollTo
+          !!window.scrollTo ? window.scrollTo(0, 0) : window.scroll(0, 0);
+        }, 500);
+      });
+
+      window.addEventListener('resize', (event) => {
+        sizeTheThings(event);
+      });
+
+      window.addEventListener('scroll', function(e) {
+        const header = document.getElementById('appHeader');
+
+        // Control shape of header div
+        if (window.scrollY > (window.innerHeight * 0.5)) {
+          header.style.clipPath = 'none';
+          header.style.webkitClipPath = 'none';
+        } else if (window.scrollY < (window.innerHeight * 0.5)) {
+          header.style.clipPath = 'polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%)';
+          header.style.webkitClipPath = 'polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%)';
+        }
+
+        // If user interacted with the map and now they've scrolled mostly
+        // out of view, add back the need to click to use the map to improve
+        // the ability to scroll.
+        const map1 = document.getElementById('Boulder_Entwine');
+        const { top: top1, bottom: bottom1 } = map1.getBoundingClientRect();
+
+        if ( // 20% of view is not the map on the top OR the bottom
+          ((bottom1 / window.innerHeight) > 0 && (bottom1 / window.innerHeight) <= 0.8) ||
+          ((1 - top1 / window.innerHeight) > 0 && (1 - top1 / window.innerHeight) < 0.8)
+        ) {
+          const mapVail = document.getElementById("interact");
+          const exitMap = document.getElementById("exitMap");
+
+          if (mapVail && mapVail.style.display == 'none') {
+            mapVail.style.display = 'flex';
+            exitMap.style.display = 'none';
+          }
+        }
+
+        const map2 = document.getElementById('Ground_Reference');
+        const { top: top2, bottom: bottom2 } = map2.getBoundingClientRect();
+
+        if ( // 20% of view is not the map on the top OR the bottom
+          ((bottom2 / window.innerHeight) > 0 && (bottom2 / window.innerHeight) <= 0.8) ||
+          ((1 - top2 / window.innerHeight) > 0 && (1 - top2 / window.innerHeight) < 0.8)
+        ) {
+          const mapVail2 = document.getElementById("interact2");
+          const exitMap2 = document.getElementById("exitMap2");
+
+          if (mapVail2 && mapVail2.style.display == 'none') {
+            mapVail2.style.display = 'flex';
+            exitMap2.style.display = 'none';
+          }
+        }
+      })
+
+      window.addEventListener('click', function(e) {
+        if (!window.clickCount) window.clickCount = 0;
+
+        window.clickCount++;
+        if (window.clickCount === 100 /* 百 */) {
+          const el = document.getElementById('犬夜叉');
+          if (el) el.style.display = 'block'; /* ブロック */
+          setTimeout(() => el.style.display = 'none', 2000); /* 無し */
+        }
+
+        if (e.target.name === 'mapBtn1') {
+          document.getElementById("interact1").style.display = 'none';
+          document.getElementById("exitMap1").style.display = 'flex';
+          document.getElementById('Boulder_Entwine').scrollIntoView();
+        }
+        if (e.target.name === 'exitMap1') {
+          document.getElementById("interact1").style.display = 'flex';
+          document.getElementById("exitMap1").style.display = 'none';
+        }
+
+        if (e.target.name === 'mapBtn2') {
+          document.getElementById("interact2").style.display = 'none';
+          document.getElementById("exitMap2").style.display = 'flex';
+          document.getElementById('Ground_Reference').scrollIntoView();
+        }
+        if (e.target.name === 'exitMap2') {
+          document.getElementById("interact2").style.display = 'flex';
+          document.getElementById("exitMap2").style.display = 'none';
+        }
+        if (e.target.name === 'footerP8') {
+          // NOTE: firefox doesn't have scrollTo
+          !!window.scrollTo ? window.scrollTo(0, 0) : window.scroll(0, 0);
+        }
+      });
+    </script>
     <link rel="stylesheet" type="text/css" href="main.css">
   </head>
   <body>
-    <div className="App">
-      <header className="App-header">
-        <img src="./pixel8.jpg" alt="Future home of Pixel8.earth" width="400" />
-        Future home of Pixel8.earth
+    <div id="appHeader">
+      <header>
+        <img id="pixel8Logo" src="./assets/pixel8-transparent.png" alt="Pixel8.earth logo" />
+        <h4>The Collective High Definition 3D Map</h4>
       </header>
     </div>
+    <div class="sideBySide">
+      <div class="info">
+        <div class="infoContainer">
+          <p>To enable a future powered by augmented reality, autonomous vehicles and digital mapping we need a global high definition 3D map. This can only be achieved by utilizing the broad array of data sources imaging our world - camera phones, 360 video, drones, aerial, satellite, radar, LiDAR. To make all these imagery sources cooperate and align we need a common ground truth - what we call a ground control surface. Leveraging geomatics, computer vision and machine learning we generate a self improving ground truth and align multiple data sources.</p>
+          <p>To demonstrate the utility of this approach we built a mobile app to allow a small group of volunteers to map downtown Boulder with photos. From this we use photogrammetry to build 3D models and align those models to our ground control surface. Check out the results from 25 volunteers mapping downtown Boulder in an afternoon (with a few solo forays by the Pixel8 team to fill gaps) in the interactive map below.</p>
+        </div>
+      </div>
+      <div class="phoneContainer">
+        <img class="phoneShell" src="./assets/pixel-no-shadow.gif" alt="pixel8 app gif" />
+      </div>
+    </div>
+    <div id="exitMap1" class="exitMap">
+      <button class="close" name="exitMap1">×</button>
+    </div>
+    <div id="Boulder_Entwine" class="map downloadsMap">
+      <iframe
+        src="https://mable-0.pixel8earth.com/entwine/boulder"
+        align="middle"
+        width="100%"
+        scrolling="no"
+      ></iframe>
+      <div id="interact1" class="interact">
+        <button class="button" name="mapBtn1">Interact with map</button>
+      </div>
+    </div>
+    <div class="download">
+      <a class="dataLink" target="_blank" href="http://potree.entwine.io/data/view.html?r=%22https://storage.googleapis.com/pixel8/entwined/ept.json%22">
+        View EPT dataset
+      </a>
+      <a class="dataLink" target="_blank" href="https://storage.googleapis.com/pixel8/boulder-entwined.zip">
+        Download EPT dataset
+      </a>
+      <a class="licenseLink" href="https://creativecommons.org/licenses/by/2.0/legalcode" target="_blank">Data is licensed as CC by 2.0</a>
+      <a class="dataLink" target="_blank" href="http://cesium.entwine.io/?url=https://storage.googleapis.com/pixel8/3dtiles/tileset.json">
+        View 3D tiles
+      </a>
+      <a class="dataLink" target="_blank" href="https://storage.googleapis.com/pixel8/boulder-3dtiles.zip">
+        Download 3D tiles
+      </a>
+    </div>
+    <div class="info">
+      <div class="infoContainer">
+        <h3>Ground Truth</h3>
+        <p>While camera phone photos are incredibly common satellite, aerial and drones can cover large swaths of geography quickly. Being able to combine 3D models made from camera phone photos with other imagery sources is critical to reach the scope and scale needed for a truly global map. In the map below we’ve fused 3DEP LiDAR and Pixel8 terrestrial data to create an augmented ground control surface. We could also extend or augment this with SAR or aerial derived point clouds. Whatever works best for the geography we want to map in 3D and what data sources are available. The key is to have a perpetually improving ground truth that we can globally build on to create the best possible 3D map.</p>
+      </div>
+    </div>
+    <div id="exitMap2" class="exitMap">
+      <button class="close" name="exitMap2">×</button>
+    </div>
+    <div id="Ground_Reference" class="map">
+      <iframe
+        src="https://mable-0.pixel8earth.com/reference?x=-105.282856&y=40.015793&color=0,.7,0&colorType=COLOR&boulderDenseLidar=true&pointBudget=2000000&ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
+        align="middle"
+        width="100%"
+        scrolling="no"
+      ></iframe>
+      <div id="interact2" class="interact">
+        <button class="button" name="mapBtn2">Interact with map</button>
+      </div>
+    </div>
+    <div class="info">
+      <div class="infoContainer">
+        <h3>Coming Next</h3>
+        <p> Let’s take a quick look at this in practice; augmenting the Boulder map with aerial data. In the animation below we can see the terrestrial 3D models created during the Boulder mapping event combined with 3D point clouds generated by Nearmap aerial imagery. This gives us not only terrific perspective from the ground and air of a building, but also allows us to scale 3D build outs that much faster. Each imagery source has benefits and shortcomings. By conflating multiple sources we can create a best of breed hybrid map, which is better and faster than any one source could be alone. (Caveat - we've reduced the pixel size for the Nearmap data to highlight alignment of the Pixel8 data. Nearmap looks very nice on its own with larger pixels.)</p>
+      </div>
+      <img class="image" src="./assets/pixel8&nearmap.gif" alt="pixel8 + nearmap gif" />
+    </div>
+    <div id="犬夜叉">
+      <img src="https://media.giphy.com/media/QNp9V9qZd6pzy/giphy.gif" alt="犬夜叉 🥚" width="111" height="160"></img>
+    </div>
+    <div class="info dark noBtmPad">
+      <div class="appImageContainer">
+        <img class="appImage" src="./assets/app_shot_1.png" alt="pixel8 3D point cloud image" />
+        <img class="appImage" src="./assets/app_shot_2.png" alt="pixel8 3D point cloud image" />
+        <img class="appImage" src="./assets/app_shot_3.png" alt="pixel8 3D point cloud image" />
+        <img class="appImage ten" src="./assets/app_shot_4.png" alt="pixel8 3D point cloud image" />
+      </div>
+    </div>
   </body>
+  <footer>
+    <img class="footerIcon" src="./favicon.ico" alt="P8 icon" name="footerP8"/>
+    <div class="footerLinks">
+      <a href="mailto: sean.gorman@pixel8.earth">contact us</a>
+      <a href="./terms-of-use.html">terms of use</a>
+      <a href="./privacy-policy.html">privacy policy</a>
+    </div>
+    <div class="footerSocialMedia">
+      <a href="https://twitter.com/pixel8earth">
+       <img src="./assets/twitter_icon.png" alt="Twitterr icon" height="25" />
+      </a>
+      <a href="https://medium.com/@pixel8earth">
+       <img src="./assets/medium_icon.png" alt="Medium icon" height="25" />
+      </a>
+    </div>
+  </footer>
 </html>
