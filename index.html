@@ -24,6 +24,19 @@
         text-decoration: none;
         font-size: 1.25em;
       }
+      .linkNoStyling {
+        font-size: inherit;
+        text-decoration: none;
+        padding: unset;
+        margin: unset;
+      }
+      .boulderMapLink {
+        color: #5b9fde;
+        font-size: inherit;
+        text-decoration: none;
+        padding: unset;
+        margin: unset;
+      }
       #boulderLidarLink {
         color: #5b9fde;
         text-decoration: none;
@@ -68,21 +81,28 @@
       .phoneShell {
         max-width: 300px;
       }
+      .boulderMapImg {
+        max-width: 90vw;
+        border-radius: 15px;
+        object-fit: cover;
+      }
       .pixel8Gif {
         width: 207px;
         position: relative;
         bottom: 120px;
         right: 408px;
       }
-
-      iframe {
-        border: none;
-        height: 90vh;
+      .mapImage {
+        padding: 5vh;
+        background-color: #0b2427;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .map {
         padding-top: 5vh;
         padding-bottom: 5vh;
-        background-color: #090909; /* gray that goes with potree viewer -> #0f171a; */
+        background-color: #0b2427; /* gray that goes with potree viewer -> #0f171a; */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -165,14 +185,23 @@
         color: #263f59;
         font-weight: bold;
       }
+      .downloadsSection {
+        display: flex;
+        flex-direction: column;
+        background-color: #0b2427; /*#090909;*/
+        padding: 5vh;
+      }
       .download {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-evenly;
         align-items: center;
-        background-color: #090909;
-        padding-bottom: 3vh;
+      }
+      .license {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
       }
       .dataLink {
         font-size: 15px;
@@ -188,6 +217,7 @@
         font-weight: normal;
         margin: none;
         font-size: small;
+        margin: 0;
       }
 
       .image {
@@ -224,6 +254,13 @@
         display: flex;
         justify-content: flex-start;
       }
+      .footerIconsLeft {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        text-decoration: none;
+      }
       .footerLinks {
         display: flex;
         flex-direction: row;
@@ -254,6 +291,9 @@
         const phoneContainer = document.getElementsByClassName('phoneContainer')[0];
         const firstInfo = document.getElementsByClassName('info')[0];
         const download = document.getElementsByClassName('download')[0];
+        const footer = document.getElementById('footer');
+        const p8FooterLinks = document.getElementById('p8FooterLinks');
+        const mapImages = document.getElementsByClassName('boulderMapImg');
 
         if (window.innerWidth <= 1000 && firstSection.style.flexDirection !== 'column') {
           firstSection.style.flexDirection = 'column';
@@ -266,19 +306,25 @@
 
         if (window.innerWidth <= 780 && download.style.flexDirection !== 'column') {
           download.style.flexDirection = 'column';
+          mapImages[0].style.height = '60vh';
+          mapImages[1].style.height = '60vh';
         } else if (window.innerWidth > 780 && download.style.flexDirection !== 'row') {
           download.style.flexDirection = 'row';
+          mapImages[0].style.height = 'auto';
+          mapImages[1].style.height = 'auto';
+        }
+
+        if (window.innerWidth <= 500 && footer.style.flexDirection !== 'column') {
+          footer.style.flexDirection = 'column';
+          p8FooterLinks.style.flexDirection = 'column'
+        } else if (window.innerWidth > 500 && footer.style.flexDirection === 'column') {
+          footer.style.flexDirection = 'row';
+          p8FooterLinks.style.flexDirection = 'row';
         }
       }
 
-
-
       window.addEventListener('load', (event) => {
         sizeTheThings(event);
-        // setTimeout( () => {
-        //   // NOTE: firefox doesn't have scrollTo
-        //   !!window.scrollTo ? window.scrollTo(0, 0) : window.scroll(0, 0);
-        // }, 500);
       });
 
       window.addEventListener('resize', (event) => {
@@ -296,41 +342,6 @@
           header.style.clipPath = 'polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%)';
           header.style.webkitClipPath = 'polygon(0% 0%, 100% 0, 100% 95%, 50% 100%, 0 95%)';
         }
-
-        // If user interacted with the map and now they've scrolled mostly
-        // out of view, add back the need to click to use the map to improve
-        // the ability to scroll.
-        const map1 = document.getElementById('Boulder_Entwine');
-        const { top: top1, bottom: bottom1 } = map1.getBoundingClientRect();
-
-        if ( // 20% of view is not the map on the top OR the bottom
-          ((bottom1 / window.innerHeight) > 0 && (bottom1 / window.innerHeight) <= 0.8) ||
-          ((1 - top1 / window.innerHeight) > 0 && (1 - top1 / window.innerHeight) < 0.8)
-        ) {
-          const mapVail = document.getElementById("interact");
-          const exitMap = document.getElementById("exitMap");
-
-          if (mapVail && mapVail.style.display == 'none') {
-            mapVail.style.display = 'flex';
-            exitMap.style.display = 'none';
-          }
-        }
-
-        const map2 = document.getElementById('Ground_Reference');
-        const { top: top2, bottom: bottom2 } = map2.getBoundingClientRect();
-
-        if ( // 20% of view is not the map on the top OR the bottom
-          ((bottom2 / window.innerHeight) > 0 && (bottom2 / window.innerHeight) <= 0.8) ||
-          ((1 - top2 / window.innerHeight) > 0 && (1 - top2 / window.innerHeight) < 0.8)
-        ) {
-          const mapVail2 = document.getElementById("interact2");
-          const exitMap2 = document.getElementById("exitMap2");
-
-          if (mapVail2 && mapVail2.style.display == 'none') {
-            mapVail2.style.display = 'flex';
-            exitMap2.style.display = 'none';
-          }
-        }
       })
 
       window.addEventListener('click', function(e) {
@@ -343,25 +354,7 @@
           setTimeout(() => el.style.display = 'none', 2000); /* 無し */
         }
 
-        if (e.target.name === 'mapBtn1') {
-          document.getElementById("interact1").style.display = 'none';
-          document.getElementById("exitMap1").style.display = 'flex';
-          document.getElementById('Boulder_Entwine').scrollIntoView();
-        }
-        if (e.target.name === 'exitMap1') {
-          document.getElementById("interact1").style.display = 'flex';
-          document.getElementById("exitMap1").style.display = 'none';
-        }
 
-        if (e.target.name === 'mapBtn2') {
-          document.getElementById("interact2").style.display = 'none';
-          document.getElementById("exitMap2").style.display = 'flex';
-          document.getElementById('Ground_Reference').scrollIntoView();
-        }
-        if (e.target.name === 'exitMap2') {
-          document.getElementById("interact2").style.display = 'flex';
-          document.getElementById("exitMap2").style.display = 'none';
-        }
         if (e.target.name === 'footerP8') {
           // NOTE: firefox doesn't have scrollTo
           !!window.scrollTo ? window.scrollTo(0, 0) : window.scroll(0, 0);
@@ -381,47 +374,43 @@
       <div class="info">
         <div class="infoContainer">
           <p>To enable a future powered by augmented reality, autonomous vehicles and digital mapping we need a global high definition 3D map. This can only be achieved by utilizing the broad array of data sources imaging our world - camera phones, 360 video, drones, aerial, satellite, radar, LiDAR. To make all these imagery sources cooperate and align we need a common ground truth - what we call a ground control surface. Leveraging geomatics, computer vision and machine learning we generate a self improving ground truth and align multiple data sources.</p>
-          <p>To demonstrate the utility of this approach we built a mobile app to allow a small group of volunteers to map downtown Boulder with photos. From this we use photogrammetry to build 3D models and align those models to our ground control surface. Check out the results from 25 volunteers mapping downtown Boulder in an afternoon (with a few solo forays by the Pixel8 team to fill gaps) in the interactive map below.</p>
+          <p>To demonstrate the utility of this approach we built a mobile app to allow a small group of volunteers to map downtown Boulder with photos. From this we use photogrammetry to build 3D models and align those models to our ground control surface. Check out the results from 25 volunteers mapping downtown Boulder in an afternoon (with a few solo forays by the Pixel8 team to fill gaps) in the interactive map.</p>
         </div>
       </div>
       <div class="phoneContainer">
         <img class="phoneShell" src="./assets/pixel-no-shadow.gif" alt="pixel8 app gif" />
       </div>
     </div>
-    <div id="exitMap1" class="exitMap">
-      <button class="close" name="exitMap1">×</button>
-    </div>
     <div id="Boulder_Entwine" class="map downloadsMap">
-      <iframe
-        src="https://mable-0.pixel8earth.com/entwine/boulder"
-        align="middle"
-        width="100%"
-        scrolling="no"
-      ></iframe>
-      <div id="interact1" class="interact">
-        <button class="button" name="mapBtn1">Interact with map</button>
+      <img class="boulderMapImg" src="./assets/boulder-map.png" alt="pixel8 Boulder map"></img>
+      <div id="interactiveBoulder" class="interact">
+        <a href="https://mable-0.pixel8earth.com/entwine/boulder" class="button linkNoStyling" name="mapBtn1" target="_blank" rel="noopener noreferrer">View Interactive Map</a>
       </div>
     </div>
-    <div class="download">
-      <a class="dataLink" target="_blank" rel="noopener noreferrer" href="http://potree.entwine.io/data/view.html?r=%22https://storage.googleapis.com/pixel8/entwined/ept.json%22">
-        View EPT dataset
-      </a>
-      <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://storage.googleapis.com/pixel8/boulder-entwined.zip">
-        Download EPT dataset
-      </a>
-      <a class="dataLink" target="_blank" rel="noopener noreferrer" href="http://cesium.entwine.io/?url=https://storage.googleapis.com/pixel8/3dtiles/tileset.json">
-        View 3D tiles
-      </a>
-      <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://storage.googleapis.com/pixel8/boulder-3dtiles.zip">
-        Download 3D tiles
-      </a>
-      <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://www.maps.arcgis.com/home/webscene/viewer.html?webscene=bcc2fea7ce944c1b98b3521938f3164a">
-        View in ArcGIS
-      </a>
-      <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://storage.googleapis.com/pixel8/boulder-i3s.slpk">
-        Download Esri SLPK
-      </a>
-      <a class="licenseLink" href="https://creativecommons.org/licenses/by/2.0/legalcode" target="_blank" rel="noopener noreferrer">Data is licensed as CC by 2.0</a>
+    <div class="downloadsSection">
+      <div class="download">
+        <a class="dataLink" target="_blank" rel="noopener noreferrer" href="http://potree.entwine.io/data/view.html?r=%22https://storage.googleapis.com/pixel8/entwined/ept.json%22">
+          View EPT dataset
+        </a>
+        <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://storage.googleapis.com/pixel8/boulder-entwined.zip">
+          Download EPT dataset
+        </a>
+        <a class="dataLink" target="_blank" rel="noopener noreferrer" href="http://cesium.entwine.io/?url=https://storage.googleapis.com/pixel8/3dtiles/tileset.json">
+          View 3D tiles
+        </a>
+        <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://storage.googleapis.com/pixel8/boulder-3dtiles.zip">
+          Download 3D tiles
+        </a>
+        <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://www.maps.arcgis.com/home/webscene/viewer.html?webscene=bcc2fea7ce944c1b98b3521938f3164a">
+          View in ArcGIS
+        </a>
+        <a class="dataLink" target="_blank" rel="noopener noreferrer" href="https://storage.googleapis.com/pixel8/boulder-i3s.slpk">
+          Download Esri SLPK
+        </a>
+      </div>
+      <div class="license">
+        <a class="licenseLink" href="https://creativecommons.org/licenses/by/2.0/legalcode" target="_blank" rel="noopener noreferrer">Data is licensed as CC by 2.0</a>
+      </div>
     </div>
     <div class="info">
       <div class="infoContainer">
@@ -429,18 +418,13 @@
         <p>While camera phone photos are incredibly common satellite, aerial and drones can cover large swaths of geography quickly. Being able to combine 3D models made from camera phone photos with other imagery sources is critical to reach the scope and scale needed for a truly global map. In the map below we’ve fused <a id="boulderLidarLink" target="_blank" rel="noopener noreferrer" href="https://bouldercolorado.gov/open-data/city-of-boulder-lidar/">City of Boulder</a> LiDAR and Pixel8 terrestrial data to create an augmented ground control surface. We could also extend or augment this with SAR or aerial derived point clouds. Whatever works best for the geography we want to map in 3D and what data sources are available. The key is to have a perpetually improving ground truth that we can globally build on to create the best possible 3D map.</p>
       </div>
     </div>
-    <div id="exitMap2" class="exitMap">
-      <button class="close" name="exitMap2">×</button>
-    </div>
-    <div id="Ground_Reference" class="map">
-      <iframe
-        src="https://mable-0.pixel8earth.com/reference?x=-105.282856&y=40.015793&color=0,.7,0&colorType=COLOR&boulderDenseLidar=true&pointBudget=2000000&ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
-        align="middle"
-        width="100%"
-        scrolling="no"
-      ></iframe>
-      <div id="interact2" class="interact">
-        <button class="button" name="mapBtn2">Interact with map</button>
+    <div id="Ground_Reference" class="mapImage">
+      <img class="boulderMapImg" src="./assets/ground-truth.png" alt="pixel8 Boulder map"></img>
+      <div id="interactiveGroundTruth" class="interact">
+        <a
+          href="https://mable-0.pixel8earth.com/reference?x=-105.282856&y=40.015793&color=0,.7,0&colorType=COLOR&boulderDenseLidar=true&pointBudget=2000000&ept=https://storage.googleapis.com/pixel8/entwined/ept.json"
+          class="button linkNoStyling" name="mapBtn1" target="_blank" rel="noopener noreferrer"
+        >View Interactive Map</a>
       </div>
     </div>
     <div class="info">
@@ -462,16 +446,18 @@
       </div>
     </div>
   </body>
-  <footer>
-    <img class="footerIcon" src="./favicon.ico" alt="P8 icon" name="footerP8"/>
-    <div class="footerLinks">
+  <footer id="footer">
+    <div class="footerIconsLeft">
+      <img class="footerIcon" src="./favicon.ico" alt="P8 icon" name="footerP8"/>
+    </div>
+    <div id="p8FooterLinks" class="footerLinks">
       <a href="mailto: sean.gorman@pixel8.earth">contact us</a>
       <a href="./terms-of-use.html">terms of use</a>
       <a href="./privacy-policy.html">privacy policy</a>
     </div>
-    <div class="footerSocialMedia">
+    <div id="socialMediaLinks" class="footerSocialMedia">
       <a href="https://twitter.com/pixel8earth">
-       <img src="./assets/twitter_icon.png" alt="Twitterr icon" height="25" />
+       <img src="./assets/twitter_icon.png" alt="Twitter icon" height="25" />
       </a>
       <a href="https://medium.com/@pixel8earth">
        <img src="./assets/medium_icon.png" alt="Medium icon" height="25" />
