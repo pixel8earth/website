@@ -12,7 +12,7 @@
              url('./assests/fonts/GreycliffCF-Medium.woff') format('woff');
       }
       html {
-        background-color: #424242;
+        background-color: #636363;
         font-family: fontMed;
       }
       img {
@@ -23,11 +23,9 @@
         font-family: fontMed,Ubuntu,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
         -webkit-font-smoothing:antialiased;
         -moz-osx-font-smoothing:grayscale
-        background-color: #424242;
-        padding: 1em 10%;
+        background-color: #636363;
       }
-      div {
-        background-color: #424242;
+      .App {
         min-height:100vh;
         color: #f2f4f5;
         display: flex;
@@ -36,23 +34,12 @@
         justify-content: center;
         color:#f2f4f5;
         margin: 30px;
+        padding: 1em 10%;
       }
       header {
-        background-color:#424242;
         display:flex;
         flex-direction:column;
         justify-content:center;
-      }
-      footer {
-        background-color:#424242;
-        display:flex;
-        flex-direction:column;
-        align-items:left;
-        justify-content:center;
-        color:#f2f4f5;
-        margin: 30px;
-        margin-left: -10px;
-        font-size: 12px;
       }
       #tos {
         font-size: 18px;
@@ -70,11 +57,80 @@
       p {
         line-height: 1.5;
       }
+
+      footer {
+        background-color: #424242;
+        padding: 8px 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        color: #f2f4f5;
+        font-size: 12px;
+      }
+      footer a {
+        color: #f2f4f5;
+        padding: 15px;
+        margin: 15px;
+        text-decoration: none;
+        font-size: 1.25em;
+      }
+      .footerIcon {
+        padding: 12px 24px;
+        height: 24px;
+        display: flex;
+        justify-content: flex-start;
+      }
+      .footerIconsLeft {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        text-decoration: none;
+      }
+      .footerLinks {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-decoration: none;
+      }
+      .footerLinks a:hover {
+        color: #4285F4;
+      }
+      .footerSocialMedia {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
     </style>
+    <script>
+      function sizeTheThings(event) {
+        const footer = document.getElementById('footer');
+        const p8FooterLinks = document.getElementById('p8FooterLinks');
+
+        if (window.innerWidth <= 500 && footer.style.flexDirection !== 'column') {
+          footer.style.flexDirection = 'column';
+          p8FooterLinks.style.flexDirection = 'column'
+        } else if (window.innerWidth > 500 && footer.style.flexDirection === 'column') {
+          footer.style.flexDirection = 'row';
+          p8FooterLinks.style.flexDirection = 'row';
+        }
+      }
+
+      window.addEventListener('load', (event) => {
+        sizeTheThings(event);
+      });
+
+      window.addEventListener('resize', (event) => {
+        sizeTheThings(event);
+      });
+    </script>
     <link rel="stylesheet" type="text/css" href="main.css">
   </head>
   <body>
-    <div className="App">
+    <div class="App">
       <header className="App-header">
         <img id="pixel8Logo" src="./assets/pixel8-logos-01.svg" alt="Pixel8.earth logo" />
         <h2 id="title">Pixel8Earth Terms of Use</h2>
@@ -153,10 +209,29 @@
           202-321-3914 Email: sean.gorman@Pixel8.earth<br/>
           © 2019 Pixel8Earth
         </p>
-      </header>
-      <footer className="footer">
         <small>Pixel8Earth Terms of Use</small>
-      </footer>
+      </header>
     </div>
   </body>
+  <footer id="footer">
+    <div class="footerIconsLeft">
+      <a href="./index.html">
+        <img class="footerIcon" src="./assets/pixel8-logos-02.svg" alt="P8 icon" name="footerP8"/>
+      </a>
+    </div>
+    <div id="p8FooterLinks" class="footerLinks">
+      <a href="./about-us.html">about us</a>
+      <a href="mailto: sean.gorman@pixel8.earth">contact us</a>
+      <a href="./terms-of-use.html">terms of use</a>
+      <a href="./privacy-policy.html">privacy policy</a>
+    </div>
+    <div id="socialMediaLinks" class="footerSocialMedia">
+      <a href="https://twitter.com/pixel8earth">
+       <img src="./assets/twitter_icon.png" alt="Twitter icon" height="25" />
+      </a>
+      <a href="https://medium.com/@pixel8earth">
+       <img src="./assets/medium_icon.png" alt="Medium icon" height="25" />
+      </a>
+    </div>
+  </footer>
 </html>

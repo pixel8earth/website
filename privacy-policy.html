@@ -18,19 +18,16 @@
         align-self: center;
       }
       html {
-        background-color: #424242;
+        background-color: #636363;
       }
       body {
         margin:0;
         font-family: fontMed,Ubuntu,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
         -webkit-font-smoothing:antialiased;
         -moz-osx-font-smoothing:grayscale
-        background-color: #424242;
-        padding: 1em 10%;
+        background-color: #636363;
       }
-      div {
-        background-color: #424242;
-        min-height:100vh;
+      .App {
         color: #f2f4f5;
         display: flex;
         flex-direction:column;
@@ -38,15 +35,14 @@
         justify-content: center;
         color:#f2f4f5;
         margin: 30px;
+        padding: 1em 10%;
       }
       header {
-        background-color:#424242;
         display:flex;
         flex-direction:column;
         justify-content:center;
       }
-      footer {
-        background-color:#424242;
+      .small {
         display:flex;
         flex-direction:column;
         align-items:left;
@@ -69,11 +65,80 @@
       p {
         line-height: 1.5;
       }
+
+      footer {
+        background-color: #424242;
+        padding: 8px 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        color: #f2f4f5;
+        font-size: 12px;
+      }
+      footer a {
+        color: #f2f4f5;
+        padding: 15px;
+        margin: 15px;
+        text-decoration: none;
+        font-size: 1.25em;
+      }
+      .footerIcon {
+        padding: 12px 24px;
+        height: 24px;
+        display: flex;
+        justify-content: flex-start;
+      }
+      .footerIconsLeft {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        text-decoration: none;
+      }
+      .footerLinks {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-decoration: none;
+      }
+      .footerLinks a:hover {
+        color: #4285F4;
+      }
+      .footerSocialMedia {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
     </style>
+    <script>
+      function sizeTheThings(event) {
+        const footer = document.getElementById('footer');
+        const p8FooterLinks = document.getElementById('p8FooterLinks');
+
+        if (window.innerWidth <= 500 && footer.style.flexDirection !== 'column') {
+          footer.style.flexDirection = 'column';
+          p8FooterLinks.style.flexDirection = 'column'
+        } else if (window.innerWidth > 500 && footer.style.flexDirection === 'column') {
+          footer.style.flexDirection = 'row';
+          p8FooterLinks.style.flexDirection = 'row';
+        }
+      }
+
+      window.addEventListener('load', (event) => {
+        sizeTheThings(event);
+      });
+
+      window.addEventListener('resize', (event) => {
+        sizeTheThings(event);
+      });
+    </script>
     <link rel="stylesheet" type="text/css" href="main.css">
   </head>
   <body>
-    <div className="App">
+    <div class="App">
       <img id="pixel8Logo" src="./assets/pixel8-logos-01.svg" alt="Pixel8.earth logo" />
       <h2 id="title">Pixel8.earth Privacy Policy</h2>
       <p>Thank you for visiting Pixel8Earth, LLC’s (“Pixel8Earth”) Internet web site (the “Site”) located at the URL: https://pixel8.earth and associated mobile application. This Privacy Policy details certain policies implemented throughout Pixel8Earth governing Pixel8Earth’s use of personally identifiable information collected from users of the Site and Pixel8Earth’s general operations.
@@ -119,9 +184,28 @@
       <p>If you have any questions regarding this Privacy Policy please contact us via e-mail at the address set forth above.</p>
       <p>This Privacy Policy was last updated: September 24th 2019</p>
       <p>This Privacy Policy is effective as of: September 24th 2019</p>
-      <footer className="footer">
-        <small>PA\10488936.2 <br/>312243-20</small>
-      </footer>
+      <small>PA\10488936.2 <br/>312243-20</small>
     </div>
   </body>
+  <footer id="footer">
+    <div class="footerIconsLeft">
+      <a href="./index.html">
+        <img class="footerIcon" src="./assets/pixel8-logos-02.svg" alt="P8 icon" name="footerP8"/>
+      </a>
+    </div>
+    <div id="p8FooterLinks" class="footerLinks">
+      <a href="./about-us.html">about us</a>
+      <a href="mailto: sean.gorman@pixel8.earth">contact us</a>
+      <a href="./terms-of-use.html">terms of use</a>
+      <a href="./privacy-policy.html">privacy policy</a>
+    </div>
+    <div id="socialMediaLinks" class="footerSocialMedia">
+      <a href="https://twitter.com/pixel8earth">
+       <img src="./assets/twitter_icon.png" alt="Twitter icon" height="25" />
+      </a>
+      <a href="https://medium.com/@pixel8earth">
+       <img src="./assets/medium_icon.png" alt="Medium icon" height="25" />
+      </a>
+    </div>
+  </footer>
 </html>
