@@ -1,0 +1,26 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="60" cy="60" r="60" fill="url(#paint0_linear)" fill-opacity="0.2"/>
+<circle cx="60" cy="60" r="45" fill="url(#paint1_linear)" fill-opacity="0.4"/>
+<circle cx="60" cy="60" r="30" fill="url(#paint2_linear)" fill-opacity="0.6"/>
+<path d="M54.7771 66.504V69H65.6731V66.072H59.0491L61.8571 63.072C62.4331 62.448 62.9611 61.872 63.4171 61.344C63.8491 60.816 64.2331 60.288 64.5451 59.784C64.8331 59.28 65.0731 58.776 65.2171 58.296C65.3611 57.816 65.4331 57.288 65.4331 56.736C65.4331 56.088 65.3131 55.488 65.0731 54.912C64.8331 54.336 64.4731 53.856 64.0171 53.424C63.5611 53.016 63.0091 52.704 62.3611 52.464C61.7131 52.224 60.9691 52.104 60.1531 52.104C59.2171 52.104 58.4011 52.248 57.7291 52.536C57.0571 52.824 56.4811 53.184 56.0491 53.664C55.5931 54.144 55.2571 54.72 55.0411 55.344C54.8011 55.992 54.6811 56.688 54.6811 57.408H58.0411C58.0411 56.736 58.2091 56.16 58.5691 55.704C58.9051 55.248 59.4091 55.008 60.0811 55.008C60.6811 55.008 61.1611 55.2 61.4971 55.536C61.8331 55.896 62.0011 56.352 62.0011 56.88C62.0011 57.216 61.9291 57.576 61.8091 57.912C61.6651 58.272 61.4971 58.632 61.2811 58.968C61.0651 59.304 60.8251 59.664 60.5371 60C60.2491 60.336 59.9611 60.672 59.6731 61.008L54.7771 66.504Z" fill="white"/>
+<defs>
+<linearGradient id="paint0_linear" x1="-3.93853e-07" y1="120" x2="121.576" y2="118.381" gradientUnits="userSpaceOnUse">
+<stop stop-color="#278EDB"/>
+<stop offset="0.294647" stop-color="#55BDDE"/>
+<stop offset="0.762033" stop-color="#2FDC9D"/>
+<stop offset="1" stop-color="#06D48A"/>
+</linearGradient>
+<linearGradient id="paint1_linear" x1="15" y1="105" x2="106.182" y2="103.786" gradientUnits="userSpaceOnUse">
+<stop stop-color="#278EDB"/>
+<stop offset="0.294647" stop-color="#55BDDE"/>
+<stop offset="0.762033" stop-color="#2FDC9D"/>
+<stop offset="1" stop-color="#06D48A"/>
+</linearGradient>
+<linearGradient id="paint2_linear" x1="30" y1="90" x2="90.788" y2="89.1907" gradientUnits="userSpaceOnUse">
+<stop stop-color="#278EDB"/>
+<stop offset="0.294647" stop-color="#55BDDE"/>
+<stop offset="0.762033" stop-color="#2FDC9D"/>
+<stop offset="1" stop-color="#06D48A"/>
+</linearGradient>
+</defs>
+</svg>
