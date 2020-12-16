@@ -72,7 +72,7 @@ function NavBar(props) {
           <Link
             to="/about_us"
             style={styles.link}
-            className={window.location.pathname === '/about_us' ? 'is-active' : ''}
+            className={window.location.hash === '#/about_us' ? 'is-active' : ''}
           >
             About Us
           </Link>
@@ -91,7 +91,7 @@ function NavBar(props) {
           <Link
             to="/careers"
             style={styles.link}
-            className={~window.location.pathname.indexOf('/careers') ? 'is-active' : ''}
+            className={~window.location.hash.indexOf('#/careers') ? 'is-active' : ''}
           >
             Careers
           </Link>

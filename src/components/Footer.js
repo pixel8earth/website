@@ -6,52 +6,69 @@ import Logo from './Logo';
 import mainStyles from '../styles';
 
 
-function Footer(props) {
-  return (
-    <MDBFooter style={{ ...styles.main, ...(props.style || {}) }}>
-      <MDBContainer className=".container-fluid" style={{ ...styles.container, maxWidth: props.fullWidth ? '100%' : '1440px' }}>
-        <MDBRow className="footerRow" style={{ padding: '0 64px' }}>
-          <Logo
-            imgStyle={{
-              height: '56px',
-              margin: '10px 0',
-            }}
-            studio={props.studio}
-          />
-          <div className="footerLinks">
-            <Link
-              to="/terms"
-              style={styles.link}
-              className={`footerLinkMargin${window.location.pathname === '/terms' ? ' is-active': ''}`}
-            >Terms of Use</Link>
-            <Link
-              to="/privacy"
-              style={styles.link}
-              className={`${window.location.pathname === '/privacy' ? ' is-active': ''}`}
-            >Privacy Policy</Link>
-          </div>
-          <div className="footerSocial">
-            <a
-              href="https://twitter.com/pixel8earth"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={styles.anchor}
-            >
-              <MDBIcon fab icon="twitter" style={styles.socialIcons} className="footerSocialIcon1" size="lg" />
-            </a>
-            <a
-              href="https://medium.com/@pixel8earth"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={styles.anchor}
-            >
-              <MDBIcon fab icon="medium-m" style={styles.socialIcons} className="footerSocialIcon2" size="lg" />
-            </a>
-          </div>
-        </MDBRow>
-      </MDBContainer>
-    </MDBFooter>
-  );
+class Footer extends React.Component {
+
+  componentDidMount() {
+    window.addEventListener('popstate', this.setHash, false);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('popstate', this.setHash);
+  }
+
+  setHash = () => {
+    this.forceUpdate();
+  }
+  
+  render() {
+    const props = this.props;
+
+    return (
+      <MDBFooter style={{ ...styles.main, ...(props.style || {}) }}>
+        <MDBContainer className=".container-fluid" style={{ ...styles.container, maxWidth: props.fullWidth ? '100%' : '1440px' }}>
+          <MDBRow className="footerRow" style={{ padding: '0 64px' }}>
+            <Logo
+              imgStyle={{
+                height: '56px',
+                margin: '10px 0',
+              }}
+              studio={props.studio}
+            />
+            <div className="footerLinks">
+              <Link
+                to="/terms"
+                style={styles.link}
+                className={`footerLinkMargin${window.location.hash === '#/terms' ? ' is-active': ''}`}
+              >Terms of Use</Link>
+              <Link
+                to="/privacy"
+                style={styles.link}
+                className={`${window.location.hash === '#/privacy' ? ' is-active': ''}`}
+              >Privacy Policy</Link>
+            </div>
+            <div className="footerSocial">
+              <a
+                href="https://twitter.com/pixel8earth"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={styles.anchor}
+              >
+                <MDBIcon fab icon="twitter" style={styles.socialIcons} className="footerSocialIcon1" size="lg" />
+              </a>
+              <a
+                href="https://medium.com/@pixel8earth"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={styles.anchor}
+              >
+                <MDBIcon fab icon="medium-m" style={styles.socialIcons} className="footerSocialIcon2" size="lg" />
+              </a>
+            </div>
+          </MDBRow>
+        </MDBContainer>
+      </MDBFooter>
+    );
+  }
 }
 
 const styles = {
