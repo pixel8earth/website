@@ -26,7 +26,7 @@ class Terms extends React.Component {
 
   setSection = () => {
     if (this.mounted && window.location.hash !== this.state.section) {
-      this.setState({ section: window.location.hash.replace('#', '') });
+      this.setState({ section: window.location.hash.replace('#/terms#', '') });
     }
   }
 
@@ -51,7 +51,7 @@ class Terms extends React.Component {
                 <div style={styles.sectionNumbers} id="termsList">
                   <a
                     className={`${(section === 'definitions' || section === '') ? 'is-active' : ''}`}
-                    href="#definitions"
+                    href="#/terms#definitions"
                   >Defined Terms</a>
                   <a className={`${~section.indexOf('1.') ? 'is-active' : ''}`} href="#1.0">1. Access and Licensed Rights</a>
                   <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('1.') ? 'flex' : 'none' }}>
