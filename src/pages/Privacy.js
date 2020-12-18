@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import mainStyles from '../styles';
-
+//
 
 function PrivacyPolicy() {
   return (
