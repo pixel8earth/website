@@ -39,7 +39,6 @@ class Terms extends React.Component {
 
   render() {
     const { section = '' } = this.state;
-    console.log('?', section)
     /* eslint-disable jsx-a11y/anchor-is-valid */
     return (
       <div style={styles.main}>
