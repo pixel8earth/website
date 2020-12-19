@@ -69,50 +69,17 @@ class Privacy extends React.Component {
                     href="#/privacy#A"
                   >A. Introduction</a>
                   <a className={`${~section.indexOf('#B') ? 'is-active' : ''}`} href="#/privacy#B">B. Information Collected</a>
-                  {/*<div style={{ ...styles.sectionNumbers, display: ~section.indexOf('1.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} onClick={this.goTo('1.1')}>1.1 Pixel8 Solution Access</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('1.2')}>1.2 Pixel8 User Licenses to Us</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('1.3')}>1.3 Pixel8 Software</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('1.4')}>1.4 Reservation of Rights</a>
-                  </div>*/}
                   <a className={`${~section.indexOf('#C') ? 'is-active' : ''}`} href="#/privacy#C">C. Cookie Policy</a>
-                  <a className={`${~section.indexOf('3.') ? 'is-active' : ''}`} href="#/privacy#3.0">3. Sign-On Credentials</a>
-                  <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('3.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} onClick={this.goTo('3.1')}>3.1 Sign-On Credentials</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('3.2')}>3.2 Change of Username</a>
-                  </div>
-                  <a className={`${~section.indexOf('4.') ? 'is-active' : ''}`} href="#/privacy#4.0">4. Site Integrity</a>
-                  <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('4.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.1')}>4.1 Prohibited Uses</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.2')}>4.2 No Harvesting or Crawling</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.3')}>4.3 No Framing</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.4')}>4.4 Account Data</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.5')}>4.5 Notifications to Us</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.6')}>4.6 Notifications to You</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.7')}>4.7 Network Security Rules</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('4.8')}>4.8 Analyticals</a>
-                  </div>
-                  <a className={`${~section.indexOf('5.') ? 'is-active' : ''}`} href="#/privacy#5.0">5. Disclaimer of Warranties, Limitations of Liability and Indemnification</a>
-                  <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('5.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} onClick={this.goTo('5.1')}>5.1 Disclaimer</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('5.2')}>5.2 Liability Limitation</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('5.3')}>5.3 Indemnification</a>
-                  </div>
-                  <a className={`${~section.indexOf('6.') ? 'is-active' : ''}`} style={styles.anchor} href="#/privacy#6.0">6. General Provisions</a>
-                  <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('6.') ? 'flex' : 'none', visibility: ~section.indexOf('6.') ? 'visible' : 'hidden' }}>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.1')}>6.1 Force Majeure</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.2')}>6.2 Service Discontinuance/Modification</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.3')}>6.3 Account Termination</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.4')}>6.4 US Government Restricted Rights</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.5')}>6.5 Trademarks</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.6')}>6.6 US DCMA</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.7')}>6.7 Governing Law</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.8')}>6.8 Dispute Resolution</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.9')}>6.9 Service Assignment</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.10')}>6.10 Injunctive Relief</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.11')}>6.11 Delaware-Based</a>
-                    <a style={styles.anchorIndent} onClick={this.goTo('6.12')}>6.12 General</a>
-                  </div>
+                  <a className={`${~section.indexOf('#D') ? 'is-active' : ''}`} href="#/privacy#D">D. Our Use of Information</a>
+                  <a className={`${~section.indexOf('#E') ? 'is-active' : ''}`} href="#/privacy#E">E. Sharing Information</a>
+                  <a className={`${~section.indexOf('#F') ? 'is-active' : ''}`} href="#/privacy#F">F. No Guarantee of Security</a>
+                  <a className={`${~section.indexOf('#G') ? 'is-active' : ''}`} href="#/privacy#G">G. Password</a>
+                  <a className={`${~section.indexOf('#H') ? 'is-active' : ''}`} href="#/privacy#H">H. International Transfers</a>
+                  <a className={`${~section.indexOf('#I') ? 'is-active' : ''}`} href="#/privacy#I">I. Children</a>
+                  <a className={`${~section.indexOf('#J') ? 'is-active' : ''}`} href="#/privacy#J">J. Policy Changes</a>
+                  <a className={`${~section.indexOf('#K') ? 'is-active' : ''}`} href="#/privacy#K">K. Your Information, Rights and Choices</a>
+                  <a className={`${~section.indexOf('#L') ? 'is-active' : ''}`} href="#/privacy#L">L. Questions</a>
+                  <a className={`${~section.indexOf('#CA') ? 'is-active' : ''}`} href="#/privacy#CA">CALIFORNIA PRIVACY RIGHTS</a>  
                 </div>
               </MDBCol>
               <MDBCol size="6" style={{ justifyContent: 'center', alignContent: 'center', padding: '0', marginLeft: '10vw' }}>
@@ -134,7 +101,7 @@ class Privacy extends React.Component {
                 }
                 {section.indexOf('#B') > -1 &&
                   <>
-                    <div style={styles.sectionHeading}>B. Information Collected</div>
+                    <div id="B" style={styles.sectionHeading}>B. Information Collected</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
                         We collect information in various ways when you use our Service and as set forth in this Policy and the Terms of Use. Some of this information may be Personal Data attributable to you. As used in this Policy, "Personal Data" means any information (either alone or in combination with other information we hold) that directly or indirectly may be used to identify or identifies you as an individual, such as your name, address and physical location, account numbers, email addresses, or telephone numbers.
@@ -168,7 +135,7 @@ class Privacy extends React.Component {
                 }
                 {section.indexOf('#C') > -1 &&
                   <>
-                    <div id="2.0" style={styles.sectionHeading}>C. Cookie Policy</div>
+                    <div id="C" style={styles.sectionHeading}>C. Cookie Policy</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
                         The Service may utilize "cookies", which are small text files placed on your computer or device. We may also use pixel tags, web beacons and other similar technologies. Such devices are used to help analyze our web page flow, customize our services and optimize our user interfaces, and measure promotional effectiveness. Our analytics cookies collect data such as the identity of the applicable internet service provider, the user's IP address of his or her terminal device, the type of browser software and operating system in use, the date and time of site access, the Site address, if any, from which the user linked to the Site, and other similar traffic-related information sent by a device (i.e. device type, device model, device brand and computer network). We may also aggregate such information with similar data collected from other users and disclose such aggregate information to third parties. Certain features are only available through the use of cookies, and generally we need to use cookies to help identify and maintain your signed-in status. You are always free to decline cookies via your browser settings, although doing so may interfere with your use of the Service. You may encounter cookies from non-affiliated third parties on certain pages of the service. To learn more about cookies, please visit allaboutcookies.org.
@@ -206,115 +173,178 @@ class Privacy extends React.Component {
                     </div>
                   </>
                 }
-                {section.indexOf('3.') > -1 &&
+                {section.indexOf('#D') > -1 &&
                   <>
-                    <div id="3.0" style={styles.sectionHeading}>Sign-On Credentials</div>
+                    <div id="D" style={styles.sectionHeading}>D. Our Use of Information</div>
                     <div style={styles.section}>
-                      <p id="3.1" style={styles.sectionP}>
-                        3.1 <span style={styles.subSectionTitle}>Sign-On Credentials.</span> When creating an account, you will receive or will be permitted to create or use existing online user name and password information ("Sign-On Credentials"), and are responsible for maintaining the confidentiality thereof and liable for all activities occurring under such Sign-On Credentials. You will not transfer to any party your Sign-On Credentials, or use the Sign-On Credentials of another, without our prior written consent. You will immediately notify us at <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a> of any unauthorized use of Sign-On Credentials or any other breach of security. We will not be liable for any loss or damage arising from a Pixel8 User's failure to comply with this section or from unauthorized use of the Sign-On Credentials.
+                      <p style={styles.sectionP}>
+                        We use Information collected through our Service for the purposes and as described in this Policy, as disclosed to you on our Pixel8 App, Pixel8 Software, and as set forth in the Terms of Use. We process your Personal Data and your Nonpersonal Data to operate, maintain, customize, measure and improve our Service and to fulfill the purposes disclosed when you provided your information to us (through the Terms of Use). The Content you provide may be used to create map data and images that we license to users, customers and researchers. It may also be used to provide “sample” sets of image data to members of the public. In order to protect the personal integrity of individuals caught in the data, we automatically remove any individuals and vehicles in any submitted Content before it is posted to the Site as Pixel8 Content.
                       </p>
-                      <p id="3.2" style={styles.sectionP}>
-                        3.2 <span style={styles.subSectionTitle}>Change of Username.</span> We may require you, as a condition of membership, to change your username if we believe appropriate (such as when a trademark owner complains about a username that does not closely relate to a user’s actual name).
+                      <p style={styles.sectionP}>
+                        We process the Personal Data on the basis of our legitimate interest of properly providing and improving our Service and on the basis that it is necessary for us to fulfil our obligations to you in our Terms of Use.
+                      </p>
+                      <p style={styles.sectionP}>
+                        If any Personal Data attributable to you is included in submitted Content, we will process such Personal Data in order to properly provide our Service. This processing is done on the basis of our legitimate interest of providing our Service. In order to protect your personal integrity, we automatically remove any faces and vehicle license plates in any submitted Content before it is made available as Pixel8 Content.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Retention policy
+                      </p>
+                      <p style={styles.sectionP}>
+                        We only store your Personal Data as long as it is needed for the purpose for which it was collected. In relation to our registered users we will keep your submitted Personal Data only as long as you are registered as a user. However, after you de-register as a user we may process such Personal Data as is necessary for us to fulfill an agreement with you, or such Personal Data as we are required to keep by law.
+                      </p>
+                      <p style={styles.sectionP}>
+                        In order for us to provide our Service and for the purposes described in this policy, we will keep any submitted Content, as well as data and statistics regarding your use of the Service and geolocational data included in the Content, indefinitely. However, at your request, we will remove all information in relation to such Content, data and/or statistics, which connects it to you as a user.
+                      </p>
+                      <p style={styles.sectionP}>
+                        In relation to visitors of our Site, all Information that we process connected to cookies are stored in accordance with our cookie policy (see section C above).
+                      </p>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Your choices regarding our use of your Personal Data for marketing purposes
+                      </p>
+                      <p style={styles.sectionP}>
+                        If you no longer wish to receive marketing-related emails from us on a going-forward basis, you may opt-out of receiving these marketing-related emails by following the unsubscribe instructions in any such message, or by emailing us at support@Pixel8.earth. We aim to comply with such request(s) as soon as reasonably practicable. Please note that if you do opt-out of receiving marketing-related emails from us, we may still send you administrative messages; you cannot opt-out from receiving administrative messages.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        General
+                      </p>
+                      <p style={styles.sectionP}>
+                        We may use and provide data and information to our partners and customers for commercial purposes after we have removed your name or any other Personal Data from it, or have combined it with other people's data in a way that it is no longer associated with you.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We also may combine your Information with information we collect from other sources to improve our products and services. Nothing in this Policy should be construed to prevent us from charging a fee to parties who wish to access Pixel8 Content or to use the Service.
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have the option of submitting Content anonymously as the user name and e-mail address you submit may be created specifically to avoid identifying you as an individual. If you do not submit a valid e-mail address however, this may interfere with your use of the Service through a loss of relevant notifications. Moreover, we cannot guarantee absolute anonymity and make no guarantee that other users will never be able to determine your identity, such as (without limitation) by observations of your activity, the manner in which you express yourself, and other patterns of conduct or behavior. Moreover, all of your activities on the Service will be traceable by others users to your username, from which your actual identity may be known. Notices may be sent to other users regarding suspicious activity and policy violations and refer to usernames and specific items. Please understand that if your username identifies you or is linked to an e-mail address, other users will be able to personally identify your activities.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Further, we may use Personal Data to respond to legal requirements, in connection with a merger, sale of assets, or other similar corporate transactions, to respond to claims that Content violates the rights of others, or to protect the rights, property, or safety or any person.
                       </p>
                     </div>
                   </>
                 }
-                {section.indexOf('4.') > -1 &&
+                {section.indexOf('#E') > -1 &&
                   <>
-                    <div id="4.0" style={styles.sectionHeading}>Site Integrity</div>
+                    <div id="E" style={styles.sectionHeading}>E. Sharing Information</div>
                     <div style={styles.section}>
-                      <p id="4.1" style={styles.sectionP}>
-                        4.1 <span style={styles.subSectionTitle}>Prohibited Uses.</span> You will not use the Pixel8 Solution in any manner that could damage, disable, overburden, or impair any Pixel8-controlled server, or the network(s) connected to any such server, or interfere with any other party's use and enjoyment of the Pixel8 Solution, including without limitation falsifying or altering Content posted by others except via normal and intended operation of the Services. You may not attempt to gain unauthorized access to other accounts, computer systems or networks connected to any of our servers or to any of the Services, including through hacking, password mining or any other means, or exploit bugs or vulnerabilities in the Pixel8 Solution. You are prohibited from violating or attempting to violate any security features of the Pixel8 Solution, including, without limitation, (a) accessing Content not intended for you, or logging onto a server or account that you are not authorized to access; (b) attempting to probe, scan, or test the vulnerability of the Pixel8 Solution, or any associated system or network, or to breach security or authentication measures without proper authorization; (c) interfering or attempting to interfere with Services to any Pixel8 User, user, host, or network, including, without limitation, by means of submitting a virus to the Site or Service, overloading, “flooding,” “spamming,” “mail bombing,” or “crashing”; (d) sending unsolicited email or messages, including, without limitation, promotions, or advertisements for products or services; (e) publishing or linking to malicious Content intended to damage or disrupt another Pixel8 User’s browser or computer or to compromise a Pixel8 User’s privacy or anonymity; (f) forging any TCP/IP packet header or any part of the header information in any email or in any posting; (g) accessing or tampering with non-public areas of the Site or Service, our computer systems, or the technical delivery systems of our providers; (h) accessing or searching or attempting to access or search the Pixel8 Solution by any means (automated or otherwise) other than through the currently available, published interfaces that are provided by us (and only pursuant to these Terms), unless you have been specifically allowed to do so in a separate agreement with us; (i) deep-linking to the Site for any purpose (ie, posting a link to a Site web page other than the home page) except as otherwise expressly permitted by us on the Site; or (j) removing or obscuring any form of advertising or messaging displayed via the Pixel8 Solution.
+                      <p style={styles.sectionP}>
+                        We do not disclose, sell or rent your Personal Data to third parties for their marketing purposes without your prior consent. If you do consent but later change your mind, you may contact us and we will cease any such activity. We only share your Personal Data as follows:
                       </p>
-                      <p id="4.2" style={styles.sectionP}>
-                        4.2 <span style={styles.subSectionTitle}>No Harvesting or Crawling.</span> You will not engage in harvesting or other collection of information about other Pixel8 Users, including email addresses, without our prior and each such Pixel8 User's prior written consent. You agree not to "crawl" the Pixel8 Solution or use or launch any automated system, including without limitation, "robots", "spiders", etc. that accesses the Pixel8 Solution or pulls Content therefrom (other than those used by public search engine providers for the sole purpose of creating publicly available searchable indices), except as otherwise enabled or permitted by us.
+                      <p style={styles.sectionP}>
+                        (i) at your direction and control via your normal and intended operation of the Service, or with your consent, for example, when you agree to our sharing your Personal Data with other selected third parties for their own marketing purposes subject to their separate privacy policies;
                       </p>
-                      <p id="4.3" style={styles.sectionP}>
-                        4.3 <span style={styles.subSectionTitle}>No Framing.</span> You may not obtain or attempt to obtain any materials or information through any means not intentionally made available through the Services or the Site. Without limiting the generality of the foregoing, you will not publish, distribute or transmit to the general public via any medium, whether via print, online, or otherwise, the Services, except through the Site or as otherwise authorized by these Terms or by us, you will not engage in “framing,” “mirroring,” or otherwise simulating the appearance or function of the Pixel8 Solution, and you will not send messages purporting to be from us. You will not remove or attempt to obscure any copyright, trademark or other proprietary rights notices contained in or on the Site or associated with the Services, including ours and our licensors.
+                      <p style={styles.sectionP}>
+                        (ii) with service providers, consultants or similar contractors, or third parties who provide services or content in connection with our Service in order to support or enhance our or such parties’ products and services or our or such parties’ business operations, or to make available and consummate initiated transactions;
                       </p>
-                      <p id="4.4" style={styles.sectionP}>
-                        4.4 <span style={styles.subSectionTitle}>Account Data.</span> While we will endeavor to back up Site and Service data and make such data available in the event of loss or deletion, we have no responsibility or liability for the deletion or failure to store any Content. You acknowledge and agree that your Content shall not be retrievable or accessible except via your authorized use of the Services and that we are under no obligation to compile and return to you your Content, including if Services terminate for any reason or if you elect to deactivate your account.
+                      <p style={styles.sectionP}>
+                        (iii) to comply with laws or respond to lawful requests and legal process or to enforce or apply our terms of use/service, license terms, or other agreements between us, and to protect the rights, safety and property of Pixel8, our agents, employees, customers, members, and others; and
                       </p>
-                      <p id="4.5" style={styles.sectionP}>
-                        4.5 <span style={styles.subSectionTitle}> Notifications to Us.</span> If you believe that you are entitled or obligated to act contrary to these Terms under any mandatory or applicable law, you agree to provide us with detailed and substantiated explanation of your reasons in writing at least thirty days before you so act, to allow us to assess whether we may, at our sole discretion, provide an alternative remedy for the situation, though we are under no obligation to do so.
+                      <p style={styles.sectionP}>
+                        (iv) under written obligations of confidentiality, in connection with or during negotiation of any merger, financing, acquisition, or dissolution, transaction, or proceeding involving sale, transfer, divestiture, or disclosure of all or a portion of our business or assets to another company.
                       </p>
-                      <p id="4.6" style={styles.sectionP}>
-                        4.6 <span style={styles.subSectionTitle}>Notifications to You.</span> For purposes of service messages and notices about the Services to you, we may place a banner notice across Site pages to alert you to certain changes such as modifications to these Terms. Alternatively, notice may consist of an email from us to an email address associated with your account, even if we have other contact information. You also agree that we may communicate with you in relation to your account and otherwise in relation to these Terms through your account or through other contact information you have provided to us, including email, mobile number, telephone, or delivery services including the postal service. You agree that all agreements, notices, disclosures and other communications that we provide to you electronically satisfy any legal requirement that such communications be in writing.
+                      <p style={styles.sectionP}>
+                        We may also share and disclose Nonpersonal Data for the same purposes as described above.
                       </p>
-                      <p id="4.7" style={styles.sectionP}>
-                        4.7 <span style={styles.subSectionTitle}>Network Security Risks.</span> Because no online system is perfectly secure or reliable, the internet is an inherently insecure medium, and the reliability of hosting services, internet intermediaries, your internet service provider, and other service providers cannot be assured, you accept security risks associated with or arising from your use of the Pixel8 Solution, and the responsibility for choosing to use a technology that does not provide perfect security or reliability.
-                      </p>
-                      <p id="4.8" style={styles.sectionP}>
-                        4.8	<span style={styles.subSectionTitle}>Analyticals.</span> Customer acknowledges the collection, storage, generation, processing, and use by or for us of anonymized or non-personally identifying data (including Metadata, testing, analytical, diagnostic and technical data, predictive analytics models, AI, machine learning, and usage statistics) concerning or arising from use of, or generated by, the Pixel8 Solution, in whole or in part, including without limitation: (a) in order to provide the functionality of, improve, and maintain the Pixel8 Solution, (b) for processing transactions and payments, (c) for solution development, and (d) for verifying compliance.
+                      <p style={styles.sectionP}>
+                        When other companies, e.g. our service providers, process your Personal Data on our behalf, we always enter into binding data processing agreements that ensure that your Personal Data always enjoys the same level of protection as under this Policy.
                       </p>
                     </div>
                   </>
                 }
-                {section.indexOf('5.') > -1 &&
+                {section.indexOf('#F') > -1 &&
                   <>
-                    <div id="5.0" style={styles.sectionHeading}>Disclaimer of Warranties, Limitations of Liability and Indemnification</div>
+                    <div id="F" style={styles.sectionHeading}>F. No Guarantee of Security</div>
                     <div style={styles.section}>
-                      <p id="5.1" style={styles.sectionP}>
-                        5.1 <span style={styles.subSectionTitle}>Disclaimer.</span> EACH PIXEL8 USER'S USE OF THE PIXEL8 SOLUTION AND CONTENT IS AT HIS OR HER SOLE RISK. THE PIXEL8 SOLUTION AND CONTENT IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS AND WE ASSUME NO RESPONSIBILITY FOR THE ACCURACY, CURRENCY, TIMELINESS, DELETION, MIS-DELIVERY OR FAILURE TO STORE OR DISPLAY ANY CONTENT, PIXEL8 USER COMMUNICATIONS, PERSONALIZATION SETTINGS, OR OTHER INFORMATION OR DATA. EACH PIXEL8 USER IS SOLELY RESPONSIBLE FOR ANY DAMAGE TO HIS OR HER COMPUTER SYSTEM AND WE WILL HAVE NO LIABILITY FOR ANY LOSS OF PROFIT, OPPORTUNITY, REVENUE, ADVANTAGE, INFORMATION OR DATA THAT RESULTS FROM USE OF THE PIXEL8 SOLUTION OR CONTENT. TO THE MAXIMUM EXTENT POSSIBLE UNDER APPLICABLE LAW, <span style={styles.subSectionTitle}>WE EXPRESSLY DISCLAIM ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.</span> Specifically, we make no warranty that (a) the Pixel8 Solution or Content will meet your requirements, goals or needs, (b) Pixel8 Solution or Content access will be uninterrupted, timely, secure or error-free, or (c) any errors or deficiencies in the Pixel8 Solution or Content will be corrected. Further, scheduled and preventive maintenance, required and emergency maintenance work, or disruption of services from internet service and hosting providers, may interrupt the functioning of or access to the Pixel8 Solution.
-                      </p>
-                      <p id="5.2" style={styles.sectionP}>
-                        5.2 <span style={styles.subSectionTitle}>Liability Limitation.</span> EXCLUDING ONLY DAMAGES ARISING OUT OF OUR LIABILITY FOR OUR FRAUD, DEATH OR PERSONAL INJURY CAUSED BY OUR NEGLIGENCE, OR ANY OTHER LOSS FOR WHICH WE CANNOT LAWFULLY EXCLUDE LIABILITY, WE WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF REVENUE, PROFITS, GOODWILL, USE, DATA OR OTHER INTANGIBLE LOSSES (EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES), RESULTING FROM THE USE OF OR INABILITY TO USE THE PIXEL8 SOLUTION AND ANY CONTENT; THE COST OF PROCUREMENT OF SUBSTITUTE SERVICES; UNAUTHORIZED DISPLAY, ACCESS TO OR DELETION OR ALTERATION OF CONTENT, INFORMATION OR DATA; STATEMENTS OR CONDUCT OF ANY THIRD PARTY; OR ANY OTHER MATTER RELATING TO US, THE CONTENT OR THE PIXEL8 SOLUTION. EXCLUDING ONLY OUR LIABILITY FOR OUR FRAUD, DEATH OR PERSONAL INJURY CAUSED BY OUR NEGLIGENCE, OR ANY OTHER LOSS FOR WHICH WE CANNOT LAWFULLY LIMIT LIABILITY, ANY LIABILITY TO YOU OR ANY THIRD PARTY IN ANY CIRCUMSTANCE IS LIMITED IN THE AGGREGATE TO THE GREATER OF $10 OR ALL AMOUNTS PAID BY YOU TO US DURING THE TWELVE-MONTH PERIOD PRECEDING THE OCCURRENCE OF THE CLAIM OR INCIDENT. The foregoing limitations and exclusions apply to the maximum extent permitted by applicable law.
-                      </p>
-                      <p id="5.3" style={styles.sectionP}>
-                        5.3 <span style={styles.subSectionTitle}>Indemnification.</span> You agree to defend, indemnify, release and hold harmless us, our suppliers, and all officers, directors, employees, consultants, agents, and representatives of any of the foregoing (collectively "Protected Parties") in full from and against any and all claims (including third party claims), losses, liability, damages, and/or costs of every kind and nature, known and unknown, suspected and unsuspected, disclosed and undisclosed, arising out of or in any way connected with: (a) your unauthorized access to or use of, the Pixel8 Solution or Content, (b) your breach of these Terms, (c) your use of Content or conduct engendered thereby, and any activities you conduct on or through the Pixel8 Solution, or (d) your infringement, or infringement by any other user of your account, of any intellectual property rights or other rights of any person or entity. Further, in the event you have a dispute with one or more Pixel8 Users, you hereby release the Protected Parties from claims, demands and damages (actual, direct and consequential) of every kind and nature, known and unknown, suspected and unsuspected, disclosed and undisclosed, foreseeable and unforeseeable, arising out of or in any way connected with such disputes.
-                        <br/><br/>
-                        FOR CALIFORNIA, USA RESIDENTS: You further agree that these Terms waive and release any claims that would otherwise be preserved by operation of section 1542 of the California Civil Code, which provides: “A general release does not extend to claims that the creditor or releasing party does not know or suspect to exist in his or her favor at the time of executing the release and that, if known by him or her, would have materially affected his or her settlement with the debtor or released party." You understand that you are releasing us from all claims, whether known or unknown to you, and whether or not you suspect that those claims may exist at this time.
+                      <p style={styles.sectionP}>
+                        We apply appropriate technical and organizational safeguards and take all reasonable steps to help protect your Personal Data in an effort to prevent loss, misuse, and unauthorized access, disclosure, alteration, and destruction. However, no one can create a completely secure Site, app or service and third parties may unlawfully intercept, steal or access transmissions or private communications. Therefore, we cannot guarantee that your Information or private communications that you transfer over the internet to us will always be secure or remain confidential.
                       </p>
                     </div>
                   </>
                 }
-                {section.indexOf('6.') > -1 &&
+                {section.indexOf('#G') > -1 &&
                   <>
-                    <div id="6.0" style={styles.sectionHeading}>General Provisions</div>
+                    <div id="G" style={styles.sectionHeading}>G. Password</div>
                     <div style={styles.section}>
-                      <p id="6.1" style={styles.sectionP}>
-                        6.1 <span style={styles.subSectionTitle}>Force Majeure.</span> Except for obligations to pay money hereunder, no delay, failure or omission by either party to carry out or observe any of its obligations hereunder will give rise to any claim against such party or be deemed to be a breach of this Agreement if and for as long as such failure or omission arises from any cause beyond the reasonable control of that party.
+                      <p style={styles.sectionP}>
+                        Your password deserves careful thought and protection. Use unique numbers, letters, and special characters and do not disclose your password to anyone. You shall not share your password or your personal sign-in credentials with others, and please remember that you are responsible for all actions taken in the name of your account. If you lose control of your password, you may lose substantial control over your Personal Data and may be subject to legally binding actions taken on your behalf. If your password has been compromised for any reason, you should immediately access your profile to change your password and notify us immediately at support@Pixel8.earth.
                       </p>
-                      <p id="6.2" style={styles.sectionP}>
-                        6.2 <span style={styles.subSectionTitle}>Service Discontinuance/Modification.</span> We may from time to time modify or discontinue access to, temporarily or permanently, the Pixel8 Solution (or any part, feature, or functionality thereof, as well as internal rules of operation, eligibility, visibility to or accessibility of the public, and other aspects). We will not be liable for any such modification, suspension or discontinuance, even if certain features or functions, your settings, and/or any Content are permanently lost.
+                    </div>
+                  </>
+                }
+                {section.indexOf('#H') > -1 &&
+                  <>
+                    <div id="H" style={styles.sectionHeading}>H. International Transfers</div>
+                    <div style={styles.section}>
+                      <p style={styles.sectionP}>
+                        We may process Information on servers located in a number of countries. Accordingly, we may share Information with our service providers and affiliated companies for such companies to carry out any of the activities specified in this Policy. We may also subcontract processing to or share Information with third parties located in countries other than your home country. Information collected within the European Economic Area, for example, may be transferred to, and processed by our affiliates or other third parties identified above that are located in, a country outside of the EEA. However, regardless of country, we will always process Information in accordance with this Policy. In respect to our service providers, we will always enter into a data processing agreement that ensure that their processing gives the same level of protection to your Personal Data as this Policy.
                       </p>
-                      <p id="6.3" style={styles.sectionP}>
-                        6.3 <span style={styles.subSectionTitle}>Account Termination.</span> We may terminate your or any other Pixel8 User’s account for cause, including without limitation for: (a) violation of these Terms; (b) abuse of Pixel8 resources or any attempt to gain unauthorized entry to the Pixel8 Solution; (c) use of the Pixel8 Solution in a manner inconsistent with its purpose; (d) such Pixel8 User's request for such termination; or (e) requirements of or for failure to comply with applicable law, regulation, court or governing agency order, or ethical requirements. We may in addition terminate the availability of the Pixel8 Solution for our own business reasons, including if we elect to cease being in the business of providing it. Our termination of any Pixel8 User's access to the Pixel8 Solution may be without notice and, on such termination, we may immediately deactivate or delete any Pixel8 User's account and Content, and/or bar any further access. We will not be liable for any termination of Pixel8 User's access. After account termination, you will not attempt to register a new account without our permission.
+                      <p style={styles.sectionP}>
+                        In addition to the above, any transfer of Personal Data from the EEA to a third country outside the EEA, will only be made if permitted by the applicable EU Personal Data protection regulation. This means that we will only initiate such transfer of Personal Data if the receiving country outside the EEA has been deemed by the EU Commission to ensure an appropriate level of protection, if we have entered into the Commission’s standard data protection clauses with the receiving company, or if there are other safeguards in place that permits such a transfer.
                       </p>
-                      <p id="6.4" style={styles.sectionP}>
-                        6.4 <span style={styles.subSectionTitle}>US Government Restricted Rights.</span> Services are provided with "RESTRICTED RIGHTS." Use, duplication, or disclosure by the U.S. Government is subject to restrictions as set forth in applicable laws and regulations. Use of the Pixel8 Solution and related materials by the U.S. Government constitutes acknowledgment of our proprietary rights.
+                    </div>
+                  </>
+                }
+                {section.indexOf('#I') > -1 &&
+                  <>
+                    <div id="" style={styles.sectionHeading}></div>
+                    <div style={styles.section}>
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.5" style={styles.sectionP}>
-                        6.5 <span style={styles.subSectionTitle}>Trademarks.</span> You are granted no right, title or license to any third party trademarks by these Terms, or to any of our trademarks or servicemarks. We reserve all right, title and interest in and to our trademarks, servicemarks, trade names, trade dress, domain names, and similar identifiers, including without limitation Pixel8TM.
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.6" style={styles.sectionP}>
-                        6.6 <span style={styles.subSectionTitle}>US DMCA.</span> If you believe that your work has been copied and is accessible via the Pixel8 Solution in a way that constitutes copyright infringement in the United States, you may notify us by providing our copyright agent with the following in writing: (a) identification of the copyrighted work that you claim has been infringed; (b) identification of the material that is claimed to be infringing and information reasonably sufficient to permit us to locate the material; (c) your name, address, telephone number, and email address; (d) a statement by you that you have a good faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law; and (e) a statement, made under penalty of perjury, that the above information in your notice is accurate and that you are the copyright owner or are authorized to act on the copyright owner's behalf. The above writing must be electronically or physically signed by you. If we receive such a claim, we may refuse or delete Content, or terminate a Pixel8 User's account in accordance with these Terms. Our designated agent to receive notification of claimed infringement under the Digital Millennium Copyright Act of 1998 (Pixel8 DMCA Agent, available via <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>. In addition to forwarding your notice to the person who provided the allegedly illegal Content, we may send a copy of your notice (with your personal information removed) to Lumen (<a href="https://lumendatabase.org/" target="_blank" rel="noopener noreferrer">https://lumendatabase.org/</a>) for publication and/or annotation. We reserve the right to remove Content alleged to be infringing or otherwise illegal without prior notice and at our sole discretion. In appropriate circumstances, we will also terminate a Pixel8 User account if the Member is determined to be a repeat infringer.
-                        <br/><br/>
-                        If you believe that a notice of infringement has been improperly submitted against you, you may submit a counter-notice, electronically or physically signed by you, and containing the following:
-                        f) identification of the material that has been removed or to which access has been disabled and the location at which the material appeared before it was removed or access to it was disabled;
-                        g) your name, address, and telephone number;
-                        h) a statement, made under penalty of perjury, that you have a good faith belief that the removal of the material was a mistake or misidentified, or that your use of the material is fair; and
-                        i) a statement that you consent to the jurisdiction of Federal District Court (1) in the judicial district where your address is located if the address is in the United States, or (2) for the US District of Colorado, if your address is located outside the United States, and that you will accept service of process from the complainant submitting the infringement notice or his/her authorized agent.
+                    </div>
+                  </>
+                }
+                {section.indexOf('#J') > -1 &&
+                  <>
+                    <div id="" style={styles.sectionHeading}></div>
+                    <div style={styles.section}>
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.7" style={styles.sectionP}>
-                        6.7 <span style={styles.subSectionTitle}>Governing Law.</span> These Terms, the Pixel8 Solution, Content, and any disputes related to or concerning any of the foregoing (including tort as well as contract claims, and whether pre-contractual or extra-contractual), will be governed by and settled in accordance with the laws of Delaware, notwithstanding the choice of laws rules of any jurisdiction to the contrary. You agree that regardless of any statute or law to the contrary, any claim or cause of action arising out of or related to these Terms, the Pixel8 Solution, or Content, must be filed within one year after such claim or cause of action arose, or be forever barred.
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.8" style={styles.sectionP}>
-                        6.8 <span style={styles.subSectionTitle}>Dispute Resolution.</span> Any disputes between or claims brought by you or us arising out of or related to these Terms, the Pixel8 Solution, or Content (including tort as well as contract claims, and whether pre-contractual or extra-contractual, as well as the arbitrability of any disputes) will be referred to and finally settled by binding arbitration before the JAMS (<a href="https://jamsadr.com" target="_blank" rel="noopener noreferrer">jamsadr.com</a>) in accordance with JAMS streamlined rules and procedures (available at <a href="https://www.jamsadr.com/rules-streamlined-arbitration/" target="_blank" rel="noopener noreferrer">https://www.jamsadr.com/rules-streamlined-arbitration/</a>) in effect at the time of arbitration except as inconsistent with this section. The arbitration will be conducted by telephone, on-line and/or based solely upon written submissions where no in-person appearance is required. If in-person appearance is required, such hearings will be held in Denver, Colorado unless another location is mutually agreed upon by the parties. In all such cases, the arbitration will be administered by JAMS in accordance with their applicable rules. The arbitrator will apply the law specified in section 6.7 above. All awards may if necessary be enforced by any court having jurisdiction. The existence of any dispute, the existence or details of the arbitration proceeding, and all related documents, materials, evidence, judgments and awards therein, will be kept confidential. Except as required by law, no party will make any public announcements with respect to the proceeding or the award, except as required to enforce same. The parties hereby waive the right to a trial by jury and agree to only bring claims in an individual capacity and not as a plaintiff or class member in any purported class or representative proceeding. Notwithstanding the foregoing, nothing in this section will preclude the right and ability to file and maintain at any time an action for recovery of injunctive or provisional relief in any court of competent jurisdiction under the laws applicable thereto. All claims (excluding requests for injunctive or equitable relief) between the parties must be resolved using arbitration in accordance with this section. Should either party file an action contrary to this section, the other party may recover lawyers' fees and costs, provided that the party seeking the award has notified the other party in writing of the improperly filed claim, and the other party has failed to withdraw the claim in timely fashion.
+                    </div>
+                  </>
+                }
+                {section.indexOf('#K') > -1 &&
+                  <>
+                    <div id="" style={styles.sectionHeading}></div>
+                    <div style={styles.section}>
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.9" style={styles.sectionP}>
-                        6.9 <span style={styles.subSectionTitle}>Assignment.</span> These Terms will not be assigned, delegated, or transferred by you, in whole or in part, whether voluntary, involuntary, by merger, consolidation, dissolution, sale of assets, or otherwise, without our prior written consent. Any such purported assignment, delegation or transfer without such written consent will be void. We may at any time assign these Terms without prior consent or notice. These Terms will be binding on, and inure to the benefit of, the parties and their respective and permitted successors and assigns.
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.10" style={styles.sectionP}>
-                        6.10 <span style={styles.subSectionTitle}>Injunctive Relief.</span> You acknowledge and agree that breach of these Terms, or any unauthorized use, disclosure or distribution of the Pixel8 Solution or Content, may cause irreparable harm to us, the extent of which would be difficult to ascertain, and that we will be entitled to seek immediate injunctive relief (in addition to any other available remedies), in any court of competent jurisdiction under the applicable laws thereto.
+                    </div>
+                  </>
+                }
+                {section.indexOf('#L') > -1 &&
+                  <>
+                    <div id="" style={styles.sectionHeading}></div>
+                    <div style={styles.section}>
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.11" style={styles.sectionP}>
-                        6.11 <span style={styles.subSectionTitle}>Delaware-Based.</span> Your use of the Pixel8 Solution will not be construed as our purposefully availing ourselves of the benefits or privileges of doing business in any other country, state or jurisdiction other than Delaware.
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p id="6.12" style={styles.sectionP}>
-                        6.12 <span style={styles.subSectionTitle}>General.</span> The Terms constitute the entire agreement between us and govern each Pixel8 User's use of the Pixel8 Solution, superseding any prior agreements. Each Pixel8 User may be subject to additional terms and conditions that may apply in the use of affiliate services, third party content or third party software. If any provision of the Terms is found by a court of competent jurisdiction to be invalid, the parties nevertheless agree that the court should endeavor to give effect to the parties' intentions as reflected in the provision, and the other provisions of the Terms remain in full force and effect. No waiver of any provision of these Terms will be deemed a further waiver or continuing waiver or such provision or any other provision, and our failure to assert any right or provision under these Terms will not constitute a waiver of such right or provision. Nothing herein will be deemed to create an agency, partnership, joint venture, employee-employer or franchisor-franchisee relationship of any kind between us and any user or other person or entity, nor do these terms extend rights to any third party. The parties hereto confirm that they have requested that these Terms and all attachments and related documents, if any, be drafted in English.
+                    </div>
+                  </>
+                }
+                {section.indexOf('#CA') > -1 &&
+                  <>
+                    <div id="" style={styles.sectionHeading}></div>
+                    <div style={styles.section}>
+                      <p style={styles.sectionP}>
+                  
                       </p>
-                      <p>v.1<br/>Effective Date: December 2020</p>
+                      <p style={styles.sectionP}>
+                  
+                      </p>
                     </div>
                   </>
                 }
