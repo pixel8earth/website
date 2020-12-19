@@ -202,7 +202,7 @@ class Privacy extends React.Component {
                         Your choices regarding our use of your Personal Data for marketing purposes
                       </p>
                       <p style={styles.sectionP}>
-                        If you no longer wish to receive marketing-related emails from us on a going-forward basis, you may opt-out of receiving these marketing-related emails by following the unsubscribe instructions in any such message, or by emailing us at support@Pixel8.earth. We aim to comply with such request(s) as soon as reasonably practicable. Please note that if you do opt-out of receiving marketing-related emails from us, we may still send you administrative messages; you cannot opt-out from receiving administrative messages.
+                        If you no longer wish to receive marketing-related emails from us on a going-forward basis, you may opt-out of receiving these marketing-related emails by following the unsubscribe instructions in any such message, or by emailing us at <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>. We aim to comply with such request(s) as soon as reasonably practicable. Please note that if you do opt-out of receiving marketing-related emails from us, we may still send you administrative messages; you cannot opt-out from receiving administrative messages.
                       </p>
                       <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
                         General
@@ -265,7 +265,7 @@ class Privacy extends React.Component {
                     <div id="G" style={styles.sectionHeading}>G. Password</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
-                        Your password deserves careful thought and protection. Use unique numbers, letters, and special characters and do not disclose your password to anyone. You shall not share your password or your personal sign-in credentials with others, and please remember that you are responsible for all actions taken in the name of your account. If you lose control of your password, you may lose substantial control over your Personal Data and may be subject to legally binding actions taken on your behalf. If your password has been compromised for any reason, you should immediately access your profile to change your password and notify us immediately at support@Pixel8.earth.
+                        Your password deserves careful thought and protection. Use unique numbers, letters, and special characters and do not disclose your password to anyone. You shall not share your password or your personal sign-in credentials with others, and please remember that you are responsible for all actions taken in the name of your account. If you lose control of your password, you may lose substantial control over your Personal Data and may be subject to legally binding actions taken on your behalf. If your password has been compromised for any reason, you should immediately access your profile to change your password and notify us immediately at <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>.
                       </p>
                     </div>
                   </>
@@ -285,62 +285,98 @@ class Privacy extends React.Component {
                 }
                 {section.indexOf('#I') > -1 &&
                   <>
-                    <div id="" style={styles.sectionHeading}></div>
+                    <div id="I" style={styles.sectionHeading}>I. Children</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
-                  
-                      </p>
-                      <p style={styles.sectionP}>
-                  
+                        The Services are not directed at or intended for children under sixteen (16) years of age, and we do not knowingly collect Personal Data from such children. If you believe that we might have any Personal Data from a child under 16 years of age, please contact us at <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>.
                       </p>
                     </div>
                   </>
                 }
                 {section.indexOf('#J') > -1 &&
                   <>
-                    <div id="" style={styles.sectionHeading}></div>
+                    <div id="J" style={styles.sectionHeading}>J. Policy Changes</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
-                  
-                      </p>
-                      <p style={styles.sectionP}>
-                  
+                        We may amend this Policy from time to time. If we make any changes to this Policy, we will post the amended terms on Pixel8.earth, change the "Last Revised" date above, and where appropriate, notify you by email or via our other notification mechanisms.
                       </p>
                     </div>
                   </>
                 }
                 {section.indexOf('#K') > -1 &&
                   <>
-                    <div id="" style={styles.sectionHeading}></div>
+                    <div id="K" style={styles.sectionHeading}>K. Your Information, Rights and Choices</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
-                  
+                        You have the right to ask us not to process your Personal Data for marketing or promotional purposes. We will usually inform you (before collecting your Personal Data) if we intend to use your Personal Data for such purposes or if we intend to disclose your information to any third party for such purposes. You may also opt out of receiving promotional emails from us by following the instructions in the emails themselves or by emailing <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>. If you opt out, we may still send you non-promotional emails, such as emails about your accounts or our ongoing business relations.
                       </p>
                       <p style={styles.sectionP}>
-                  
+                        You can see, review and change your Personal Data by logging into the Service or by contacting us at <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>. You should promptly update your Personal Data if it changes or is inaccurate.
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have the right to receive confirmation on whether or not we process Personal Data concerning you, and in such cases get access to such Personal Data and also information regarding the Personal Data and how we process it.
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have the right to have inaccurate Personal Data concerning you rectified without undue delay. Taking into account the purposes of the processing, you also have the right to have incomplete Personal Data about you completed.
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have, under certain circumstances, the right to have Personal Data concerning you erased, for example if the Personal Data are no longer necessary in relation to the purposes for which they were collected or if the Personal Data have been unlawfully processed.
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have the right to withdraw a consent provided by you at any time by contacting us. If your consent is withdrawn, we will no longer process your Personal Data for the purpose that you had given your consent to.
+                      </p>
+                      <p style={styles.sectionP}>
+                        In some circumstances you have the right to obtain restriction of the processing of your Personal Data. For example if you contest the accuracy of the Personal Data, you can also require that we restrict the processing of your Personal Data for such a period that enables us to verify the accuracy of the Personal Data.
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have the right to object to processing of your Personal Data that is based on our legitimate interests. If this is done, we must provide compelling legitimate grounds for the processing which overrides your interests, rights and freedoms, in order to proceed with the processing of your Personal Data. 
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have the right to receive the Personal Data relating to you and that you have provided to us, in a commonly used electronic format. You have the right to transmit that data to another controller (data portability).
+                      </p>
+                      <p style={styles.sectionP}>
+                        You may always contact Pixel8 at support@Pixel8.earth if you have any questions or comments regarding our processing of your Personal Data. You also have the right to complain about the processing of your Personal Data by lodging a complaint to the relevant data protection authority.
+                      </p>
+                      <p style={styles.sectionP}>
+                        You may delete your account any time by emailing support@Pixel8.earth. Deletion is your sole means of terminating your account. We will in our own discretion keep Nonpersonal Data and explicitly the images submitted and the associated geolocation data which is required, if any, to maintain the uninterrupted and intended Pixel8 Solution functionality. This Nonpersonal Data may be stored under a new username not attributable to you.
+                      </p>
+                      <p style={styles.sectionP}>
+                        In addition to the above, you may opt-out of providing Information via the Pixel8 App to Pixel8 at any time by uninstalling the application using the standard uninstall process available on your mobile device or via the mobile application marketplace or store.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Please note that once you make a public posting, you may not be able to change or remove it.
                       </p>
                     </div>
                   </>
                 }
                 {section.indexOf('#L') > -1 &&
                   <>
-                    <div id="" style={styles.sectionHeading}></div>
+                    <div id="L" style={styles.sectionHeading}>L. Questions</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
-                  
-                      </p>
-                      <p style={styles.sectionP}>
-                  
+                        If you have any questions about this Policy, please contact us at <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>.
                       </p>
                     </div>
                   </>
                 }
                 {section.indexOf('#CA') > -1 &&
                   <>
-                    <div id="" style={styles.sectionHeading}></div>
+                    <div id="CA" style={styles.sectionHeading}>CALIFORNIA PRIVACY RIGHTS</div>
                     <div style={styles.section}>
                       <p style={styles.sectionP}>
-                  
+                        If you are a California resident, California law may provide you with certain rights regarding our use of information about you.
+                      </p>
+                      <p style={styles.sectionP}>
+                        A. “Do Not Track” under the California Online Privacy Protection Act. We support “do not track” (a preference you may be able to set in your web browser to inform Sites that you do not want to be tracked). We are not aware of any processes for others collecting information about your activities on our Sites over time and across third party Sites, apps, or other online services, nor do we knowingly collect information about your activities over time across third party sites and services.
+                      </p>
+                      <p style={styles.sectionP}>
+                        B. California's "Shine the Light" law (Civil Code Section § 1798.83). This law permits users of our Site that are California residents to request certain information regarding our disclosure of personal information, as defined by the Shine the Light law, to third parties for their direct marketing purposes. To make such a request, please send an email to us at privacy@Pixel8.earth.
+                      </p>
+                      <p style={styles.sectionP}>
+                        C. California Consumer Privacy Act (CCPA). This part (C) serves as a privacy notice for California residents and applies solely to residents of California. Any terms defined in the CCPA have the same meaning when used in this part (C). Note that provision of this CCPA notice is not an admission on our part that we are a “business” within the meaning of the CCPA, and nothing in this policy may be construed as such an admission.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Personal Information we collect
                       </p>
                       <p style={styles.sectionP}>
                   
@@ -454,5 +490,7 @@ const styles = {
     lineHeight: '32px'
   }
 };
+
+// <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>
 
 export default Privacy;
