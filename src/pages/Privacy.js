@@ -79,7 +79,8 @@ class Privacy extends React.Component {
                   <a className={`${~section.indexOf('#J') ? 'is-active' : ''}`} href="#/privacy#J">J. Policy Changes</a>
                   <a className={`${~section.indexOf('#K') ? 'is-active' : ''}`} href="#/privacy#K">K. Your Information, Rights and Choices</a>
                   <a className={`${~section.indexOf('#L') ? 'is-active' : ''}`} href="#/privacy#L">L. Questions</a>
-                  <a className={`${~section.indexOf('#CA') ? 'is-active' : ''}`} href="#/privacy#CA">CALIFORNIA PRIVACY RIGHTS</a>  
+                  <a className={`${~section.indexOf('#M') ? 'is-active' : ''}`} href="#/privacy#M">CALIFORNIA PRIVACY RIGHTS</a>  
+                  <a className={`${~section.indexOf('#N') ? 'is-active' : ''}`} href="#/privacy#N">EU-US PRIVACY POLICY</a>
                 </div>
               </MDBCol>
               <MDBCol size="6" style={{ justifyContent: 'center', alignContent: 'center', padding: '0', marginLeft: '10vw' }}>
@@ -359,7 +360,7 @@ class Privacy extends React.Component {
                     </div>
                   </>
                 }
-                {section.indexOf('#CA') > -1 &&
+                {section.indexOf('#M') > -1 &&
                   <>
                     <div id="CA" style={styles.sectionHeading}>CALIFORNIA PRIVACY RIGHTS</div>
                     <div style={styles.section}>
@@ -375,11 +376,231 @@ class Privacy extends React.Component {
                       <p style={styles.sectionP}>
                         C. California Consumer Privacy Act (CCPA). This part (C) serves as a privacy notice for California residents and applies solely to residents of California. Any terms defined in the CCPA have the same meaning when used in this part (C). Note that provision of this CCPA notice is not an admission on our part that we are a “business” within the meaning of the CCPA, and nothing in this policy may be construed as such an admission.
                       </p>
-                      <p style={styles.sectionP}>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
                         Personal Information we collect
                       </p>
                       <p style={styles.sectionP}>
-                  
+                        We collect certain “Personal Information,” as defined by the CCPA and as listed in section B of the main body of the Policy and have done so within the last 12 months.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Personal Information does not include: (a) publicly available information from government records; (b) deidentified information or aggregate consumer information.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We obtain the categories of Personal Information listed in section B of the main body of the Policy listed above from the following categories of sources:
+                      </p>
+                      <ul style={styles.list}>
+                        <li>directly from you or publicly available sources;</li>
+                        <li>indirectly when you use our services (eg cookies when using our Site); and</li>
+                        <li>from the sources listed in this policy.</li>
+                      </ul>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Our use of Personal Information
+                      </p>
+                      <p style={styles.sectionP}>
+                        We may use and have disclosed the Personal Information we collect for the following purposes:
+                      </p>
+                      <ul style={styles.list}>
+                        <li>to fulfill or meet the reason you provided the Personal Information. For example, if you share your name and contact information to request a price quote or ask a question about our offerings, we will use that Personal Information to respond to your inquiry. If you provide your Personal Information to purchase a access to our service, we will use that information to process your payment and facilitate delivery.</li>
+                        <li>to provide, support, personalize, and develop our Site and Services.</li>
+                        <li>to create, maintain, customize, and secure your account with us.</li>
+                        <li>to process your requests, transactions, and payments.</li>
+                        <li>to provide you with support and to respond to your inquiries, including to investigate and address your concerns and monitor and improve our responses.</li>
+                        <li>to help maintain the safety, security, and integrity of our Site, products and services, databases and other technology assets, and business.</li>
+                        <li>for testing, research, analysis, and product development.</li>
+                        <li>to respond to law enforcement requests and as required by applicable law, court order, or governmental regulations.</li>
+                        <li>as described to you when collecting your Personal Information or as otherwise set forth in the CCPA.</li>
+                        <li>detecting security incidents, protecting against malicious, deceptive, fraudulent, or illegal activity, and prosecuting those responsible for that activity.</li>
+                        <li>debugging to identify and repair errors that impair existing intended functionality.</li>
+                        <li>to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of our assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which Personal Information held by us is among the assets transferred.</li>
+                      </ul>
+                      <p style={styles.sectionP}>
+                        We will not collect additional categories of Personal Information or use the Personal Information we collected for materially different, unrelated, or incompatible purposes as those set out above, or in section D in the main body of the Policy above, without providing you notice.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We do not sell Personal Information as the term “sell” is defined in the CCPA.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Sharing Personal Information
+                      </p>
+                      <p style={styles.sectionP}>
+                        We may disclose any or all of the categories above of your Personal Information to third parties for a business purpose, as set forth in this policy, and we have done so in the last 12 months.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We disclose your Personal Information for a business purpose to the categories of third parties set out in section E in the main body of the Policy above.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Your rights and choices
+                      </p>
+                      <p style={styles.sectionP}>
+                        You have the right to request that we disclose certain information to you about our collection and use of your Personal Information over the past 12 months. Once we receive and confirm your verifiable consumer request, we will disclose to you (unless an exception applies):
+                      </p>
+                      <ul style={styles.list}>
+                        <li>the categories of Personal Information we collected about you.</li>
+                        <li>the categories of sources for the Personal Information we collected about you.</li>
+                        <li>our business or commercial purpose for collecting that Personal Information.</li>
+                        <li>the categories of third parties with whom we share that Personal Information.</li>
+                        <li>the specific pieces of Personal Information we collected about you (also called a Personal Data portability request).</li>
+                        <li>if we disclosed your Personal Information for a business purpose, a list of disclosures for a business purpose, identifying the Personal Information categories that each category of recipient obtained.</li>
+                      </ul>
+                      <p style={styles.sectionP}>
+                        We do not provide these Personal Data access and portability rights for B2B Personal Information to the extent such an exception remains in effect under the CCPA.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Deletion request rights
+                      </p>
+                      <p style={styles.sectionP}>
+                        California residents have the right under the CCPA to request that we delete any of their Personal Information that we have collected and retained, subject to certain exceptions. Once we receive and confirm a verifiable consumer request (see below), we will delete (and direct our service providers to delete) relevant Personal Information from our records, unless an exception applies (such as the B2B exception referenced above).
+                      </p>
+                      <p style={styles.sectionP}>
+                        We may deny California residents’ deletion request if doing so is permitted or required by applicable law, or if retaining the Personal Information is necessary for us or our service provider(s) to:
+                      </p>
+                      <ul style={styles.list}>
+                        <li>complete the transaction for which we collected the Personal Information, provide a good or service that you requested, take actions reasonably anticipated within the context of our ongoing business relationship with the requesting individual, or otherwise perform our contract with a requesting individual.</li>
+                        <li>detect security incidents, protect against malicious, deceptive, fraudulent, or illegal activity, or prosecute those responsible for such activities.</li>
+                        <li>debug products to identify and repair errors that impair existing intended functionality.</li>
+                        <li>exercise free speech, ensure the right of another to exercise their free speech rights, or exercise another right provided for by law.</li>
+                        <li>engage in public or peer-reviewed scientific, historical, or statistical research in the public interest that adheres to all other applicable ethics and privacy laws, when the Personal Information's deletion may likely render impossible or seriously impair the research's achievement, if you previously provided informed consent.</li>
+                        <li>enable solely internal uses that are reasonably aligned with consumer expectations.</li>
+                        <li>comply with a legal obligation.</li>
+                        <li>make other internal and lawful uses of that Personal Information that are compatible with the context in which you provided it.</li>
+                      </ul>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Verifiable consumer request
+                      </p>
+                      <p style={styles.sectionP}>
+                        To exercise the access, Personal Data portability, and deletion rights under the CCPA described above, please submit to us a verifiable consumer request as set forth above.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Only a California resident may make a verifiable consumer request related to their Personal Information. A California resident may also make a verifiable consumer request on behalf of their minor child.
+                      </p>
+                      <p style={styles.sectionP}>
+                        A verifiable consumer request for Personal Data access or portability can only be made twice within a 12-month period. The verifiable consumer request must provide sufficient information that allows us to reasonably verify the California resident about whom we collected Personal Information or an authorized representative, and contain sufficient detail that allows us to properly understand, evaluate, and respond to it. We cannot respond to your request or provide Personal Information if we cannot verify your identity or authority to make the request and confirm the Personal Information relates to you.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Making a verifiable consumer request does not require you to create an account on our Site. However, we do consider requests made through your password protected account sufficiently verified when the request relates to Personal Information associated with that specific account. We will only use Personal Information provided in a verifiable consumer request to verify the requestor's identity or authority to make the request.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We will endeavour to respond to a verifiable consumer request within 45 days of its receipt. If we require more time (up to 90 days), we will inform you of the reason and extension period in writing. If you have an account with us, we will deliver our written response to that account. If you do not have an account with us, we will deliver our written response by mail or electronically.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Any disclosures we provide will only cover the 12-month period preceding the verifiable consumer request’s receipt. The response we provide will also explain the reasons we cannot comply with a request, if applicable. For Personal Data portability requests, we will select a format to provide your Personal Information that is readily useable and should allow you to transmit the Personal Information from one entity to another entity without hindrance.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We do not charge a fee to process or respond to your verifiable consumer request unless it is excessive, repetitive, or manifestly unfounded. If we determine that the request warrants a fee, we will tell you why we made that decision and provide you with a cost estimate before completing your request.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontStyle: 'italic' }}>
+                        Non-discrimination
+                      </p>
+                      <p style={styles.sectionP}>
+                        We will not discriminate against you for exercising any of your CCPA rights. Except as permitted by the CCPA, we will not:
+                      </p>
+                      <ul style={styles.list}>
+                        <li>deny you goods or services.</li>
+                        <li>charge you different prices or rates for goods or services, including through granting discounts or other benefits, or imposing penalties.</li>
+                        <li>provide you a different level or quality of goods or services.</li>
+                        <li>suggest that you may receive a different price or rate for goods or services or a different level or quality of goods or services.</li>
+                      </ul>
+                    </div>
+                  </>
+                }
+                {section.indexOf('#N') > -1 &&
+                  <>
+                    <div id="L" style={styles.sectionHeading}>EU-US PRIVACY POLICY</div>
+                    <div style={styles.section}>
+                      <p style={styles.sectionP}>
+                        This EU-US Privacy Policy explains how we adhere to the privacy principles of the EU-US Privacy Shield Framework and Swiss-US Privacy Shield Framework with respect to transfers of personal information from the <a href="https://europa.eu/european-union/about-eu/countries_en" target="_blank" rel="noopener noreferrer">European Union</a>, as well as the United Kingdom, Norway, Lichtenstein and Iceland (collectively, ”EU”), and from Switzerland, to the United States. We are subject to the investigatory and enforcement powers of the Federal Trade Commission (FTC).
+                      </p>
+                      <p style={styles.sectionP}>
+                        The United States Department of Commerce and the European Commission have agreed on a set of <a href="https://www.privacyshield.gov/eu-us-framework" target="_blank" rel="noopener noreferrer">Privacy Shield Principles and Supplemental Principles</a>, to enable U.S. companies to satisfy the requirement under European Union law that adequate protection be given to personal information transferred from the EU to the United States (the “EU-US Privacy Shield”). The EU also has recognized the EU-US Privacy Shield as providing adequate data protection. The United States Department of Commerce and the government of Switzerland have agreed on a similar set of <a href="https://www.privacyshield.gov/eu-us-framework" target="_blank" rel="noopener noreferrer">Privacy Shield Principles and Supplemental Principles</a>, to enable U.S. companies to satisfy the requirement under applicable Swiss law that adequate protection be given to personal information transferred from Switzerland to the United States (the “Swiss-US Privacy Shield”).
+                      </p>
+                      <p style={styles.sectionP}>
+                        We comply with the EU-US Privacy Shield Framework and Swiss-US Privacy Shield Framework as set forth by the U.S. Department of Commerce regarding the collection, use, and retention of personal information transferred f to the United States. We have certified to the Department of Commerce that we adhere to the Privacy Shield Principles.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontFamily: mainStyles.boldFont }}>
+                        A. Scope
+                      </p>  
+                      <p style={styles.sectionP}>
+                        This EU-US Privacy Policy applies to all personal information received by us in the United States from the EU and from Switzerland, in any format, including electronic, paper or verbal.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontFamily: mainStyles.boldFont }}>
+                        B. Definitions
+                      </p>
+                      <p style={styles.sectionP}>
+                        For purposes of this EU-US Privacy Policy, the following definitions will apply:
+                      </p>
+                      <ul style={styles.list}>
+                        <li>“agent” means any third party that collects or uses personal information under our instructions and for us, or to which we disclose personal information for use on our behalf.</li>
+                        <li>“personal information” and “personal data” means any data, information or data/information set(s) that identifies or could be used by or on behalf of us to identify an individual. Personal information does not include information that is encoded or anonymized, or publicly available information that has not been combined with non-public personal information.</li>
+                        <li>“sensitive personal information” means personal information that reveals race, ethnic origin, political opinions, religious or philosophical beliefs, trade union membership, views or activities, that concerns health or sex life, ideological views or activities, information on social security measures or benefits, or information on criminal or administrative proceedings and sanctions other than in the context of pending proceedings. In addition, we will treat as sensitive personal information any information received from a third party where that third party treats and explicitly identifies the information as sensitive within the same meaning as used here.</li>
+                      </ul>
+                      <p style={{ ...styles.sectionP, fontFamily: mainStyles.boldFont }}>
+                        C. Privacy Shield Principles
+                      </p>
+                      <p style={styles.sectionP}>
+                        The privacy principles in this EU-US Privacy Policy have been developed based on the Privacy Shield Principles and Supplemental Principles. For purposes of these principles and this section C, the term “EU” includes Switzerland.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (i) Notice. Where we collect personal information directly from individuals in the EU, we will inform such individuals about the purposes for which we collect and use personal information about them, the types of non–agent third parties to which we disclose that information, the choices and means, if any, we offer individuals for limiting the use and disclosure of personal information about them, and how to contact us. Notice will be provided in clear and conspicuous language when individuals are first asked to provide personal information, or as soon as practicable thereafter, and in any event before we use or disclose the information for a purpose other than that for which it was originally collected.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Where we receive personal information from our subsidiaries, affiliates or other entities in the EU, we will use and disclose such information in accordance with the notices provided by such entities and the choices made by the individuals to whom such personal information relates.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (ii) Choice. We will offer individuals the opportunity to choose (opt-out) whether their personal information is (a) to be disclosed to a non-agent third party, or (b) to be used for a purpose that is materially different than the purpose for which it was originally collected or subsequently authorized by the individual.
+                      </p>
+                      <p style={styles.sectionP}>
+                        For sensitive personal information, we don't solicit such information and there's no need to disclose such information in order to use our services or sites. If we elect in the future to solicit such information, we will give individuals the opportunity to affirmatively and explicitly (opt-in) consent to the disclosure of such solicited information to a non-agent third party or the use of the information for a purpose other than the purpose for which it was originally collected or subsequently authorized by the individual.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We will provide individuals with reasonable mechanisms to exercise their choices.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (iii) Data Integrity. We will use personal information only in ways that are compatible with and relevant to the purposes for which it was collected or subsequently authorized by the individual. We will take reasonable steps to ensure that personal information is reliable to its intended use, accurate, complete, and current. We will remain compliant for as long as we retain personal information. Personal information will be retained in a form identifying or making identifiable an individual only for so long as necessary to process such information, subject to our right to retain such information for longer periods for the time and to the extent such processing reasonably serves the purposes of archiving in the public interest, journalism, literature and art, scientific or historical research, and statistical analysis.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (iv) Accountability for Onward Transfer. To transfer personal data to an agent, we will: (a) transfer such data only for limited and specified purposes; (b) ascertain that the agent is obligated to provide at least the same level of privacy protection as is required by the Privacy Shield Principles; (c) take reasonable and appropriate steps to ensure that the agent effectively processes the personal information transferred in a manner consistent with our obligations under the Privacy Shield Principles; (d) require the agent to notify us if it makes a determination that it can no longer meet its obligation to provide the same level of protection as is required by the Privacy Shield Principles; (e) upon notice, including under (d), take reasonable and appropriate steps to stop and remediate unauthorized processing; (f) provide a summary or a representative copy of the relevant privacy provisions of its contract with that agent to the Department of Commerce upon request; and (g) enter into enforceable contracts with agents consistent with this policy.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We will undertake to obtain assurances from our agents that they will safeguard personal information consistent with this policy. Examples of appropriate assurances that may be provided by agents include: (h) a contract obligating the agent to provide at least the same or substantially similar level of protection as is required by the relevant Privacy Shield Principles, (i) such agent being certified as Privacy Shield Principles-compliant, (j) such agent being subject to the EU Data Protection Directive, or (k) such agent being subject to another EU or Swiss adequacy finding (e.g., companies located in Canada). Where we have knowledge that an agent is using or disclosing personal information in a manner contrary to this policy, we will take reasonable steps to prevent or stop such use or disclosure.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (v) Access and Correction. Upon request, we will grant individuals reasonable access to personal information that it holds about them. In addition, we will take reasonable steps to permit individuals to correct, amend, or delete information that is demonstrated to be inaccurate or incomplete, or that has been processed in violation of the Privacy Shield Principles, except where the burden or expense of providing access would be disproportionate to the risks to the individual’s privacy in the case in question, or where the rights of persons other than the individual would be violated.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (vi) Security. We will take reasonable and appropriate measures to protect personal information in our possession from loss, misuse and unauthorized access, disclosure, alteration and destruction, taking into account the risks involved in the processing and nature of the personal data.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (vii) Enforcement. We will conduct compliance reviews of our relevant privacy practices to verify adherence to this EU-US Privacy Policy and appropriate employee and agent training as necessary. Any employee or agent of ours that we determine is in violation of this policy will be subject to disciplinary action up to and including termination of employment or service. We will be responsible if our agent processes personal information in a manner inconsistent with the Privacy Shield Principles, unless we prove that we are not responsible for the event giving rise to the damage.
+                      </p>
+                      <p style={styles.sectionP}>
+                        (viii) Dispute Resolution. Any questions or concerns regarding the use or disclosure of personal information should be directed to the Data Processing Officer. We will investigate and attempt to resolve complaints and disputes regarding use and disclosure of personal information by reference to this policy in an expeditious manner, and at no cost to the individual.
+                      </p>
+                      <p style={styles.sectionP}>
+                        We have further committed to refer unresolved Privacy Shield complaints to JAMS (jamsadr.com), an alternative dispute resolution provider located in the United States, which serves as our third-party dispute resolution provider for Privacy Shield Principles-related disputes. If you do not receive timely acknowledgment of your complaint from us, or if we have not addressed your complaint to your satisfaction, please contact or visit JAMS for more information or to file a complaint. The services of JAMS are provided at no cost to you.
+                      </p>
+                      <p style={styles.sectionP}>
+                        Individuals may submit complaints on an individualized basis (and not purporting to be acting in a representative capacity or on behalf of a class) to <a href="https://www.jamsadr.com/eu-us-privacy-shield" target="_blank" rel="noopener noreferrer">JAMS</a>. No damages, fees, or other remedies are available. Arbitrators will have the authority only to award individual-specific non-monetary equitable relief (such as access, correction, deletion, or return of the individual data's in question). Each party will bear its own attorneys fees, subject to the rules of JAMS.
+                      </p>
+                      <p style={styles.sectionP}>
+                        In addition, individuals may submit disputes to binding arbitration who first comply with <a href="https://www.privacyshield.gov/article?id=C-Pre-Arbitration-Requirements" target="_blank" rel="noopener noreferrer">pre-arbitration requirements</a>. Arbitration may not be invoked and is not available if the individual’s same claimed violation of the Privacy Shield Principles: (a) has previously been subject to binding arbitration; (b) was the subject of a final judgment entered in a court action to which the individual was a party; or (c) was previously settled by the parties. In addition, arbitration is not available if an EU Data Protection Authority: (d) has authority under sections III.5 or III.9 of the Privacy Shield Principles; or (e) has the authority to resolve the claimed violation directly with us.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontFamily: mainStyles.boldFont }}>
+                        D. Limitation
+                      </p>  
+                      <p style={styles.sectionP}>
+                        Adherence to this EU-US Privacy Policy is limited to the extent (i) required to respond to a legal or ethical obligation; (ii) necessary to meet national security, public interest or law enforcement obligations; and (iii) expressly permitted by an applicable law, rule or regulation.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontFamily: mainStyles.boldFont }}>
+                        E. Privacy Policy
+                      </p>
+                      <p style={styles.sectionP}>
+                        We recognize the importance of maintaining the privacy of information collected online and via applications, and have created this policy governing the treatment of personal information collected through web sites, services, operations and applications that we operate. The policy reflects additional legal requirements and evolving standards with respect to privacy, and in fact, we utilize this policy in facilitating adherence to the Privacy Shield Principles and applicable EU data protection laws. As such, this EU-US Privacy Policy and the Policy should be construed harmoniously wherever possible; however, with respect to personal information that is transferred from the EU or Switzerland to the US, the Policy is subordinate to this EU-US Privacy Policy.
+                      </p>
+                      <p style={{ ...styles.sectionP, fontFamily: mainStyles.boldFont }}>
+                        F. Contact Information
+                      </p>
+                      <p style={styles.sectionP}>
+                        Questions or comments regarding this policy may be submitted to us via <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>.
                       </p>
                     </div>
                   </>
@@ -490,7 +711,5 @@ const styles = {
     lineHeight: '32px'
   }
 };
-
-// <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>
 
 export default Privacy;
