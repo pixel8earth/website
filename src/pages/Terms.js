@@ -26,13 +26,20 @@ class Terms extends React.Component {
 
   setSection = () => {
     if (this.mounted && window.location.hash !== this.state.section) {
-      this.setState({ section: window.location.hash.replace('#', '') });
+      this.setState({ section: window.location.hash.replace('#/terms#', '') });
+    }
+  }
+
+  goTo = (id) => () => {
+    const el = document.getElementById(id);
+    if (el && el.scrollIntoView) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
   render() {
     const { section = '' } = this.state;
-
+    /* eslint-disable jsx-a11y/anchor-is-valid */
     return (
       <div style={styles.main}>
         <div style={styles.content}>
@@ -50,67 +57,67 @@ class Terms extends React.Component {
               <MDBCol size="3" style={{ justifyContent: 'left', alignContent: 'center', padding: '0' }}>
                 <div style={styles.sectionNumbers} id="termsList">
                   <a
-                    className={`${(section === 'definitions' || section === '') ? 'is-active' : ''}`}
-                    href="#definitions"
+                    className={`${(section === 'definitions' || section === '' || section === '#/terms') ? 'is-active' : ''}`}
+                    href="#/terms#definitions"
                   >Defined Terms</a>
-                  <a className={`${~section.indexOf('1.') ? 'is-active' : ''}`} href="#1.0">1. Access and Licensed Rights</a>
+                  <a className={`${~section.indexOf('1.') ? 'is-active' : ''}`} href="#/terms#1.0">1. Access and Licensed Rights</a>
                   <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('1.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} href="#1.1">1.1 Pixel8 Solution Access</a>
-                    <a style={styles.anchorIndent} href="#1.2">1.2 Pixel8 User Licenses to Us</a>
-                    <a style={styles.anchorIndent} href="#1.3">1.3 Pixel8 Software</a>
-                    <a style={styles.anchorIndent} href="#1.4">1.4 Reservation of Rights</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('1.1')}>1.1 Pixel8 Solution Access</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('1.2')}>1.2 Pixel8 User Licenses to Us</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('1.3')}>1.3 Pixel8 Software</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('1.4')}>1.4 Reservation of Rights</a>
                   </div>
-                  <a className={`${~section.indexOf('2.') ? 'is-active' : ''}`} href="#2.0">2. Terms Applicable to Content</a>
+                  <a className={`${~section.indexOf('2.') ? 'is-active' : ''}`} href="#/terms#2.0">2. Terms Applicable to Content</a>
                   <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('2.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} href="#2.1">2.1 Specific Prohibited Uses</a>
-                    <a style={styles.anchorIndent} href="#2.2">2.2 Handling of Your Content</a>
-                    <a style={styles.anchorIndent} href="#2.3">2.3 Propriety of Content</a>
-                    <a style={styles.anchorIndent} href="#2.4">2.4 Prohibited Content</a>
-                    <a style={styles.anchorIndent} href="#2.5">2.5 Use of Content</a>
-                    <a style={styles.anchorIndent} href="#2.6">2.6 Third Party Sites</a>
-                    <a style={styles.anchorIndent} href="#2.7">2.7 Prerequisites</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('2.1')}>2.1 Specific Prohibited Uses</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('2.2')}>2.2 Handling of Your Content</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('2.3')}>2.3 Propriety of Content</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('2.4')}>2.4 Prohibited Content</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('2.5')}>2.5 Use of Content</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('2.6')}>2.6 Third Party Sites</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('2.7')}>2.7 Prerequisites</a>
                   </div>
-                  <a className={`${~section.indexOf('3.') ? 'is-active' : ''}`} href="#3.0">3. Sign-On Credentials</a>
+                  <a className={`${~section.indexOf('3.') ? 'is-active' : ''}`} href="#/terms#3.0">3. Sign-On Credentials</a>
                   <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('3.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} href="#3.1">3.1 Sign-On Credentials</a>
-                    <a style={styles.anchorIndent} href="#3.2">3.2 Change of Username</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('3.1')}>3.1 Sign-On Credentials</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('3.2')}>3.2 Change of Username</a>
                   </div>
-                  <a className={`${~section.indexOf('4.') ? 'is-active' : ''}`} href="#4.0">4. Site Integrity</a>
+                  <a className={`${~section.indexOf('4.') ? 'is-active' : ''}`} href="#/terms#4.0">4. Site Integrity</a>
                   <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('4.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} href="#4.1">4.1 Prohibited Uses</a>
-                    <a style={styles.anchorIndent} href="#4.2">4.2 No Harvesting or Crawling</a>
-                    <a style={styles.anchorIndent} href="#4.3">4.3 No Framing</a>
-                    <a style={styles.anchorIndent} href="#4.4">4.4 Account Data</a>
-                    <a style={styles.anchorIndent} href="#4.5">4.5 Notifications to Us</a>
-                    <a style={styles.anchorIndent} href="#4.6">4.6 Notifications to You</a>
-                    <a style={styles.anchorIndent} href="#4.5">4.7 Network Security Rules</a>
-                    <a style={styles.anchorIndent} href="#4.8">4.8 Analyticals</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.1')}>4.1 Prohibited Uses</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.2')}>4.2 No Harvesting or Crawling</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.3')}>4.3 No Framing</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.4')}>4.4 Account Data</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.5')}>4.5 Notifications to Us</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.6')}>4.6 Notifications to You</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.7')}>4.7 Network Security Rules</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('4.8')}>4.8 Analyticals</a>
                   </div>
-                  <a className={`${~section.indexOf('5.') ? 'is-active' : ''}`} href="#5.0">5. Disclaimer of Warranties, Limitations of Liability and Indemnification</a>
+                  <a className={`${~section.indexOf('5.') ? 'is-active' : ''}`} href="#/terms#5.0">5. Disclaimer of Warranties, Limitations of Liability and Indemnification</a>
                   <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('5.') ? 'flex' : 'none' }}>
-                    <a style={styles.anchorIndent} href="#5.1">5.1 Disclaimer</a>
-                    <a style={styles.anchorIndent} href="#5.2">5.2 Liability Limitation</a>
-                    <a style={styles.anchorIndent} href="#5.3">5.3 Indemnification</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('5.1')}>5.1 Disclaimer</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('5.2')}>5.2 Liability Limitation</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('5.3')}>5.3 Indemnification</a>
                   </div>
-                  <a className={`${~section.indexOf('6.') ? 'is-active' : ''}`} style={styles.anchor} href="#6.0">6. General Provisions</a>
+                  <a className={`${~section.indexOf('6.') ? 'is-active' : ''}`} style={styles.anchor} href="#/terms#6.0">6. General Provisions</a>
                   <div style={{ ...styles.sectionNumbers, display: ~section.indexOf('6.') ? 'flex' : 'none', visibility: ~section.indexOf('6.') ? 'visible' : 'hidden' }}>
-                    <a style={styles.anchorIndent} href="#6.1">6.1 Force Majeure</a>
-                    <a style={styles.anchorIndent} href="#6.2">6.2 Service Discontinuance/Modification</a>
-                    <a style={styles.anchorIndent} href="#6.3">6.3 Account Termination</a>
-                    <a style={styles.anchorIndent} href="#6.4">6.4 US Government Restricted Rights</a>
-                    <a style={styles.anchorIndent} href="#6.5">6.5 Trademarks</a>
-                    <a style={styles.anchorIndent} href="#6.6">US DCMA</a>
-                    <a style={styles.anchorIndent} href="#6.7">6.7 Governing Law</a>
-                    <a style={styles.anchorIndent} href="#6.8">6.8 Dispute Resolution</a>
-                    <a style={styles.anchorIndent} href="#6.9">6.9 Service Assignment</a>
-                    <a style={styles.anchorIndent} href="#6.10">6.10 Injunctive Relief</a>
-                    <a style={styles.anchorIndent} href="#6.11">6.11 Delaware-Based</a>
-                    <a style={styles.anchorIndent} href="#6.12">6.12 General</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.1')}>6.1 Force Majeure</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.2')}>6.2 Service Discontinuance/Modification</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.3')}>6.3 Account Termination</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.4')}>6.4 US Government Restricted Rights</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.5')}>6.5 Trademarks</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.6')}>6.6 US DCMA</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.7')}>6.7 Governing Law</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.8')}>6.8 Dispute Resolution</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.9')}>6.9 Service Assignment</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.10')}>6.10 Injunctive Relief</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.11')}>6.11 Delaware-Based</a>
+                    <a style={styles.anchorIndent} onClick={this.goTo('6.12')}>6.12 General</a>
                   </div>
                 </div>
               </MDBCol>
               <MDBCol size="6" style={{ justifyContent: 'center', alignContent: 'center', padding: '0', marginLeft: '10vw' }}>
-                {(section === 'definitions' || section === '') &&
+                {(section === 'definitions' || section === '' || section === '#/terms') &&
                   <>
                     <div id="definitions" style={styles.sectionHeading}>Defined Terms</div>
                     <div style={styles.section}>

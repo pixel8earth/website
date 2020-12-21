@@ -1,11 +1,17 @@
 import React from 'react';
 
+import coverImage from '../assets/P8_Cover_Image_of_Boulder.png';
+import bitFabImg from '../assets/Bitfab_image.png';
+import streetView1 from '../assets/Street_view_one_direction-360.png';
+import nabPilotImg from '../assets/Nabpilot_image.png';
+import streetView2 from '../assets/Street_view_two_directions-front_camera.png';
+
 function Photogrammetry() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '24px' }}>
       <h2 style={styles.heading}>Imagery Collection Best Practices for Pixel8.earth Photogrammetry</h2>
       <br/>
-      <img src="/assets/P8_Cover_Image_of_Boulder.png" alt="3D Boulder, CO buildings" style={styles.image} />
+      <img src={coverImage} alt="3D Boulder, CO buildings" style={styles.image} />
       <br/>
 
       <h2 style={styles.heading}>Introduction</h2>
@@ -13,7 +19,7 @@ function Photogrammetry() {
       <p style={styles.paragraph}>The common theme in all camera strategies is we want to collect as many perspectives of the built environment as possible. We say “built environment” specifically because we don’t want to deliberately capture transient objects like people or cars. The reason for avoiding these transient objects is 1) privacy and 2) they aren’t useful references. The reason we want to maximize the number of perspectives we have of the built environment is to generate the best photogrammetrical result possible. In the image below we can see how multiple images capturing all the perspectives of a small house help generate a complete 3D model.
       </p>
       <br/>
-      <img src="/assets/Bitfab_image.png" alt="3D model showing input photo locations" style={styles.image} /> {/* eslint-disable-line jsx-a11y/img-redundant-alt */}
+      <img src={bitFabImg} alt="3D model showing input photo locations" style={styles.image} /> {/* eslint-disable-line jsx-a11y/img-redundant-alt */}
       <span style={styles.courtesy}>Courtesy of Bitfab.io</span>
       <br/>
       <p style={styles.paragraph}>The more overlap in your photo/video and the greater the diversity of perspectives the better the results. Depending on the type of camera you are using it will vary the amount of work you need to capture the requisite variety of perspectives. We’ll cover the benefits and resulting strategy for each camera type next.</p>
@@ -22,12 +28,12 @@ function Photogrammetry() {
       <h2 style={styles.heading} id="360">360 Action Video Cameras</h2>
       <p style={styles.paragraph}>Pixel8.earth currently supports both GoPro Max and Fusion, which both generate a 360 degree format. The beauty of using a 360 degree capture is you collect all the visible perspective for a scene in one pass. This means that if you are collecting a street’s built environment you only need to collect imagery going in one direction.</p>
       <br/>
-      <img src="/assets/Street_view_one_direction-360.png" alt="one direction capture process" style={styles.image} />
+      <img src={streetView1} alt="one direction capture process" style={styles.image} />
       <span style={styles.courtesy}>Courtesy of Holli Packwood via Youtube</span>
       <br/>
       <p style={styles.paragraph}>The use case for Pixel8.earth is focused on collecting the world’s outdoor built environment. Most of this is easily accomplished with simply capturing streets. Often there are also unique features like sculpture, monuments, statues, etc. that can be circled instead of just passed by. In this case looping around an object or structure is a great strategy for maximizing the number of perspectives you capture. The 360 camera is awesome but it can’t capture the other side of an object unless you convey the camera to that perspective. In drone photogrammetry they call this a radial collection pattern, which is a good analog to compare to:</p>
       <br/>
-      <img src="/assets/Nabpilot_image.png" alt="large scale radial capture process" style={styles.image} />
+      <img src={nabPilotImg} alt="large scale radial capture process" style={styles.image} />
       <span style={styles.courtesy}>Courtesy of Nabpilot.org</span>
       <br/>
       <p style={styles.paragraph}>The beauty of the approach Pixel8.earth has taken is we don’t need the aerial positions because we can stitch our ground collection with previously collected aerial imagery. In summary using a 360 degree camera you can just do one pass down a street to get good imagery for a 3D model. If there is an opportunity to circle around objects you want to get better detail on it is a big help.</p>
@@ -42,7 +48,7 @@ function Photogrammetry() {
       </ul>
       <p style={styles.paragraph}>If you are collecting a street using a forward facing camera you want to capture going in both directions of the street. The image below lays out this basic concept:</p>
       <br/>
-      <img src="/assets/Street_view_two_directions-front_camera.png" alt="two direction capture process" style={styles.image} />
+      <img src={streetView2} alt="two direction capture process" style={styles.image} />
       <span style={styles.courtesy}>Courtesy of Holli Packwood via Youtube</span>
       <br/>
       <p style={styles.paragraph}>By collecting in both directions with a forward facing camera you increase the odds of getting multiple perspectives of the built environment. If you have a street with a statue on it you’d want to travel both directions of the street then circle around the statue to get all the facets for a good 3D model.</p>
