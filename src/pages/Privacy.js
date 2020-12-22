@@ -600,7 +600,8 @@ class Privacy extends React.Component {
                         F. Contact Information
                       </p>
                       <p style={styles.sectionP}>
-                        Questions or comments regarding this policy may be submitted to us via <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>.
+                        Questions or comments regarding this policy may be submitted to us via <a href="mailto: sean.gorman@pixel8.earth" target="_blank" rel="noopener noreferrer">sean.gorman@pixel8.earth</a>.<br />
+                        Active status is available <a href="https://www.privacyshield.gov/participant?id=a2zt0000000XZbbAAG&status=Active" target="_blank" rel="noopener noreferrer">here</a>
                       </p>
                     </div>
                   </>
