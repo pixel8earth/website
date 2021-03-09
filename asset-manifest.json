@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.d661e655.chunk.css",
+    "main.css": "/static/css/main.51771e61.chunk.css",
     "main.js": "/static/js/main.1f7b268d.chunk.js",
     "main.js.map": "/static/js/main.1f7b268d.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.dac90090.js",
@@ -12,7 +12,7 @@
     "static/js/3.316eb696.chunk.js.map": "/static/js/3.316eb696.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.a0659502.chunk.css.map": "/static/css/2.a0659502.chunk.css.map",
-    "static/css/main.d661e655.chunk.css.map": "/static/css/main.d661e655.chunk.css.map",
+    "static/css/main.51771e61.chunk.css.map": "/static/css/main.51771e61.chunk.css.map",
     "static/js/2.b0caf893.chunk.js.LICENSE.txt": "/static/js/2.b0caf893.chunk.js.LICENSE.txt",
     "static/media/3Dicon.a6da0f03.svg": "/static/media/3Dicon.a6da0f03.svg",
     "static/media/Bitfab_image.2a750880.png": "/static/media/Bitfab_image.2a750880.png",
@@ -53,7 +53,7 @@
     "static/js/runtime-main.dac90090.js",
     "static/css/2.a0659502.chunk.css",
     "static/js/2.b0caf893.chunk.js",
-    "static/css/main.d661e655.chunk.css",
+    "static/css/main.51771e61.chunk.css",
     "static/js/main.1f7b268d.chunk.js"
   ]
 }
